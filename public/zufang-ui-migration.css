@@ -443,11 +443,6 @@ dialog table .small { margin-top: 0; margin-bottom: 0; }
   color: #c84b43;
 }
 
-/* Absolute final container alignment; keep after all legacy migration rules. */
-body:has(#maintenance.tab-panel) .main > .rental-header,
-body:has(#maintenance.tab-panel) #maintenance > .panel { max-width: none !important; margin-left: 0 !important; margin-right: 0 !important; }
-body:has(#maintenance.tab-panel) #maintenance > .panel { width: 100% !important; }
-
 /* Final visual-diff corrections (must remain last in this stylesheet). */
 #record-dialog.maintenance-dialog .dialog-head { position: relative; border-left: 0; }
 #record-dialog.maintenance-dialog .dialog-head::before { content: ''; position: absolute; left: 40px; top: 36px; width: 6px; height: 80px; border-radius: 4px; background: #16a6b0; }
@@ -471,16 +466,6 @@ body:has(#maintenance.tab-panel) #maintenance > .panel { width: 100% !important;
   #record-dialog.maintenance-dialog .maintenance-field input:not([type=file]),
   #record-dialog.maintenance-dialog .maintenance-field select { min-height: 54px; font-size: 16px; }
 }
-
-/* Use the full workspace width like the reference page; avoid centered max-width gaps. */
-body:has(#maintenance.tab-panel) .main > .rental-header,
-body:has(#maintenance.tab-panel) #maintenance > .panel { max-width: none; margin-left: 0; margin-right: 0; }
-body:has(#maintenance.tab-panel) .main > .rental-header { padding-left: 0; padding-right: 0; }
-body:has(#maintenance.tab-panel) #maintenance > .panel { width: 100%; }
-body:has(#maintenance.tab-panel) > .sidebar { display: flex !important; visibility: visible !important; opacity: 1 !important; }
-body:has(#maintenance.tab-panel) > .sidebar .brand,
-body:has(#maintenance.tab-panel) > .sidebar nav,
-body:has(#maintenance.tab-panel) > .sidebar .sidebar-footer { visibility: visible !important; opacity: 1 !important; }
 
 /* Daily maintenance list: light navigation + clean grouped table surface. */
 body:has(#maintenance.tab-panel) { grid-template-columns: 180px minmax(0, 1fr); }
