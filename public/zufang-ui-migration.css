@@ -519,6 +519,13 @@ dialog table .small { margin-top: 0; margin-bottom: 0; }
   font-size: 14px;
   font-weight: 700;
 }
+#record-dialog.maintenance-dialog .maintenance-section-core .field-label::after,
+#record-dialog.maintenance-dialog .maintenance-section-text .field-item .field-label::after,
+#record-dialog.maintenance-dialog .maintenance-section-result .field-amount .field-label::after,
+#record-dialog.maintenance-dialog .maintenance-section-result .field-status .field-label::after {
+  content: ' *';
+  color: #df4b54;
+}
 #record-dialog.maintenance-dialog .maintenance-field input:not([type=file]),
 #record-dialog.maintenance-dialog .maintenance-field select,
 #record-dialog.maintenance-dialog .maintenance-field textarea {
@@ -536,8 +543,10 @@ dialog table .small { margin-top: 0; margin-bottom: 0; }
 #record-dialog.maintenance-dialog .maintenance-field textarea { min-height: 126px; padding: 13px 16px; resize: vertical; }
 #record-dialog.maintenance-dialog .field-note { align-items: start; }
 #record-dialog.maintenance-dialog .field-note .field-label { padding-top: 14px; }
-#record-dialog.maintenance-dialog .field-amount input { border-color: #f29a9e; background: #fff4f4; color: #cf3e48; font-size: 22px; font-weight: 800; }
-#record-dialog.maintenance-dialog .field-amount input::before { content: '¥'; }
+#record-dialog.maintenance-dialog .maintenance-input-prefix { display: flex; align-items: center; min-width: 0; min-height: 46px; padding: 0 14px; border: 1px solid #f29a9e; border-radius: 10px; background: #fff4f4; }
+#record-dialog.maintenance-dialog .maintenance-input-prefix b { color: #cf3e48; font-size: 20px; }
+#record-dialog.maintenance-dialog .field-amount .maintenance-input-prefix input { min-height: 42px; padding: 0 0 0 10px; border: 0; background: transparent; color: #cf3e48; font-size: 22px; font-weight: 800; }
+#record-dialog.maintenance-dialog .field-amount .maintenance-input-prefix:focus-within { box-shadow: 0 0 0 3px rgba(223,75,84,.12); }
 #record-dialog.maintenance-dialog .field-status select,
 #record-dialog.maintenance-dialog .field-reimbursementBatchId select { border-color: #9bd6d2; background: #f1fbfa; color: #087a78; }
 #record-dialog.maintenance-dialog .maintenance-media-field { align-items: start; }

@@ -462,7 +462,7 @@ const rows = [...groups.entries()].map(([roomNo, items]) => [roomLabel(roomNo), 
       <section class="maintenance-section maintenance-section-result">
         <div class="maintenance-section-head"><span>金额与状态</span><small>结果区</small></div>
         <div class="maintenance-section-grid">
-          <label class="maintenance-field field-amount"><span class="field-label">金额</span><input name="amount" inputmode="decimal" value="${esc(record.amount ?? '')}" /></label>
+          <label class="maintenance-field field-amount"><span class="field-label">金额</span><span class="maintenance-input-prefix"><b>¥</b><input name="amount" inputmode="decimal" value="${esc(record.amount ?? '')}" /></span></label>
           <label class="maintenance-field field-status"><span class="field-label">状态</span><select name="status"><option value="pending" ${record.status === 'pending' ? 'selected' : ''}>待处理</option><option value="done" ${record.status === 'done' ? 'selected' : ''}>已完成待报销</option><option value="reimbursed" ${record.status === 'reimbursed' ? 'selected' : ''}>已报销</option></select></label>
           <label class="maintenance-field full field-reimbursementBatchId"><span class="field-label">报销批次</span><select name="reimbursementBatchId">${maintenanceBatchOptions(record.reimbursementBatchId)}</select></label>
         </div>
