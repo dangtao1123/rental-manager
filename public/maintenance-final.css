@@ -59,6 +59,10 @@ body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbo
 #record-dialog.maintenance-dialog .maintenance-section-core .maintenance-field:not(.full) { grid-template-columns: 190px minmax(0,1fr); }
 #record-dialog.maintenance-dialog .maintenance-field.full { grid-column: 1 / -1; }
 #record-dialog.maintenance-dialog .maintenance-field .field-label { color: #294a5b; font-size: 18px; font-weight: 700; }
+#record-dialog.maintenance-dialog .maintenance-section-core .field-label::after,
+#record-dialog.maintenance-dialog .maintenance-section-text .field-item .field-label::after,
+#record-dialog.maintenance-dialog .maintenance-section-result .field-amount .field-label::after,
+#record-dialog.maintenance-dialog .maintenance-section-result .field-status .field-label::after { content: ' *'; color: #df4b54; }
 #record-dialog.maintenance-dialog .maintenance-field input:not([type=file]), #record-dialog.maintenance-dialog .maintenance-field select { width: 100%; min-height: 64px; margin: 0; padding: 0 18px; border: 1px solid #bfd6e0; border-radius: 12px; background: #fff; color: #173548; font-size: 20px; font-weight: 650; }
 #record-dialog.maintenance-dialog .maintenance-field textarea { width: 100%; min-height: 156px; margin: 0; padding: 16px 18px; border: 1px solid #bfd6e0; border-radius: 12px; font-size: 19px; line-height: 1.6; resize: vertical; }
 #record-dialog.maintenance-dialog .field-note { align-items: start; }
@@ -69,6 +73,7 @@ body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbo
 #record-dialog.maintenance-dialog .field-status select, #record-dialog.maintenance-dialog .field-reimbursementBatchId select { border-color: #9bd6d2; background: #f1fbfa; color: #087a78; }
 #record-dialog.maintenance-dialog .maintenance-media-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
 #record-dialog.maintenance-dialog .maintenance-media-field > input[type=file] { min-height: 58px; padding: 16px; border: 1px dashed #a9c9d6; border-radius: 11px; background: #fbfdfe; }
+#record-dialog.maintenance-dialog .maintenance-existing-image { grid-column: 2; margin-top: 0; }
 #record-dialog.maintenance-dialog .dialog-actions { padding: 22px 40px 28px; }
 #record-dialog.maintenance-dialog .dialog-actions button { height: 54px; min-width: 132px; border-radius: 10px; font-size: 17px; }
 @media (max-width: 700px) {
