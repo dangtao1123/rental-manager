@@ -628,6 +628,47 @@ body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .ma
   #record-dialog.maintenance-dialog .dialog-actions { padding: 14px 18px 18px; }
 }
 
+/* Exact maintenance-detail target tuning. */
+#record-dialog.maintenance-dialog { width: min(1180px, calc(100vw - 36px)); }
+#record-dialog.maintenance-dialog .dialog-head { min-height: 150px; padding: 34px 42px 28px 40px; }
+#record-dialog.maintenance-dialog .dialog-head h2 { font-size: 34px; }
+#record-dialog.maintenance-dialog .dialog-subtitle { margin-top: 10px; font-size: 16px; }
+#record-dialog.maintenance-dialog .dialog-fields.dialog-maintenance { padding: 30px 42px 28px; }
+#record-dialog.maintenance-dialog .maintenance-section { padding-bottom: 28px; }
+#record-dialog.maintenance-dialog .maintenance-section + .maintenance-section { padding-top: 28px; }
+#record-dialog.maintenance-dialog .maintenance-section-head { margin-bottom: 22px; font-size: 19px; }
+#record-dialog.maintenance-dialog .maintenance-section-core .maintenance-section-grid { grid-template-columns: 1fr 1fr; gap: 20px 48px; }
+#record-dialog.maintenance-dialog .maintenance-section-core .field-roomId { grid-column: 1 / -1; }
+#record-dialog.maintenance-dialog .maintenance-field,
+#record-dialog.maintenance-dialog .maintenance-section-core .maintenance-field:not(.full) { grid-template-columns: 190px minmax(0, 1fr); gap: 20px; }
+#record-dialog.maintenance-dialog .maintenance-field .field-label { font-size: 16px; }
+#record-dialog.maintenance-dialog .maintenance-field input:not([type=file]),
+#record-dialog.maintenance-dialog .maintenance-field select { min-height: 54px; border-radius: 11px; font-size: 18px; }
+#record-dialog.maintenance-dialog .maintenance-field textarea { min-height: 152px; border-radius: 11px; font-size: 17px; line-height: 1.6; }
+#record-dialog.maintenance-dialog .field-note .field-label { padding-top: 18px; }
+#record-dialog.maintenance-dialog .maintenance-section-result .maintenance-section-grid { gap: 18px; }
+#record-dialog.maintenance-dialog .maintenance-input-prefix { min-height: 62px; border-radius: 11px; }
+#record-dialog.maintenance-dialog .maintenance-input-prefix b { font-size: 24px; }
+#record-dialog.maintenance-dialog .field-amount .maintenance-input-prefix input { min-height: 54px; font-size: 25px; }
+#record-dialog.maintenance-dialog .maintenance-media-grid { gap: 14px; }
+#record-dialog.maintenance-dialog .maintenance-media-field > input[type=file] { min-height: 58px; padding: 16px; border-radius: 11px; font-size: 14px; }
+#record-dialog.maintenance-dialog .maintenance-existing-image { margin-top: 0; }
+#record-dialog.maintenance-dialog .dialog-actions { padding: 22px 40px 28px; }
+#record-dialog.maintenance-dialog .dialog-actions button { height: 54px; min-width: 132px; font-size: 17px; }
+@media (max-width: 700px) {
+  #record-dialog.maintenance-dialog { width: calc(100vw - 16px); }
+  #record-dialog.maintenance-dialog .dialog-head { min-height: 108px; padding: 24px 20px 20px 24px; }
+  #record-dialog.maintenance-dialog .dialog-head h2 { font-size: 26px; }
+  #record-dialog.maintenance-dialog .dialog-subtitle { font-size: 13px; }
+  #record-dialog.maintenance-dialog .dialog-fields.dialog-maintenance { padding: 20px 18px; }
+  #record-dialog.maintenance-dialog .maintenance-field,
+  #record-dialog.maintenance-dialog .maintenance-section-core .maintenance-field:not(.full) { grid-template-columns: 112px minmax(0, 1fr); gap: 10px; }
+  #record-dialog.maintenance-dialog .maintenance-field .field-label { font-size: 13px; }
+  #record-dialog.maintenance-dialog .maintenance-field input:not([type=file]),
+  #record-dialog.maintenance-dialog .maintenance-field select { min-height: 44px; font-size: 15px; }
+  #record-dialog.maintenance-dialog .maintenance-field textarea { min-height: 110px; font-size: 15px; }
+}
+
 @media (max-width: 800px) {
   #record-dialog.maintenance-dialog .dialog-head {
     padding-left: 16px;
