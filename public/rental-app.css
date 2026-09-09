@@ -1,0 +1,7 @@
+/* Single CSS entrypoint. Legacy sheets remain as rollback sources only. */
+@import url('zufang.css');
+@import url('zufang-design.css');
+@import url('vendor/rental-ui-reference.css');
+@import url('vendor/rental-ui-state.css');
+@import url('zufang-ui-migration.css');
+@import url('maintenance-final.css');
