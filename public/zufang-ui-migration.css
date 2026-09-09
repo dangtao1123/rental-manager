@@ -467,6 +467,12 @@ dialog table .small { margin-top: 0; margin-bottom: 0; }
   #record-dialog.maintenance-dialog .maintenance-field select { min-height: 54px; font-size: 16px; }
 }
 
+/* Use the full workspace width like the reference page; avoid centered max-width gaps. */
+body:has(#maintenance.tab-panel) .main > .rental-header,
+body:has(#maintenance.tab-panel) #maintenance > .panel { max-width: none; margin-left: 0; margin-right: 0; }
+body:has(#maintenance.tab-panel) .main > .rental-header { padding-left: 0; padding-right: 0; }
+body:has(#maintenance.tab-panel) #maintenance > .panel { width: 100%; }
+
 /* Daily maintenance list: light navigation + clean grouped table surface. */
 body:has(#maintenance.tab-panel) { grid-template-columns: 180px minmax(0, 1fr); }
 body:has(#maintenance.tab-panel) .sidebar {
