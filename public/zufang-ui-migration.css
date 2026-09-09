@@ -468,6 +468,36 @@ body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table { b
 body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr { box-shadow: none; }
 body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody td { padding-top: 14px; padding-bottom: 14px; border-top: 0; border-bottom: 1px solid #e5eef1; }
 body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr:last-child td { border-bottom: 0; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table { width: 100%; table-layout: fixed; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table th:nth-child(1),
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table td:nth-child(1) { width: 42px; text-align: center; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table th:nth-child(2),
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table td:nth-child(2) { width: 22%; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table th:nth-child(3),
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table td:nth-child(3) { width: 30%; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table th:nth-child(4),
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table td:nth-child(4) { width: 9%; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table th:nth-child(5),
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table td:nth-child(5) { width: 10%; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table th:nth-child(6),
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table td:nth-child(6) { width: 20%; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table th:nth-child(7),
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table td:nth-child(7) { width: 110px; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr { position: relative; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody td:first-child { border-left: 4px solid #19a879; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr.maintenance-row-pending td:first-child { border-left-color: #f0a21b; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr.maintenance-row-done td:first-child { border-left-color: #2f8fe2; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-item-cell { min-width: 0; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-item-cell strong,
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-item-cell span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-item-cell span { color: #6e8793; font-size: 12px; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-batch-tag { margin-top: 5px; padding: 3px 8px; border-radius: 999px; background: #edf8fb; color: #5b7c8a; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-evidence-grid { gap: 8px; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-image-link,
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-image-link img { width: 48px; height: 48px; border-radius: 6px; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .row-actions { justify-content: flex-end; gap: 6px; margin-top: 0; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .row-actions .small { width: 34px; padding: 0; font-size: 0; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-amount { display: inline-flex; align-items: center; min-height: 30px; padding: 0 10px; border-radius: 999px; }
 @media (max-width: 800px) {
   body:has(#maintenance.tab-panel) { display: block; }
   body:has(#maintenance.tab-panel) .sidebar { width: 100%; padding: 10px 13px 9px; border-right: 0; border-bottom: 1px solid #dce8ed; }
