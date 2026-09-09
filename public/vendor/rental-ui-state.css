@@ -1,0 +1,126 @@
+/* Component state layer: shared by all tabs and dialogs. */
+button,
+.room-card,
+.stat-card,
+.tenant-row,
+.quick-action,
+.photo-tile,
+.inventory-row {
+  transition: color .16s ease, background-color .16s ease, border-color .16s ease,
+    box-shadow .16s ease, transform .16s ease, opacity .16s ease;
+}
+
+button:hover:not(:disabled):not([data-disabled="true"]),
+.quick-action:hover,
+.photo-tile:hover,
+.inventory-row:hover {
+  transform: translateY(-1px);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.stat-card:focus-visible {
+  outline: 3px solid rgba(22, 121, 177, .24);
+  outline-offset: 2px;
+}
+
+button:active:not(:disabled),
+button.is-pressed {
+  transform: translateY(1px) scale(.985);
+}
+
+button:disabled,
+button[data-disabled="true"],
+button[aria-disabled="true"] {
+  cursor: not-allowed;
+  color: #98a8af !important;
+  border-color: #dfe7ea !important;
+  background: #f1f4f5 !important;
+  box-shadow: none !important;
+  opacity: .72;
+  transform: none !important;
+}
+
+.button-primary[aria-busy="true"] iconify-icon {
+  animation: spin .8s linear infinite;
+}
+
+.stat-card:hover,
+.room-card:hover,
+.tenant-row:hover {
+  border-color: #a9c9d5;
+  box-shadow: 0 14px 32px rgba(25, 57, 75, .13);
+}
+
+.stat-card:active,
+.room-card:active,
+.tenant-row:active {
+  box-shadow: 0 5px 14px rgba(25, 57, 75, .08);
+}
+
+.modal {
+  opacity: 0;
+  transform: translate(-50%, calc(-50% + 8px));
+  transition: opacity .16s ease, transform .16s ease;
+}
+
+.modal.is-opening {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+.modal-open { overflow: hidden; }
+
+.toast {
+  position: fixed;
+  z-index: 40;
+  right: 24px;
+  bottom: 24px;
+  max-width: min(360px, calc(100vw - 32px));
+  padding: 11px 14px;
+  border: 1px solid #c8dce5;
+  border-radius: 7px;
+  color: #1e4d63;
+  background: #f2fbff;
+  box-shadow: 0 12px 30px rgba(20, 54, 70, .18);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.toast[data-tone="success"] { color: #116d61; border-color: #acd9ca; background: #effaf6; }
+.toast[data-tone="warning"] { color: #885d12; border-color: #efd08e; background: #fff8e8; }
+.toast[hidden] { display: none; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 760px) {
+  .toast { right: 16px; bottom: 16px; }
+}
+
+.state-board { min-height: 100vh; padding: 32px; }
+.state-shell { width: min(1120px, 100%); margin: 0 auto; }
+.state-section { padding: 22px; margin-bottom: 16px; }
+.state-section h2 { margin: 0; font-size: 19px; }
+.state-section>p { margin: 6px 0 18px; color: var(--muted); font-size: 12px; }
+.state-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.state-grid>div,.state-grid>label { display: grid; align-content: start; gap: 8px; min-width: 0; }
+.state-label { color: var(--muted); font-size: 11px; font-weight: 750; }
+.state-hover-demo button { border-color: var(--primary-dark); background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 8px 18px rgba(13,93,146,.18); }
+.input-grid { grid-template-columns: repeat(3, 1fr); }
+.input-grid input,.input-grid select { width: 100%; height: 40px; padding: 0 11px; border: 1px solid #cedee6; border-radius: 6px; color: var(--ink); background: #fff; }
+.focus-demo input { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(22,121,177,.12); }
+.error-demo input { border-color: var(--danger); background: var(--danger-soft); }
+.error-demo small { color: var(--danger); font-size: 11px; }
+.toggle { display: flex; align-items: center; gap: 8px; width: max-content; min-height: 36px; padding: 0 10px 0 5px; border: 1px solid var(--line); border-radius: 99px; color: var(--muted); background: #f1f4f5; }
+.toggle span { width: 25px; height: 25px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.12); transition: transform .16s ease; }
+.toggle.active { color: #fff; border-color: var(--teal); background: var(--teal); }
+.toggle.active span { transform: translateX(20px); }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.state-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.state-list { margin: 0 0 18px; border-top: 1px solid #edf1f3; }
+.state-list .todo-row { padding: 14px 0; }
+.state-modal { width: min(620px, calc(100vw - 48px)); }
+@media (max-width: 760px) { .state-board { padding: 18px 13px; } .state-grid,.input-grid,.state-cards { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 460px) { .state-grid,.input-grid,.state-cards { grid-template-columns: 1fr; } }

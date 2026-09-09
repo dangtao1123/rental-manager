@@ -1,0 +1,19 @@
+[Unit]
+Description=Rental management application
+After=network.target
+
+[Service]
+Type=simple
+User=rentalapp
+Group=rentalapp
+WorkingDirectory=/opt/rental-manager
+EnvironmentFile=/etc/rental-manager.env
+ExecStart=/usr/local/bin/node /opt/rental-manager/server.js
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

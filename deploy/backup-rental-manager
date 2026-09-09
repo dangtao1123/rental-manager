@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+
+backup_dir=/var/backups/rental-manager
+data_dir=/opt/rental-manager/data
+
+mkdir -p "$backup_dir"
+chmod 700 "$backup_dir"
+stamp=$(date +%Y%m%d-%H%M%S)
+
+if [ -d "$data_dir" ]; then
+  tar -C "$data_dir" -czf "$backup_dir/data-$stamp.tar.gz" .
+  chmod 600 "$backup_dir/data-$stamp.tar.gz"
+fi
+
+find "$backup_dir" -type f -name '*.tar.gz' -mtime +30 -delete

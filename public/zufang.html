@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>租房管理</title>
+    <link rel="stylesheet" href="zufang.css?v=29" />
+  <link rel="stylesheet" href="zufang-design.css?v=7" />
+  <link rel="stylesheet" href="vendor/rental-ui-reference.css?v=2" />
+  <link rel="stylesheet" href="vendor/rental-ui-state.css?v=2" />
+  <link rel="stylesheet" href="zufang-ui-migration.css?v=18" />
+  <style>
+    .room-landlord{margin-top:7px;color:var(--muted);font-size:12px;line-height:1.6}.room-history{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);line-height:1.7}.room-history summary{cursor:pointer;color:var(--blue);font-size:12px;margin-bottom:7px}.room-item{display:flex;align-items:center;gap:8px;margin-top:4px}.item-thumb{width:34px;height:34px;object-fit:cover;border-radius:4px;border:1px solid var(--line)}.room-inactive{border-color:#9aa6ac;background:#eef1f2;color:#6d7a80}.room-inactive .room-status{color:#68777e}.tenant-group{margin-top:14px}.tenant-group h3{margin:0 0 8px;font-size:16px;color:var(--ink)}.tenant-card{grid-template-columns:1.2fr 1fr 1.3fr 0.7fr auto}.tenant-card .row-actions{margin-top:0}.ledger-filters{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:15px;padding:12px;border:1px solid var(--line);border-radius:6px;background:#f8fafb}.ledger-filters label{display:block;color:var(--muted);font-size:12px}.ledger-filters input,.ledger-filters select{width:100%;height:40px;margin-top:6px;padding:0 10px;border:1px solid var(--line);border-radius:5px;background:#fff}.ledger-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}.ledger-summary div{padding:13px;border:1px solid var(--line);border-radius:6px;background:#fff}.ledger-summary span{display:block;color:var(--muted);font-size:12px}.ledger-summary strong{display:block;margin-top:5px;color:var(--blue);font-size:21px}.subheading{margin:20px 0 8px}@media(max-width:800px){.ledger-filters{grid-template-columns:1fr}.ledger-summary{grid-template-columns:1fr 1fr}.ledger-filters .ghost{width:100%}}@media(max-width:450px){.ledger-summary{grid-template-columns:1fr}.room-item{flex-wrap:wrap}}
+    .room-maintenance{border-color:#d59b4b;background:#fff8e9}.room-maintenance .room-status{color:#a86600}
+    #record-dialog.renewal-dialog .dialog-actions{flex-wrap:wrap}
+    #record-dialog.renewal-dialog .renewal-payment-summary{min-width:360px;max-width:540px}
+    #record-dialog.renewal-dialog .field-deposit{grid-column:3}
+    #record-dialog.renewal-dialog .field-deposit input{border:0;background:transparent;padding-left:0;color:var(--ink);font-weight:800}
+    @media(max-width:800px){#record-dialog.renewal-dialog .renewal-payment-summary{min-width:0;max-width:none;flex:1 1 100%;order:-1}}
+    /* Modal form system: clear sections, explicit readonly values, stable header/footer. */
+    #record-dialog form{min-height:0}
+    #record-dialog .dialog-fields{align-content:start;grid-auto-rows:min-content;scrollbar-gutter:stable}
+    #record-dialog .field-label{display:block;color:var(--muted);font-size:12px;line-height:1.3;letter-spacing:.01em}
+    #record-dialog .dialog-fields label{min-width:0}
+    #record-dialog .dialog-fields input,#record-dialog .dialog-fields select{box-sizing:border-box}
+    #record-dialog .dialog-fields input[type=file]{height:auto;min-height:42px;padding:9px 10px}
+    #record-dialog .dialog-fields textarea{min-height:88px}
+    #record-dialog .form-section-heading{display:flex;align-items:center;gap:9px;margin:8px 0 1px;padding:13px 0 8px;border-bottom:1px solid var(--line);font-size:16px;line-height:1.2}
+    #record-dialog .form-section-heading::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--teal);flex:0 0 auto}
+    #record-dialog .readonly-field{display:flex;flex-direction:column;justify-content:center;min-height:55px;padding:2px 0 7px}
+    #record-dialog .readonly-field .readonly-value{display:block;margin-top:7px;color:var(--ink);font-size:15px;line-height:1.25;font-weight:800;word-break:break-word}
+    #record-dialog .readonly-field.calculated-field:not(.field-amount):not(.field-refundAmount) .readonly-value{font-size:15px}
+    #record-dialog .readonly-field.field-amount .readonly-value,#record-dialog .readonly-field.field-refundAmount .readonly-value{color:var(--red);font-size:25px;font-weight:900}
+    #record-dialog .readonly-field.field-waterAmount .readonly-value,#record-dialog .readonly-field.field-electricityAmount .readonly-value{color:var(--red);font-size:20px}
+    #record-dialog .dialog-fields .calculated-field:not(.readonly-field) input{color:var(--red);font-weight:800;background:var(--red-soft)}
+    #record-dialog .dialog-fields .field-note textarea{min-height:96px}
+    #record-dialog.lease-dialog .dialog-fields{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 16px}
+    #record-dialog.lease-dialog .field-roomId,#record-dialog.lease-dialog .field-section-roomId{grid-column:1/-1}
+    #record-dialog.lease-dialog .field-idCardFront,#record-dialog.lease-dialog .field-idCardBack,#record-dialog.lease-dialog .field-note{grid-column:1/-1}
+    #record-dialog.renewal-dialog .dialog-fields{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 16px}
+    #record-dialog.renewal-dialog .form-section-heading{grid-column:1/-1}
+    #record-dialog.renewal-dialog .field-roomNo{grid-column:1}.renewal-dialog .field-tenantName{grid-column:2}.renewal-dialog .field-tenantPhone{grid-column:3}
+    #record-dialog.renewal-dialog .field-renewalDate{grid-column:1}.renewal-dialog .field-durationPreset{grid-column:2/-1}
+    #record-dialog.renewal-dialog .field-leaseStart{grid-column:1}.renewal-dialog .field-startDate{grid-column:2}.renewal-dialog .field-endDate{grid-column:3}
+    #record-dialog.renewal-dialog .field-monthlyRent{grid-column:1}.renewal-dialog .field-monthlyPropertyFee{grid-column:2}.renewal-dialog .field-amount{grid-column:3}
+    #record-dialog.renewal-dialog .field-note{grid-column:1/-1}
+    #record-dialog.checkout-dialog .dialog-fields{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 14px}
+    #record-dialog.checkout-dialog .form-section-heading,#record-dialog.checkout-dialog .field-roomNo,#record-dialog.checkout-dialog .field-bankHeading,#record-dialog.checkout-dialog .field-otherHeading,#record-dialog.checkout-dialog .field-otherItems,#record-dialog.checkout-dialog .field-note{grid-column:1/-1}
+    #record-dialog.checkout-dialog .field-tenantName,#record-dialog.checkout-dialog .field-tenantPhone,#record-dialog.checkout-dialog .field-leaseStart,#record-dialog.checkout-dialog .field-leaseEnd,#record-dialog.checkout-dialog .field-paidThrough{grid-column:span 1}
+    #record-dialog.checkout-dialog .field-checkoutDate{grid-column:1}
+    #record-dialog.checkout-dialog .field-propertyAmount{grid-column:1/-1}
+    #record-dialog.checkout-dialog .field-bankName,#record-dialog.checkout-dialog .field-accountName,#record-dialog.checkout-dialog .field-accountNo{grid-column:span 1}
+    #record-dialog.rooms-dialog .dialog-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+    #record-dialog.rooms-dialog .form-section-heading,#record-dialog.rooms-dialog .field-note{grid-column:1/-1}
+    #record-dialog.maintenance-dialog .dialog-fields,#record-dialog.items-dialog .dialog-fields,#record-dialog.costs-dialog .dialog-fields,#record-dialog.ledger-dialog .dialog-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+    #record-dialog.maintenance-dialog .form-section-heading,#record-dialog.items-dialog .form-section-heading,#record-dialog.costs-dialog .form-section-heading,#record-dialog.ledger-dialog .form-section-heading{grid-column:1/-1}
+    #record-dialog.maintenance-dialog .field-beforeImage,#record-dialog.maintenance-dialog .field-afterImage,#record-dialog.maintenance-dialog .field-paymentProof,#record-dialog.items-dialog .field-note,#record-dialog.items-dialog .field-image,#record-dialog.costs-dialog .field-note,#record-dialog.ledger-dialog .field-note{grid-column:1/-1}
+    .maintenance-view-switch{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 12px}
+    .maintenance-view-switch button{height:34px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer}
+    .maintenance-view-switch button.active{border-color:#1679b1;background:#1679b1;color:#fff}
+    .maintenance-batch-tag{display:inline-flex;align-items:center;margin-top:6px;padding:2px 8px;border-radius:999px;background:#eef8fc;color:#1679b1;font-size:12px;font-weight:700}
+    .maintenance-batch-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+    .maintenance-batch-actions .small{height:34px;padding:0 12px}
+    #maintenance-batch-dialog{width:min(720px,calc(100vw - 24px))}
+    #maintenance-batch-dialog{border:0;border-radius:16px;background:#fbfdfe;box-shadow:0 24px 70px rgba(18,49,63,.22);padding:0}
+    #maintenance-batch-dialog .dialog-head{display:flex;justify-content:space-between;align-items:center;padding:20px 24px 16px;background:#fff;border-bottom:1px solid #dce8ed}
+    #maintenance-batch-dialog .dialog-head h2{margin:0;font-size:24px;color:#102b39}
+    #maintenance-batch-dialog .dialog-head button{width:36px;height:36px;border:1px solid #d6e4ea;border-radius:9px;background:#f3f8fa;color:#607784;font-size:21px;cursor:pointer}
+    #maintenance-batch-dialog .dialog-body{display:grid;gap:14px;padding:20px 24px 18px}
+    #maintenance-batch-dialog .batch-targets{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#f8fafb;color:var(--muted);line-height:1.6}
+    #maintenance-batch-dialog label{display:block;color:#607784;font-size:12px;font-weight:600}
+    #maintenance-batch-dialog input,#maintenance-batch-dialog select,#maintenance-batch-dialog textarea{width:100%;margin-top:8px}
+    #maintenance-batch-dialog textarea{min-height:88px}
+    #maintenance-batch-dialog .dialog-actions{display:flex;justify-content:flex-end;gap:10px;padding:15px 24px 20px;background:#fff;border-top:1px solid #dce8ed}
+    #maintenance-batch-dialog .dialog-actions button{height:42px;padding:0 18px;border-radius:9px;font-size:14px;font-weight:700}
+    #record-dialog .dialog-actions{min-height:70px;box-sizing:border-box}
+    @media(max-width:800px){
+      #record-dialog.lease-dialog .dialog-fields,#record-dialog.renewal-dialog .dialog-fields,#record-dialog.checkout-dialog .dialog-fields,#record-dialog.rooms-dialog .dialog-fields,#record-dialog.maintenance-dialog .dialog-fields,#record-dialog.items-dialog .dialog-fields,#record-dialog.costs-dialog .dialog-fields,#record-dialog.ledger-dialog .dialog-fields{grid-template-columns:1fr}
+      #record-dialog .dialog-fields .form-section-heading,#record-dialog .dialog-fields [class*="field-"]{grid-column:1!important}
+      #record-dialog.checkout-dialog .field-bankName,#record-dialog.checkout-dialog .field-accountName,#record-dialog.checkout-dialog .field-accountNo{grid-column:1!important}
+    }
+    /* Refined form components: calm surfaces, stronger hierarchy, and readable values. */
+    #record-dialog{background:#fbfdfe;border-color:#cfe0e7;border-radius:16px;box-shadow:0 24px 70px rgba(18,49,63,.22)}
+    #record-dialog .dialog-head{padding:24px 28px 18px;background:#fff;border-bottom:1px solid #dce8ed}
+    #record-dialog .dialog-head h2{font-size:24px;letter-spacing:0;color:#102b39}
+    #record-dialog .dialog-head button{width:36px;height:36px;border-radius:9px;background:#f3f8fa;border-color:#d6e4ea;font-size:21px}
+    #record-dialog .dialog-fields{gap:16px 18px;padding:22px 28px 18px;background:#fbfdfe}
+    #record-dialog .dialog-fields label{color:#607784;font-size:12px;font-weight:600}
+    #record-dialog .field-label{color:#607784;font-size:12px;font-weight:600}
+    #record-dialog .dialog-fields input,#record-dialog .dialog-fields select,#record-dialog .dialog-fields textarea{margin-top:8px;border:1px solid #cddfe7;border-radius:9px;background:#fff;color:#19313e;font-size:14px;transition:border-color .16s,box-shadow .16s,background .16s}
+    #record-dialog .dialog-fields input,#record-dialog .dialog-fields select{height:44px;padding:0 13px}
+    #record-dialog .dialog-fields textarea{min-height:104px;padding:12px 13px;line-height:1.6}
+    #record-dialog .dialog-fields input:hover,#record-dialog .dialog-fields select:hover,#record-dialog .dialog-fields textarea:hover{border-color:#9fc6d7}
+    #record-dialog .dialog-fields input:focus,#record-dialog .dialog-fields select:focus,#record-dialog .dialog-fields textarea:focus{border-color:#1679b1;box-shadow:0 0 0 4px rgba(22,121,177,.11);outline:0}
+    #record-dialog .dialog-fields select{appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235e7784' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 13px center;padding-right:38px}
+    #record-dialog .form-section-heading{margin:9px 0 0;padding:15px 0 9px;border-bottom:1px solid #d9e7ec;color:#193746;font-size:16px;font-weight:800}
+    #record-dialog .form-section-heading::before{width:5px;height:20px;background:#167d77}
+    #record-dialog .readonly-field{min-height:65px;padding:10px 12px 11px;border:1px solid #d8e6eb;border-radius:9px;background:#f3f8fa}
+    #record-dialog .readonly-field .readonly-value{margin-top:7px;color:#142f3d;font-size:15px;font-weight:800}
+    #record-dialog .summary-field.readonly-field{min-height:55px;padding:2px 0 8px;border:0;border-radius:0;background:transparent}
+    #record-dialog .summary-field.readonly-field .readonly-value{font-size:15px}
+    #record-dialog .readonly-field.field-amount,#record-dialog .readonly-field.field-refundAmount{border-color:#f3c3c6;background:#fff2f3}
+    #record-dialog .readonly-field.field-amount .readonly-value,#record-dialog .readonly-field.field-refundAmount .readonly-value{margin-top:6px;color:#c9484e;font-size:27px;line-height:1.1}
+    #record-dialog .readonly-field.field-waterAmount,#record-dialog .readonly-field.field-electricityAmount{border-color:#f1ccd0;background:#fff5f5}
+    #record-dialog .readonly-field.field-waterAmount .readonly-value,#record-dialog .readonly-field.field-electricityAmount .readonly-value{color:#c9484e;font-size:20px}
+    #record-dialog .dialog-fields .calculated-field:not(.readonly-field) input{border-color:#f0c8cb;background:#fff4f4;color:#c9484e;font-weight:800}
+    #record-dialog .field-durationPreset{padding:14px 15px 15px;border:2px solid #1679b1;border-radius:11px;background:#eff8fc}
+    #record-dialog .field-durationPreset select{height:46px;border-color:#b7d8e5;color:#1679b1;font-size:16px;font-weight:800;background-color:#fff}
+    #record-dialog .dialog-actions{gap:10px;padding:15px 28px 21px;background:#fff;border-top:1px solid #dce8ed}
+    #record-dialog .dialog-actions button{height:42px;padding:0 18px;border-radius:9px;font-size:14px;font-weight:700}
+    #record-dialog .dialog-actions .primary{min-width:96px;box-shadow:0 6px 16px rgba(22,121,177,.18)}
+    #record-dialog .checkout-refund-summary{border-radius:10px;background:#fff2f3;border-color:#f0c2c6}
+    #record-dialog .refund-summary-title{font-size:14px;color:#c9484e}
+    #record-dialog .refund-summary-title strong{font-size:22px}
+    #record-dialog .refund-summary-grid{line-height:1.6}
+    #record-dialog.checkout-dialog .field-waterStart,#record-dialog.checkout-dialog .field-waterEnd,#record-dialog.checkout-dialog .field-waterUnitPrice,#record-dialog.checkout-dialog .field-waterAmount,#record-dialog.checkout-dialog .field-electricityStart,#record-dialog.checkout-dialog .field-electricityEnd,#record-dialog.checkout-dialog .field-electricityUnitPrice,#record-dialog.checkout-dialog .field-electricityAmount{padding:11px 12px;border:1px solid #d9e7ec;border-radius:10px;background:#f5fafb}
+    #record-dialog.checkout-dialog .field-waterStart input,#record-dialog.checkout-dialog .field-waterEnd input,#record-dialog.checkout-dialog .field-waterUnitPrice input,#record-dialog.checkout-dialog .field-electricityStart input,#record-dialog.checkout-dialog .field-electricityEnd input,#record-dialog.checkout-dialog .field-electricityUnitPrice input{background:#fff}
+    #record-dialog .dialog-fields input[type=file]{border-style:dashed;background:#f8fbfc;color:#607784}
+    #record-dialog .upload-preview{max-width:140px;max-height:90px;margin-top:10px;border-radius:8px}
+    #record-dialog .other-item-row{gap:9px;margin:9px 0}
+    #record-dialog .other-item-row input{height:40px!important;border-radius:8px}
+    #record-dialog .other-item-row .small{height:40px;border-radius:8px}
+    @media(max-width:800px){
+      #record-dialog .dialog-head{padding:19px 18px 14px}
+      #record-dialog .dialog-head h2{font-size:21px}
+      #record-dialog .dialog-fields{padding:17px 18px 12px;gap:14px}
+      #record-dialog .dialog-actions{padding:12px 18px 17px}
+      #record-dialog .dialog-actions button{flex:1 1 0;padding:0 12px}
+      #record-dialog .checkout-refund-summary{flex:1 1 100%;margin:0;order:-1}
+    }
+    .renewal-record-dialog,.room-items-dialog,.room-maintenance-dialog,.room-photos-dialog{border-radius:16px;border-color:#cfe0e7;background:#fbfdfe}
+    .renewal-record-dialog .dialog-head,.room-items-dialog .dialog-head,.room-maintenance-dialog .dialog-head,.room-photos-dialog .dialog-head{padding:22px 24px 16px;background:#fff;border-bottom:1px solid #dce8ed}
+    .renewal-record-dialog .table-wrap,.room-items-dialog .table-wrap,.room-maintenance-dialog .table-wrap{margin:18px 22px 22px;border:1px solid #d8e6eb;border-radius:10px;overflow:auto;background:#fff}
+    .renewal-record-dialog .table,.room-items-dialog .table,.room-maintenance-dialog .table{font-size:13px}
+    .renewal-record-dialog .table th,.room-items-dialog .table th,.room-maintenance-dialog .table th{background:#f2f8fa;color:#58717d;font-weight:800}
+    .renewal-record-dialog .table td,.renewal-record-dialog .table th,.room-items-dialog .table td,.room-items-dialog .table th,.room-maintenance-dialog .table td,.room-maintenance-dialog .table th{padding:13px 14px;vertical-align:middle}
+    .renewal-record-dialog .dialog-actions,.room-items-dialog .dialog-actions,.room-maintenance-dialog .dialog-actions,.room-photos-dialog .dialog-actions{padding:14px 22px 18px;background:#fff;border-top:1px solid #dce8ed}
+    .room-photos-dialog .room-photos-list{margin:18px 22px 10px;padding:0}
+    .room-photo-card{padding:10px;border:1px solid #d8e6eb;border-radius:10px;background:#fff}
+    .room-photo-card .small{width:100%;margin-top:2px}
+    #record-dialog.rooms-dialog{width:min(820px,calc(100vw - 30px))}
+    #record-dialog.maintenance-dialog,#record-dialog.items-dialog,#record-dialog.costs-dialog,#record-dialog.ledger-dialog{width:min(860px,calc(100vw - 30px))}
+    #record-dialog.maintenance-batch-dialog{width:min(1500px,calc(100vw - 24px))}
+    #record-dialog .dialog-fields > label,#record-dialog .dialog-fields > .readonly-field{min-width:0}
+    #record-dialog .dialog-fields .field-label{white-space:normal;overflow-wrap:anywhere}
+    #record-dialog .dialog-fields input::placeholder,#record-dialog .dialog-fields textarea::placeholder{color:#9aadb7}
+    #record-dialog .dialog-fields input[readonly]{cursor:default}
+    #record-dialog .dialog-fields .readonly-field.summary-field{align-self:center}
+    @media(max-width:640px){.renewal-record-dialog .dialog-head,.room-items-dialog .dialog-head,.room-maintenance-dialog .dialog-head,.room-photos-dialog .dialog-head{padding:18px 17px 13px}.renewal-record-dialog .table-wrap,.room-items-dialog .table-wrap,.room-maintenance-dialog .table-wrap{margin-left:16px;margin-right:16px}.room-photos-dialog .room-photos-list{margin-left:16px;margin-right:16px}}
+    #overview .stat-icon{display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important}
+    #overview .stat-icon iconify-icon{display:flex!important;align-items:center!important;justify-content:center!important;width:20px!important;height:20px!important;line-height:1!important}
+    #overview .stat-icon iconify-icon svg{display:block!important;width:20px!important;height:20px!important;margin:auto!important}
+    #overview .quick-action{justify-content:center;text-align:center}
+    #overview .quick-action iconify-icon{display:flex;align-items:center;justify-content:center;flex:0 0 auto;line-height:1}
+  </style>
+</head>
+<body>
+  <aside class="sidebar" aria-label="租房模块导航">
+<div class="brand"><span class="brand-mark"><iconify-icon icon="hugeicons:home-09"></iconify-icon></span><span>东瑞安心租</span></div>
+    <div class="workspace-label">RENTAL WORKSPACE</div>
+    <nav>
+      <button class="nav-item active" data-tab="overview"><iconify-icon icon="hugeicons:dashboard-square-01"></iconify-icon><span>工作台</span></button>
+      <button class="nav-item" data-tab="rental"><iconify-icon icon="hugeicons:building-03"></iconify-icon><span>租房管理</span></button>
+      <button class="nav-item" data-tab="rooms"><iconify-icon icon="hugeicons:door-01"></iconify-icon><span>房间管理</span></button>
+      <button class="nav-item" data-tab="tenants"><iconify-icon icon="hugeicons:user-group"></iconify-icon><span>租户管理</span></button>
+      <button class="nav-item" data-tab="ledger"><iconify-icon icon="hugeicons:invoice-03"></iconify-icon><span>收支账单</span></button>
+      <button class="nav-item" data-tab="maintenance"><iconify-icon icon="hugeicons:tool-box"></iconify-icon><span>日常维护</span></button>
+      <button class="nav-item" data-tab="checkout"><iconify-icon icon="hugeicons:logout-03"></iconify-icon><span>入住 / 退房</span></button>
+      <button class="nav-item" data-tab="templates" hidden><iconify-icon icon="hugeicons:note-edit"></iconify-icon><span>业务文字</span></button>
+      <button class="nav-item" data-tab="settings"><iconify-icon icon="hugeicons:settings-02"></iconify-icon><span>租房设置</span></button>
+      <button class="nav-item" data-tab="audit"><iconify-icon icon="hugeicons:activity-01"></iconify-icon><span>操作日志</span></button>
+    </nav>
+    <div class="sidebar-footer"><div class="user-avatar">管</div><div><strong>管理员</strong><small>已登录</small></div><iconify-icon icon="hugeicons:more-vertical"></iconify-icon></div>
+  </aside>
+  <main class="main rental-shell">
+<div class="topbar"><div><span class="crumb">房产目录</span><iconify-icon icon="hugeicons:arrow-right-01"></iconify-icon><strong id="view-title">工作台</strong></div><div class="top-actions"><button class="avatar-small" type="button">管</button></div></div>
+<header class="rental-header"><div><p class="eyebrow">RENTAL WORKSPACE</p><h1>租房管理</h1><p>房间、租户、账单、维护与退房清单统一管理</p></div></header>
+    <nav class="tabs" aria-label="租房模块"><button class="active" data-tab="overview">工作台</button><button data-tab="rental">租房管理</button><button data-tab="rooms">房间管理</button><button data-tab="tenants">租户管理</button><button data-tab="ledger">收支账单</button><button data-tab="maintenance">维修维护</button><button data-tab="checkout">入住/退房</button><button data-tab="templates">业务文字</button><button data-tab="settings">租房设置</button><button data-tab="audit">操作日志</button></nav>
+    <section id="overview" class="tab-panel active"><div id="expiry-alert" class="expiry-alert" hidden><strong>租金即将到期</strong><span id="expiry-alert-text"></span></div><div class="stats"><div><span>房间总数</span><strong id="stat-rooms">0</strong><small>点击查看租房管理</small></div><div><span>在租房间</span><strong id="stat-occupied">0</strong><small>当前已出租</small></div><div><span>空置房间</span><strong id="stat-vacant">0</strong><small>可安排入住</small></div><div><span>即将到期房间</span><strong id="stat-expiring">0</strong><small>按提醒阈值统计</small></div></div><section class="panel overview-finance-panel"><div class="panel-title"><div><h2>收支明细</h2><p>按所选时间范围汇总实际收支</p></div><div class="overview-finance-actions"><div class="overview-finance-range" role="group" aria-label="收支统计范围"><button type="button" class="active" data-overview-finance-range="month">本月</button><button type="button" data-overview-finance-range="year">本年</button><button type="button" data-overview-finance-range="custom">自定义</button></div><div id="overview-finance-custom" class="overview-finance-custom" hidden><input id="overview-finance-start" type="date" aria-label="收支开始日期" /><span>至</span><input id="overview-finance-end" type="date" aria-label="收支结束日期" /></div><button class="text-button" data-tab="ledger" type="button">查看账单 <iconify-icon icon="hugeicons:arrow-up-right-01"></iconify-icon></button></div></div><div id="overview-finance" class="overview-finance"></div></section><div class="overview-columns"><section class="panel overview-todo-panel"><div class="panel-title"><div><h2>待处理事项</h2><p>待处理维护及已退租待退押金</p></div><button class="text-button" data-tab="maintenance" type="button">全部查看</button></div><div id="todo-list" class="todo-list"></div></section><section class="panel quick-panel"><div class="panel-title"><div><h2>快捷入口</h2><p>高频操作集中处理</p></div></div><div class="quick-grid"><button class="quick-action" data-action="add-lease" type="button"><iconify-icon icon="hugeicons:login-03"></iconify-icon><span>新增入住</span></button><button class="quick-action" data-action="add-lease" type="button"><iconify-icon icon="hugeicons:calendar-03"></iconify-icon><span>租户续费</span></button><button class="quick-action" data-action="add-maintenance" type="button"><iconify-icon icon="hugeicons:tool-box"></iconify-icon><span>新增维护</span></button><button class="quick-action" data-action="add-ledger" type="button"><iconify-icon icon="hugeicons:invoice-03"></iconify-icon><span>新增流水</span></button></div></section></div></section>
+    <section id="rental" class="tab-panel"><section class="panel"><div class="panel-title"><div><h2>租房管理</h2><p>绿色为已租出，红色为空置，黄色为装修维护中；在房源卡片上完成入住、续费和退房</p></div><button class="primary" data-action="add-lease">+ 新增入住</button></div><div id="room-list" class="room-grid"></div></section></section>
+    <section id="rooms" class="tab-panel"><section class="panel"><div class="panel-title"><div><h2>房间管理</h2><p>维护房间档案、房东托管、物业费、物品和维护入口</p></div><button class="primary" data-action="add-room">添加房间</button></div><div id="room-admin-list" class="table-wrap"></div><h3 class="subheading">房间物品清单</h3><div id="items-list" class="table-wrap"></div></section></section>
+    <section id="tenants" class="tab-panel"><section class="panel"><div class="panel-title"><div><h2>租户管理</h2><p>在租与已退租分开查看，交费日期用于续费提醒</p></div><button class="primary" data-action="add-lease">+ 新增入住</button></div><div id="tenant-list" class="data-list"></div></section></section>
+    <section id="ledger" class="tab-panel"><section class="panel"><div class="panel-title"><div><h2>收支账单</h2><p>记录实际收入与支出，可按时间和房间筛选</p></div><button class="primary" data-action="add-ledger">+ 新增流水</button></div><div class="ledger-filters"><label>开始日期<input id="ledger-start" type="date" /></label><label>结束日期<input id="ledger-end" type="date" /></label><label>房间<select id="ledger-room"><option value="">全部房间</option></select></label><button id="clear-ledger-filters" class="ghost" type="button">清除筛选</button></div><div id="ledger-summary" class="ledger-summary"></div><div id="ledger-list" class="table-wrap"></div></section></section>
+    <section id="maintenance" class="tab-panel"><section class="panel"><div class="panel-title"><div><h2>房间维修维护</h2><p>维护前后图片、付款凭证与成本记录</p></div><div class="panel-actions"><button class="ghost" data-action="add-cost">+ 记录水电物业成本</button><button class="primary" data-action="add-maintenance">+ 新增维护</button></div></div><div class="maintenance-view-switch"><button type="button" class="active" data-maintenance-view="records">日常维护记录</button><button type="button" data-maintenance-view="batches">批次管理</button></div><div class="maintenance-filters"><label>月份<input id="maintenance-month" type="month" /></label><label>具体日期<input id="maintenance-date" type="date" /></label><label>房间<select id="maintenance-room"><option value="">全部房间</option></select></label><button id="clear-maintenance-filters" class="ghost" type="button">清除筛选</button></div><div class="maintenance-batch-actions"><span id="maintenance-batch-count">已完成待报销 0 条，共 0元</span><button class="small" data-batch-maintenance="assign-batch">批次修改</button><button class="small" data-batch-maintenance="complete">批量完成</button><button class="small" data-batch-maintenance="reimburse">批量报销</button><button class="small" data-batch-maintenance="export">导出待报销</button><button class="small" data-batch-maintenance="public-link">未报销明细链接</button></div><div id="maintenance-list" class="table-wrap"></div><h3 id="maintenance-cost-heading" class="subheading">水电物业成本记录</h3><div id="cost-list" class="table-wrap"></div></section></section>
+    <section id="checkout" class="tab-panel"><section class="panel"><div class="panel-title"><div><h2>入住/退房验收</h2><p>从房间卡片办理退房时会自动加载当前租户、押金、租期和物品快照</p></div><button class="primary" data-action="add-checkout">+ 新建退房</button></div><div id="checkout-list" class="table-wrap"></div></section></section>
+    <section id="templates" class="tab-panel"><section class="panel"><div class="panel-title"><div><h2>业务文字</h2><p>生成续租、入住和退房文字，直接发送给租户或管理层</p></div></div><div class="template-tabs"><button class="active" data-template="renewal">续租续费</button><button data-template="move-in">新租户入住</button><button data-template="checkout">租户退租</button></div><form id="template-form" class="template-form"></form><textarea id="template-output" readonly placeholder="填写后点击生成文字"></textarea><button id="copy-template" class="primary wide">生成并复制文字</button><p id="template-status" class="status"></p></section></section>
+    <section id="settings" class="tab-panel"><section class="panel"><div class="panel-title"><div><h2>租房设置</h2><p>统一设置物业费、水费、电费单价及到期提醒，房间和退房记录会自动调用</p></div></div><form id="rental-settings-form" class="template-form"></form><button id="save-rental-settings" class="primary" type="submit" form="rental-settings-form">保存设置</button><p id="settings-status" class="status"></p><hr class="section-rule" /><div class="panel-title"><div><h2>后台账号管理</h2><p>管理员可以创建或停用其他操作账号，操作日志会记录操作者。</p></div></div><form id="rental-user-form" class="template-form"><label>账号<input name="username" required pattern="[A-Za-z0-9_-]{3,40}" /></label><label>显示名称<input name="displayName" required /></label><label>初始密码<input name="password" type="password" minlength="8" required /></label><button class="primary" type="submit">创建账号</button></form><p id="user-status" class="status"></p><div id="user-list" class="table-wrap"></div></section></section>
+    <section id="audit" class="tab-panel"><section class="panel"><div class="panel-title"><div><h2>操作日志</h2><p>记录房间、租户、账单、维护和设置的变更，便于追溯</p></div></div><div id="audit-list" class="table-wrap"></div></section></section>
+  </main>
+  <dialog id="rental-auth-dialog"><form id="rental-auth-form"><div class="dialog-head"><h2>租房管理登录</h2></div><p class="meta">请输入账号和密码后查看租房数据。</p><label class="auth-field">账号<input id="rental-auth-user" autocomplete="username" value="admin" /></label><label class="auth-field">管理密码<input id="rental-auth-password" type="password" autocomplete="current-password" /></label><p id="rental-auth-error" class="error"></p><div class="dialog-actions"><button class="primary" type="submit">登录并加载</button></div></form></dialog>
+  <dialog id="renewal-dialog" class="renewal-record-dialog"><div class="dialog-head"><div><p class="dialog-kicker">租户财务记录</p><h2 id="renewal-dialog-title">续费记录</h2></div><button id="renewal-dialog-close" type="button" aria-label="关闭">×</button></div><div id="renewal-list" class="table-wrap"></div></dialog>
+  <dialog id="image-preview-dialog"><div class="dialog-head"><h2>图片预览</h2><button id="image-preview-close" type="button">×</button></div><img id="image-preview" class="image-preview" alt="物品图片预览" /></dialog>
+  <dialog id="room-items-dialog"><div class="dialog-head"><h2 id="room-items-dialog-title">物品清单</h2><button id="room-items-dialog-close" type="button">×</button></div><div id="room-items-list" class="table-wrap"></div><div class="dialog-actions"><button class="primary" id="room-items-add" type="button">+ 新增物品</button></div></dialog>
+  <dialog id="room-maintenance-dialog"><div class="dialog-head"><h2 id="room-maintenance-dialog-title">维护记录</h2><button id="room-maintenance-dialog-close" type="button">×</button></div><div id="room-maintenance-list" class="table-wrap"></div><div class="dialog-actions"><button class="primary" id="room-maintenance-add" type="button">+ 新增维护</button></div></dialog>
+  <dialog id="room-photos-dialog"><div class="dialog-head"><h2 id="room-photos-dialog-title">房间照片</h2><button id="room-photos-dialog-close" type="button">×</button></div><div id="room-photos-list" class="room-photos-list"></div><p id="room-photos-status" class="status" aria-live="polite"></p><div class="dialog-actions"><input id="room-photos-upload" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden /><button class="primary" id="room-photos-add" type="button">+ 上传照片</button></div></dialog>
+  <dialog id="room-tenants-dialog" class="room-tenants-dialog"><div class="dialog-head"><h2 id="room-tenants-dialog-title">历史租客</h2><button id="room-tenants-dialog-close" type="button" aria-label="关闭">×</button></div><div id="room-tenants-list" class="table-wrap"></div></dialog>
+  <dialog id="record-dialog"><form id="record-form"><div class="dialog-head"><h2 id="dialog-title">新增记录</h2><button type="button" data-close>×</button></div><div id="dialog-fields" class="dialog-fields"></div><p id="dialog-error" class="error"></p><div class="dialog-actions"><div id="checkout-refund-summary" class="checkout-refund-summary" hidden></div><button type="button" class="ghost" id="record-cancel">取消</button><button type="button" class="ghost" id="checkout-temp-save" hidden>暂存</button><button type="button" class="ghost" id="generate-dialog-text">生成文字</button><button class="primary" type="submit">保存</button></div></form></dialog>
+  <dialog id="maintenance-batch-dialog"><form id="maintenance-batch-form"><div class="dialog-head"><h2>批次修改</h2><button type="button" data-maintenance-batch-close>×</button></div><div class="dialog-body"><p id="maintenance-batch-summary" class="meta"></p><div id="maintenance-batch-targets" class="batch-targets"></div><label>选择批次<select id="maintenance-batch-select"></select></label><label id="maintenance-batch-name-wrap">新批次名称<input id="maintenance-batch-name" placeholder="例如：9月第一批报销" /></label><label>批次备注<textarea id="maintenance-batch-note" placeholder="可选"></textarea></label><p id="maintenance-batch-error" class="error"></p></div><div class="dialog-actions"><button type="button" class="ghost" data-maintenance-batch-close>取消</button><button class="primary" type="submit">保存修改</button></div></form></dialog>
+  <script src="vendor/hugeicons-preload.js?v=1"></script>
+  <script src="vendor/iconify-icon.min.js?v=1" defer></script>
+<script src="zufang.js?v=54" defer></script>
+<script src="zufang-overrides.js?v=40" defer></script>
+    <script src="zufang-ui.js?v=25" defer></script>
+  <script>
+    document.addEventListener('click', function (event) {
+      const item = event.target.closest('[data-tab]');
+      if (!item) return;
+      const titles = { overview: '工作台', rental: '租房管理', rooms: '房间管理', tenants: '租户管理', ledger: '收支账单', maintenance: '日常维护', checkout: '入住 / 退房', templates: '业务文字', settings: '租房设置', audit: '操作日志' };
+      const title = document.getElementById('view-title');
+      if (title) title.textContent = titles[item.dataset.tab] || item.dataset.tab;
+      document.querySelectorAll('.nav-item').forEach((nav) => nav.classList.toggle('active', nav.dataset.tab === item.dataset.tab));
+    });
+  </script>
+  <dialog id="move-in-dialog" class="move-in-dialog"><div class="dialog-head"><div><p class="dialog-kicker">入住办理</p><h2>办理入住</h2></div><button type="button" id="move-in-close" aria-label="关闭">×</button></div><div id="move-in-steps" class="move-in-steps"></div><div id="move-in-content" class="move-in-content"></div><div class="dialog-actions move-in-actions"><span id="move-in-status" class="status"></span><button type="button" class="ghost" id="move-in-cancel">取消办理</button><button type="button" class="ghost" id="move-in-back">上一步</button><button type="button" class="ghost" id="move-in-save" hidden>保存草稿</button><button type="button" class="ghost" id="move-in-generate-text" hidden>生成文字</button><button type="button" class="primary" id="move-in-next">签署合同</button></div></dialog>
+</body>
+</html>

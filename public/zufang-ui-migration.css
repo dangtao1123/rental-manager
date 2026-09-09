@@ -1,0 +1,1285 @@
+/* Structural bridge from the live business markup to the rental workspace UI. */
+.tab-panel > .ui-page-head { position: relative; z-index: 1; }
+.tab-panel > .ui-content-panel { padding: 0; overflow: hidden; }
+.tab-panel > .ui-content-panel > .panel-title[hidden] { display: none !important; }
+.tab-panel > .ui-content-panel > .subheading { margin: 22px 22px 10px; }
+.tab-panel > .ui-content-panel > .table-panel { border: 0; border-radius: 0; box-shadow: none; }
+.tab-panel > .ui-content-panel > .table-panel table { width: 100%; }
+.tab-panel > .ui-content-panel > .data-list,
+.tab-panel > .ui-content-panel > .tenant-list { padding: 0 22px 22px; }
+.tab-panel > .ui-content-panel > .room-grid { padding: 0 22px 22px; }
+.tab-panel > .ui-content-panel > .ledger-summary { margin: 0 22px 16px; }
+.tab-panel > .ui-content-panel > .ledger-filters,
+.tab-panel > .ui-content-panel > .maintenance-filters { margin: 0 22px 16px; }
+.ui-rental-filter, .ui-room-filter, .ui-audit-filter { margin-bottom: 16px; }
+.ui-rental-filter select, .ui-room-filter select { min-width: 150px; }
+.ui-rental-filter #rental-filter-occupancy { min-width: 174px; }
+.ledger-summary { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; grid-auto-flow: row; }
+.ledger-summary .income-summary strong { color: var(--green) !important; }
+.ledger-summary .expense-summary strong { color: var(--red) !important; }
+.ledger-summary .balance-summary strong { color: var(--blue) !important; }
+.ledger-summary .pending-summary { border-color: #efc77f !important; background: var(--amber-soft) !important; }
+.ledger-summary .pending-summary strong { color: var(--amber) !important; }
+.overview-finance-panel .panel-title { align-items: flex-start; }
+.overview-finance-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; }
+.overview-finance-range { display: inline-flex; padding: 3px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface-soft); }
+.overview-finance-range button { min-height: 30px; padding: 0 11px; border: 0; border-radius: 5px; color: var(--muted); background: transparent; font-size: 12px; }
+.overview-finance-range button.active { color: #fff; background: var(--teal); font-weight: 800; }
+.overview-finance-custom { display: inline-flex; align-items: center; gap: 6px; }
+.overview-finance-custom input { width: 132px; height: 34px; padding: 0 8px; border: 1px solid var(--line-strong); border-radius: 6px; color: var(--ink); background: #fff; }
+.overview-finance { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+.overview-finance .finance-item.income strong { color: var(--green) !important; }
+.overview-finance .finance-item.expense strong { color: var(--red) !important; }
+.overview-finance .finance-item.balance strong { color: var(--blue) !important; }
+.ui-content-panel .table-wrap { overflow-x: auto; }
+.ui-content-panel .table-wrap table { min-width: 720px; }
+.ui-content-panel .room-card { min-width: 0; }
+.ui-content-panel .lease-card,
+.ui-content-panel .tenant-card { box-shadow: var(--shadow); }
+.ui-content-panel .room-actions,
+.ui-content-panel .row-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+.ui-content-panel .room-actions .small,
+.ui-content-panel .row-actions .small { min-height: 32px; }
+.ui-content-panel .settings-grid { border: 0; }
+.room-admin-mobile-list { display: none; }
+.room-admin-table { overflow-x: auto; }
+.room-admin-table table { min-width: 1040px; }
+.ui-content-panel table th,
+.ui-content-panel table td,
+dialog table th,
+dialog table td { vertical-align: middle; }
+.ui-content-panel table .table-actions,
+table .table-actions,
+dialog table .table-actions,
+dialog table .row-actions,
+table .row-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin: 0; }
+.ui-content-panel table .button,
+dialog table .button,
+dialog table .small { margin-top: 0; margin-bottom: 0; }
+.room-archive-button { width: 36px; min-width: 36px; padding: 0 !important; display: inline-flex; align-items: center; justify-content: center; }
+.room-archive-button iconify-icon { font-size: 17px; }
+.archive-icon-button { width: 32px; min-width: 32px; height: 32px; padding: 0 !important; display: inline-flex; align-items: center; justify-content: center; }
+.archive-icon-button iconify-icon { font-size: 16px; }
+.room-tenants-dialog { width: min(920px, calc(100vw - 32px)); max-height: min(720px, calc(100vh - 32px)); border-radius: 16px; border-color: #cfe0e7; background: #fbfdfe; }
+.room-tenants-dialog .dialog-head { padding: 22px 24px 16px; background: #fff; border-bottom: 1px solid #dce8ed; }
+.room-tenants-dialog .table-wrap { margin: 18px 22px 22px; border: 1px solid #d8e6eb; border-radius: 10px; overflow: auto; background: #fff; }
+.room-tenants-dialog table { min-width: 760px; font-size: 13px; }
+.room-tenants-dialog table th { color: #58717d; background: #f2f8fa; font-weight: 800; }
+.room-tenants-dialog table td, .room-tenants-dialog table th { padding: 13px 14px; vertical-align: middle; }
+.room-tenants-dialog table small { display: block; margin-top: 4px; color: var(--muted); }
+.room-tenants-empty { margin: 0; padding: 34px 20px; color: var(--muted); text-align: center; }
+.contract-file-link { display: inline-flex; align-items: center; width: max-content; margin-top: 8px; color: var(--primary); font-size: 12px; font-weight: 700; }
+.dialog-fields [data-contract-field][hidden] { display: none !important; }
+.room-mobile-meta { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+.room-mobile-meta div { display: grid; gap: 4px; }
+.room-mobile-meta span { color: var(--muted); font-size: 11px; }
+.room-mobile-meta b { font-size: 13px; }
+#archive-list h2 { margin: 0 0 14px; font-size: 18px; }
+#archive-list .section-rule-title { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); }
+#archive-list small { display: block; margin-top: 4px; color: var(--muted); }
+
+@media (max-width: 760px) {
+  .tab-panel > .ui-content-panel { overflow: visible; }
+  .tab-panel > .ui-content-panel > .room-grid,
+  .tab-panel > .ui-content-panel > .data-list,
+  .tab-panel > .ui-content-panel > .tenant-list { padding: 0 13px 13px; }
+  .tab-panel > .ui-content-panel > .subheading { margin: 18px 13px 9px; }
+  .tab-panel > .ui-content-panel > .ledger-summary { margin: 0 13px 12px; }
+  .tab-panel > .ui-content-panel > .ledger-filters,
+  .tab-panel > .ui-content-panel > .maintenance-filters { margin: 0 13px 12px; }
+  .ui-rental-filter, .ui-room-filter, .ui-audit-filter { display: grid; grid-template-columns: 1fr; }
+  .overview-finance-panel .panel-title { display: block; }
+  .overview-finance-actions { justify-content: flex-start; margin-top: 12px; }
+  .overview-finance-custom { width: 100%; }
+  .overview-finance-custom input { flex: 1; width: auto; min-width: 0; }
+  .overview-finance { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .ledger-summary { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .ui-rental-filter select, .ui-room-filter select { min-width: 0; width: 100%; }
+  .ui-content-panel .room-grid { grid-template-columns: 1fr; gap: 10px; }
+  .ui-content-panel .room-card { padding: 14px; border-top-width: 3px; }
+  .ui-content-panel .room-card-head { align-items: flex-start; }
+  .ui-content-panel .room-card-head strong { max-width: 72%; line-height: 1.35; }
+  .ui-content-panel .room-tenant { font-size: 12px; line-height: 1.7; }
+  .ui-content-panel .room-expiry { margin-top: 8px; padding: 8px 9px; border-radius: 6px; }
+  .ui-content-panel .room-actions { gap: 6px; margin-top: 12px; }
+  .ui-content-panel .room-actions .small { flex: 1 1 calc(50% - 6px); min-width: 0; }
+  .ui-content-panel .tenant-group { margin-top: 13px; }
+  .ui-content-panel .tenant-group h3 { font-size: 15px; }
+  .ui-content-panel .lease-card,
+  .ui-content-panel .tenant-card { display: grid; grid-template-columns: 1fr; gap: 11px; padding: 14px; }
+  .ui-content-panel .tenant-card > div { min-width: 0; }
+  .ui-content-panel .tenant-card .tenant-dates { padding: 9px 10px; border-radius: 7px; background: #f6f9fa; }
+  .ui-content-panel .tenant-card .tenant-dates strong { font-size: 17px; }
+  .ui-content-panel .tenant-card .row-actions { margin-top: 0; }
+  .ui-content-panel .tenant-card .row-actions .small { flex: 1 1 calc(50% - 7px); min-width: 0; }
+  .ui-content-panel .table-panel { overflow-x: auto; }
+  .ui-content-panel .table-panel table { min-width: 680px; }
+  .room-admin-table { display: none; }
+  .room-admin-mobile-list { display: grid; gap: 10px; padding: 13px; }
+  .room-admin-mobile-card { padding: 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff; box-shadow: var(--shadow); }
+  .room-admin-mobile-card .room-card-head h3 { margin: 0; font-size: 16px; }
+  .room-admin-mobile-card .room-card-head p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+  .room-admin-mobile-card .card-actions { margin-top: 14px; }
+  .room-admin-mobile-card .card-actions .button { flex: 1 1 calc(50% - 7px); min-width: 0; }
+  .room-admin-mobile-card .card-actions .room-archive-button { flex: 0 0 40px; min-width: 40px; }
+  .room-tenants-dialog .dialog-head { padding: 18px 17px 13px; }
+  .room-tenants-dialog .table-wrap { margin: 14px 16px 18px; }
+  .ui-content-panel .table-panel td, .ui-content-panel .table-panel th { padding: 10px 11px; }
+  .ui-content-panel .maintenance-batch { margin: 0 13px 12px; }
+  .ui-content-panel .settings-grid { padding: 15px 13px; }
+  #archive-list table, #archive-list tbody, #archive-list tr, #archive-list td { display: block; width: 100%; }
+  #archive-list thead { display: none; }
+  #archive-list tr { margin-bottom: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 8px; }
+  #archive-list td { padding: 4px 0; border: 0; }
+  #archive-list td:last-child { padding-top: 10px; }
+}
+
+@media (max-width: 450px) {
+  .overview-finance { grid-template-columns: 1fr !important; }
+  .ledger-summary { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .overview-finance-actions { gap: 8px; }
+  .overview-finance-actions .text-button { width: 100%; justify-content: flex-start; }
+}
+
+/* Mobile maintenance list: turn the dense table into readable cards without touching desktop. */
+@media (max-width: 760px) {
+  #maintenance-list .table-wrap {
+    overflow-x: hidden !important;
+  }
+
+  #maintenance-list .maintenance-data-table {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    table-layout: auto !important;
+  }
+
+  #maintenance-list .maintenance-data-table thead {
+    display: none !important;
+  }
+
+  #maintenance-list .maintenance-data-table tbody {
+    display: grid !important;
+    gap: 12px;
+  }
+
+  #maintenance-list .maintenance-data-table tr {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px 12px;
+    padding: 14px 14px 15px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 6px 16px rgba(13, 56, 70, 0.04);
+  }
+
+  #maintenance-list .maintenance-data-table td {
+    display: flex !important;
+    flex-direction: column;
+    gap: 4px;
+    width: auto !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    text-align: left !important;
+  }
+
+  #maintenance-list .maintenance-data-table td::before {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  #maintenance-list .maintenance-data-table td:nth-child(1) {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #maintenance-list .maintenance-data-table td:nth-child(1)::before {
+    content: "选择";
+  }
+
+  #maintenance-list .maintenance-record-table td:nth-child(2)::before { content: "房间 / 日期 / 类型"; }
+  #maintenance-list .maintenance-record-table td:nth-child(3)::before { content: "事项 / 备注"; }
+  #maintenance-list .maintenance-record-table td:nth-child(4)::before { content: "金额"; }
+  #maintenance-list .maintenance-record-table td:nth-child(5)::before { content: "状态"; }
+  #maintenance-list .maintenance-record-table td:nth-child(6)::before { content: "图片"; }
+  #maintenance-list .maintenance-record-table td:nth-child(7)::before { content: "操作"; }
+
+  #maintenance-list .maintenance-record-table td:nth-child(3),
+  #maintenance-list .maintenance-record-table td:nth-child(7) {
+    grid-column: 1 / -1;
+  }
+
+  #maintenance-list .maintenance-record-table td:nth-child(6) .maintenance-evidence-grid {
+    gap: 8px;
+  }
+
+  #maintenance-list .maintenance-record-table td:nth-child(6) .maintenance-evidence-grid > div {
+    font-size: 10px;
+  }
+
+  #maintenance-list .maintenance-record-table td:nth-child(6) .maintenance-image-link {
+    width: 42px;
+    height: 32px;
+  }
+
+  #maintenance-list .maintenance-record-table td:nth-child(7) .row-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  #maintenance-list .maintenance-record-table td:nth-child(7) .row-actions .small {
+    min-height: 32px;
+  }
+}
+
+/* Tenant directory: keep labels readable while reserving a stable action column. */
+.tenant-list .tenant-row { display: grid; grid-template-columns: 1.3fr 0.55fr 2.6fr 0.72fr 0.85fr 0.68fr 0.62fr 250px; align-items: center; gap: 10px; }
+.tenant-list .tenant-row > div { min-width: 0; }
+.tenant-list .tenant-row .tenant-main { text-align: left; justify-self: start; }
+.tenant-list .tenant-row > div > span { display: block; color: var(--muted); font-size: 11px; line-height: 1.35; }
+.tenant-list .tenant-row > div > strong { display: block; margin-top: 4px; color: var(--ink); font-size: 13px; line-height: 1.35; overflow-wrap: anywhere; }
+.tenant-list .tenant-main h3 { white-space: nowrap; }
+.tenant-phone-inline { margin-left: 6px; color: var(--muted); font-size: 12px; font-weight: 500; }
+.tenant-list .tenant-row .table-actions { width: 250px; min-width: 250px; display: flex; align-items: center; justify-content: flex-end; flex-wrap: nowrap; gap: 6px; margin: 0; }
+.tenant-list .tenant-row .table-actions .button { flex: 0 0 auto; min-height: 30px; padding: 0 8px; font-size: 12px; white-space: nowrap; }
+.tenant-list .tenant-row .table-actions .tenant-archive-button { width: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+.tenant-list .tenant-row .table-actions .tenant-archive-button iconify-icon { font-size: 16px; }
+.tenant-list .tenant-row .table-actions .button-refund { color: #9b6711; border-color: #efc77f; background: #fff4d6; }
+.tenant-list .tenant-row em { display: block; margin-top: 4px; color: var(--red); font-size: 12px; font-style: normal; font-weight: 700; }
+.tenant-list .tenant-row .tenant-payment strong { white-space: nowrap; overflow-wrap: normal; font-size: 12px; }
+.tenant-status-success { color: var(--green) !important; }
+.tenant-status-warning { color: var(--amber) !important; }
+.tenant-status-muted { color: var(--muted) !important; }
+@media (max-width: 1100px) and (min-width: 761px) {
+  .tenant-list .tenant-row { grid-template-columns: 1.1fr 0.6fr 1.8fr 0.8fr 0.9fr 0.75fr 0.7fr 240px; gap: 8px; }
+  .tenant-list .tenant-row .table-actions { width: 240px; min-width: 240px; }
+}
+@media (max-width: 760px) {
+  .tenant-list .tenant-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tenant-list .tenant-row .tenant-main { grid-column: 1 / -1; }
+  .tenant-list .tenant-row .table-actions { grid-column: 1 / -1; width: 100%; min-width: 0; flex-wrap: wrap; }
+  .tenant-list .tenant-row .table-actions .button { flex: 1 1 calc(50% - 4px); }
+  .tenant-list .tenant-row .table-actions .tenant-archive-button { width: auto; padding: 0 8px; }
+  .tenant-list .tenant-row .table-actions .tenant-archive-button::after { content: '归档'; margin-left: 4px; }
+  .tenant-phone-inline { display: block; margin: 3px 0 0; }
+  .tenant-list .tenant-row .tenant-payment strong { white-space: normal; }
+}
+
+/* Inventory confirmation stays consistent across move-in, renewal and checkout dialogs. */
+.dialog-inventory-section { grid-column: 1 / -1; padding-top: 2px; }
+.dialog-inventory-heading { min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.dialog-inventory-heading h3 { margin: 0; padding-left: 14px; position: relative; color: var(--ink); font-size: 16px; line-height: 1.4; }
+.dialog-inventory-heading h3::before { content: ''; position: absolute; left: 0; top: 3px; width: 4px; height: 18px; border-radius: 2px; background: var(--brand); }
+.dialog-inventory-heading p { margin: 3px 0 0 14px; color: var(--muted); font-size: 12px; }
+.dialog-inventory-heading .button { flex: 0 0 auto; min-height: 32px; padding: 0 12px; }
+.dialog-inventory-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 0 2px; }
+.dialog-inventory-item { display: inline-flex; align-items: baseline; gap: 6px; min-height: 32px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; background: #f7fafb; color: var(--ink); }
+.dialog-inventory-item strong { font-size: 13px; }
+.dialog-inventory-item small { color: var(--muted); font-size: 12px; }
+@media (max-width: 760px) {
+  .dialog-inventory-heading { align-items: flex-start; }
+  .dialog-inventory-item { width: 100%; }
+}
+
+/* Rental cards keep the information hierarchy stable and pin actions to the bottom. */
+.ui-content-panel .room-card { display: flex; flex-direction: column; min-height: 224px; }
+.ui-content-panel .room-card .room-actions { margin-top: auto; }
+.room-card.room-occupied { border-color: #66bda2 !important; background: var(--green-soft) !important; }
+.room-card.room-vacant { border-color: #e37e81 !important; background: var(--red-soft) !important; }
+.room-card.room-maintenance { border-color: #e4af52 !important; background: var(--amber-soft) !important; }
+.room-card.room-move-in-pending { border-color: #e4af52 !important; background: #fff8e8 !important; }
+.room-card.room-move-in-pending .room-status { color: #9b6711 !important; background: #ffe5ae; padding: 4px 7px; border-radius: 5px; }
+.room-card-head > div:first-child { min-width: 0; flex: 1 1 auto; }
+.room-card-head-meta { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 8px; flex: 0 0 auto; white-space: nowrap; }
+.room-card-days { color: var(--red) !important; font-size: 16px; font-weight: 900; line-height: 1.1; white-space: nowrap; }
+.room-card.room-expiring { border-color: #e4af52 !important; background: #fff4d6 !important; }
+.room-card.room-expiring .room-status { color: #9b6711 !important; background: #ffe5ae; padding: 4px 7px; border-radius: 5px; }
+.room-card.room-expiring .room-card-days { color: #b16b00; }
+.room-tenant { margin-top: 10px; line-height: 1.6; }
+.room-payment-row { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 10px; margin-top: 13px; }
+.room-payment-row > div { min-width: 0; }
+.room-payment-row span { display: block; color: var(--muted); font-size: 11px; }
+.room-payment-row strong { display: block; margin-top: 4px; color: var(--ink); font-size: 13px; line-height: 1.35; overflow-wrap: anywhere; }
+.room-vacant-note { margin-top: 11px; color: var(--muted); font-size: 12px; }
+.overview-finance { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+.overview-finance .finance-item.pending { border-color: #efc77f; background: var(--amber-soft); }
+.overview-finance .finance-item.pending strong { color: var(--amber) !important; }
+.overview-finance .finance-item.pending small { display: block; margin-top: 4px; color: #a66d18; font-size: 11px; }
+@media (max-width: 760px) {
+  .overview-finance { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .ui-content-panel .room-card { min-height: 214px; }
+  .room-card-head-meta { gap: 5px; }
+  .room-card-days { font-size: 14px; }
+  .room-payment-row { gap: 7px; }
+  .room-payment-row strong { font-size: 12px; }
+}
+@media (max-width: 450px) {
+  .overview-finance { grid-template-columns: 1fr !important; }
+  .room-payment-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .room-payment-row span { font-size: 10px; }
+  .room-payment-row strong { font-size: 11px; }
+}
+/* Move-in workflow */
+.move-in-dialog{width:min(920px,calc(100vw - 28px));max-width:920px;padding:0;border:0;border-radius:14px;background:#fff;color:#17313d;box-shadow:0 24px 70px rgba(15,44,57,.24)}
+.move-in-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:10px;align-items:center;padding:14px 16px;border:1px solid #d7e4e8;border-radius:10px;background:#fff;margin-bottom:10px}.move-in-row strong,.move-in-row small{display:block}.move-in-row small{margin-top:4px;color:#69818b;font-size:12px}
+.move-in-row.move-in-contract_pending{border-color:#e4af52;background:#fff8e8}.move-in-row.move-in-contract_signed{border-color:#66bda2;background:#effaf6}.move-in-row.move-in-payment_pending{border-color:#e4af52;background:#fff8e8}.move-in-row .status-chip{white-space:nowrap}
+.contract-badge{display:inline-flex;align-items:center;margin-top:6px;padding:4px 7px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none}.contract-badge.uploaded{color:#0e7c70;background:#e2f6ef;border:1px solid #a9dccd}.contract-badge.missing{color:#a66d18;background:#fff4d6;border:1px solid #efc77f}
+.move-in-dialog::backdrop{background:rgba(17,40,49,.56)}
+.move-in-dialog .dialog-head{padding:22px 26px 16px;border-bottom:1px solid #dce8ed;display:flex;justify-content:space-between;align-items:flex-start}
+.move-in-dialog .dialog-head h2{margin:0;font-size:24px}.move-in-dialog .dialog-kicker{margin:0 0 4px;color:#168b88;font-size:12px;font-weight:800;letter-spacing:.12em}
+.move-in-dialog .dialog-head button{border:1px solid #d2e1e6;background:#f5f9fa;border-radius:8px;font-size:22px;width:38px;height:38px;color:#6f858e}
+.move-in-steps{display:flex;gap:8px;padding:16px 26px;background:#f4f8f9;border-bottom:1px solid #dce8ed}.move-in-steps span{flex:1;display:flex;align-items:center;gap:8px;color:#78909a;font-size:13px;font-weight:700}.move-in-steps b{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#e2edf0;color:#58717d;font-size:12px}.move-in-steps span.active{color:#147f7b}.move-in-steps span.active b,.move-in-steps span.complete b{background:#168b88;color:#fff}
+.move-in-content{max-height:min(66vh,650px);overflow:auto;padding:24px 26px}.move-in-section h3{margin:0 0 6px;font-size:18px}.move-in-section>p{margin:0 0 20px}.move-in-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.move-in-grid label{display:flex;flex-direction:column;gap:7px;color:#5d7580;font-size:13px}.move-in-grid label.full{grid-column:1/-1}.move-in-grid input,.move-in-grid select,.move-in-grid textarea{width:100%;box-sizing:border-box;border:1px solid #c8dbe2;border-radius:8px;padding:11px 12px;background:#fff;color:#17313d;font:inherit}.move-in-grid textarea{min-height:88px;resize:vertical}.move-in-inventory{margin-top:20px;border-top:1px solid #dce8ed;padding-top:16px}.move-in-inventory .section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.inventory-inline{display:flex;gap:8px;flex-wrap:wrap}.inventory-inline span:not(.meta){padding:6px 10px;border-radius:999px;background:#edf7f6;color:#167e7b;font-size:12px}.move-in-actions{padding:14px 26px 18px;border-top:1px solid #dce8ed;display:flex;justify-content:flex-end;align-items:center;gap:10px;background:#fff}.move-in-actions .status{margin-right:auto}.contract-status-card{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:16px;border:1px solid #d4e3e8;border-radius:10px;background:#f8fbfc}.contract-status-card span{color:#6d858e;font-size:13px}.contract-status-card strong{font-size:15px}.move-in-contract-actions{display:flex;gap:12px;margin-top:18px}.upload-button{cursor:pointer}.move-in-placeholder-help{margin-top:20px;padding:14px;border:1px dashed #bfd5dc;border-radius:8px;background:#f9fbfc;color:#607985;font-size:12px}.move-in-placeholder-help code{display:inline-block;margin:6px 5px 0 0;padding:3px 6px;border-radius:4px;background:#eaf3f5;color:#136e74}.move-in-amount{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid #f1bfc3;border-radius:10px;background:#fff3f3}.move-in-amount span{color:#7c5f62}.move-in-amount strong{font-size:13px;color:#8c5960}.move-in-amount b{margin-left:auto;color:#d2454e;font-size:24px}
+@media(max-width:640px){.move-in-dialog{width:calc(100vw - 14px);border-radius:12px}.move-in-dialog .dialog-head{padding:18px 17px 13px}.move-in-steps{padding:12px 17px;gap:4px}.move-in-steps span{font-size:11px;gap:4px}.move-in-steps b{width:24px;height:24px;border-radius:6px}.move-in-content{padding:18px 17px;max-height:62vh}.move-in-grid{grid-template-columns:1fr;gap:12px}.move-in-grid label.full{grid-column:auto}.move-in-actions{padding:12px 17px 14px;flex-wrap:wrap}.move-in-actions .status{width:100%;margin:0}.move-in-contract-actions{flex-direction:column}.move-in-amount{align-items:flex-start;flex-direction:column}.move-in-amount b{margin-left:0}}
+@media(max-width:640px){.move-in-row{grid-template-columns:minmax(0,1fr) auto;gap:8px}.move-in-row .button-outline{grid-column:1}.move-in-row .button-danger-outline{grid-column:2;grid-row:2}}
+
+/* Mobile tab switching: keep the overview layout only when the overview tab is active. */
+@media (max-width: 640px) {
+  #overview.tab-panel.view:not(.active) {
+    display: none !important;
+  }
+
+  #overview.tab-panel.view.active {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* UI polish pass: widen the workspace a little and make dense lists easier to scan. */
+.rental-shell {
+  width: min(1360px, 100%);
+}
+
+.page-head .subtitle {
+  max-width: 760px;
+}
+
+.ui-content-panel .table-panel table {
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.ui-content-panel .table-panel thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f6fafb;
+}
+
+.ui-content-panel .table-panel tbody tr:nth-child(even) {
+  background: #fcfeff;
+}
+
+.ui-content-panel .table-panel tbody tr:hover {
+  background: #f3f8fb;
+}
+
+.ui-content-panel .table-panel th,
+.ui-content-panel .table-panel td {
+  padding: 12px 10px;
+}
+
+.ui-content-panel .table-panel td {
+  overflow-wrap: anywhere;
+}
+
+.tenant-list .tenant-row {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(13, 56, 70, 0.04);
+}
+
+.tenant-list .tenant-row + .tenant-row {
+  margin-top: 0;
+}
+
+.tenant-list .tenant-row .tenant-main h3 {
+  line-height: 1.25;
+}
+
+.tenant-list .tenant-row .table-actions .button {
+  border-radius: 6px;
+}
+
+.room-admin-table table {
+  min-width: 1160px;
+  table-layout: fixed;
+}
+
+.room-admin-table table th:nth-child(1),
+.room-admin-table table td:nth-child(1) {
+  width: 15%;
+}
+
+.room-admin-table table th:nth-child(2),
+.room-admin-table table td:nth-child(2) {
+  width: 8%;
+}
+
+.room-admin-table table th:nth-child(3),
+.room-admin-table table td:nth-child(3) {
+  width: 10%;
+}
+
+.room-admin-table table th:nth-child(4),
+.room-admin-table table td:nth-child(4) {
+  width: 11%;
+}
+
+.room-admin-table table th:nth-child(5),
+.room-admin-table table td:nth-child(5) {
+  width: 14%;
+}
+
+.room-admin-table table th:nth-child(6),
+.room-admin-table table td:nth-child(6) {
+  width: 12%;
+}
+
+.room-admin-table table th:nth-child(7),
+.room-admin-table table td:nth-child(7) {
+  width: 10%;
+}
+
+.room-admin-table table th:nth-child(8),
+.room-admin-table table td:nth-child(8) {
+  width: 10%;
+}
+
+.room-admin-table table th:nth-child(9),
+.room-admin-table table td:nth-child(9) {
+  width: 10%;
+}
+
+#maintenance-list .maintenance-record-table th:nth-child(2),
+#maintenance-list .maintenance-record-table td:nth-child(2) {
+  width: 22%;
+}
+
+#maintenance-list .maintenance-record-table th:nth-child(3),
+#maintenance-list .maintenance-record-table td:nth-child(3) {
+  width: 34%;
+}
+
+#maintenance-list .maintenance-record-table th:nth-child(4),
+#maintenance-list .maintenance-record-table td:nth-child(4) {
+  width: 8%;
+}
+
+#maintenance-list .maintenance-record-table th:nth-child(5),
+#maintenance-list .maintenance-record-table td:nth-child(5) {
+  width: 10%;
+}
+
+#maintenance-list .maintenance-record-table th:nth-child(6),
+#maintenance-list .maintenance-record-table td:nth-child(6) {
+  width: 18%;
+}
+
+#maintenance-list .maintenance-record-table th:nth-child(7),
+#maintenance-list .maintenance-record-table td:nth-child(7) {
+  width: 120px;
+}
+
+#maintenance-list .maintenance-record-table td:nth-child(3) {
+  line-height: 1.45;
+}
+
+#maintenance-list .maintenance-record-table tbody tr:hover {
+  background: #f3f8fb;
+}
+
+#maintenance-list .maintenance-record-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f6fafb;
+}
+
+#maintenance-list .maintenance-record-table td:nth-child(6) .maintenance-evidence-grid {
+  gap: 8px;
+}
+
+#maintenance-list .maintenance-record-table td:nth-child(6) .maintenance-image-link {
+  width: 54px;
+  height: 40px;
+}
+
+#maintenance-list .maintenance-record-table td:nth-child(7) .row-actions {
+  gap: 6px;
+}
+
+.overview-finance > div,
+.ledger-summary > div {
+  border-radius: 10px;
+}
+
+/* UI redesign pass: unify the visual rhythm across the whole workspace. */
+:root {
+  --surface-raised: #fff;
+  --surface-tint: #f6fafb;
+  --surface-band: #eef5f6;
+  --line-soft: #e3edf0;
+  --shadow-soft: 0 8px 24px rgba(18, 49, 63, .06);
+  --shadow-strong: 0 22px 60px rgba(18, 49, 63, .16);
+}
+
+body {
+  background: linear-gradient(180deg, #eef4f5 0%, #edf2f4 100%);
+}
+
+.main {
+  padding-left: 28px;
+  padding-right: 28px;
+}
+
+.rental-shell {
+  width: min(1380px, 100%);
+}
+
+.page-head,
+.ui-page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 18px 0 16px;
+  padding: 2px 0 0;
+}
+
+.page-head > div,
+.ui-page-head > div {
+  min-width: 0;
+}
+
+.page-head h1,
+.ui-page-head h1 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.12;
+  letter-spacing: -.3px;
+}
+
+.page-head .subtitle,
+.ui-page-head .subtitle {
+  max-width: 760px;
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.page-head .button,
+.ui-page-head .button,
+.page-head .primary,
+.ui-page-head .primary,
+.page-head .ghost,
+.ui-page-head .ghost {
+  margin-top: 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.section-head p {
+  margin-top: 4px;
+  line-height: 1.55;
+}
+
+.filter-bar,
+.ui-content-panel .ledger-filters,
+.ui-content-panel .maintenance-filters {
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  background: var(--surface-tint);
+  box-shadow: var(--shadow-soft);
+}
+
+.filter-bar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: 10px;
+  align-items: end;
+  padding: 14px;
+}
+
+.filter-bar label {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.filter-bar input,
+.filter-bar select {
+  width: 100%;
+  height: 40px;
+  margin-top: 6px;
+  padding: 0 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 5px;
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-soft);
+}
+
+.segmented button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.segmented button.active {
+  background: var(--teal);
+  color: #fff;
+}
+
+.segmented.vertical {
+  flex-direction: column;
+  width: 100%;
+}
+
+.panel,
+.ui-content-panel .table-panel,
+.ui-content-panel .settings-grid,
+.ui-content-panel .account-panel,
+.ui-content-panel .template-side,
+.ui-content-panel .template-editor {
+  border-color: var(--line-soft);
+  border-radius: 14px;
+  box-shadow: var(--shadow-soft);
+}
+
+.ui-content-panel .table-panel {
+  overflow: hidden;
+}
+
+.ui-content-panel .table-panel table,
+.room-admin-table table,
+.table {
+  table-layout: fixed;
+}
+
+.ui-content-panel .table-panel thead th,
+.table thead th,
+.room-admin-table thead th,
+.maintenance-data-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f5f9fa;
+}
+
+.ui-content-panel .table-panel tbody tr:nth-child(even) td,
+.table tbody tr:nth-child(even) td,
+.room-admin-table tbody tr:nth-child(even) td,
+.maintenance-data-table tbody tr:nth-child(even) td {
+  background: #fcfeff;
+}
+
+.ui-content-panel .table-panel tbody tr:hover td,
+.table tbody tr:hover td,
+.room-admin-table tbody tr:hover td,
+.maintenance-data-table tbody tr:hover td {
+  background: #f3f8fb;
+}
+
+.ui-content-panel .table-panel td,
+.ui-content-panel .table-panel th,
+.table td,
+.table th,
+.room-admin-table td,
+.room-admin-table th {
+  padding: 12px 11px;
+}
+
+.ui-content-panel .table-panel td,
+.table td,
+.room-admin-table td,
+.maintenance-data-table td {
+  overflow-wrap: anywhere;
+}
+
+.stats > div,
+.overview-finance > div,
+.ledger-summary > div {
+  border-radius: 12px;
+  box-shadow: var(--shadow-soft);
+}
+
+.overview-finance > div {
+  min-height: 92px;
+}
+
+.overview-finance > div:nth-child(1),
+.overview-finance > div:nth-child(4) {
+  background: #e8f7f0;
+  border-color: #bfe2d1;
+}
+
+.overview-finance > div:nth-child(2),
+.overview-finance > div:nth-child(5) {
+  background: #fff1f2;
+  border-color: #efc4c6;
+}
+
+.overview-finance > div:nth-child(3) {
+  background: #f6fbff;
+  border-color: #d3e5f0;
+}
+
+.overview-finance > div:nth-child(1) strong,
+.overview-finance > div:nth-child(4) strong {
+  color: var(--green);
+}
+
+.overview-finance > div:nth-child(2) strong,
+.overview-finance > div:nth-child(5) strong {
+  color: var(--red);
+}
+
+.overview-finance > div:nth-child(3) strong {
+  color: var(--blue);
+}
+
+.overview-todo-panel .todo-list {
+  gap: 12px;
+}
+
+.todo-card,
+.todo-link,
+.quick-action {
+  border-color: var(--line-soft);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.todo-card:hover,
+.todo-link:hover,
+.quick-action:hover {
+  border-color: #b6d7e4;
+  background: var(--blue-soft);
+}
+
+.room-card,
+.lease-card,
+.tenant-card,
+.room-admin-mobile-card {
+  border-color: var(--line-soft);
+  border-radius: 12px;
+  box-shadow: var(--shadow-soft);
+}
+
+.room-card {
+  min-height: 152px;
+  background: #fff;
+}
+
+.room-card-head strong,
+.room-card h3,
+.tenant-list .tenant-main h3 {
+  line-height: 1.25;
+}
+
+.room-tenant,
+.room-payment-row strong,
+.tenant-list .tenant-row > div > strong {
+  line-height: 1.45;
+}
+
+.room-actions .small,
+.row-actions .small,
+.table-actions .small {
+  min-height: 32px;
+  border-radius: 8px;
+}
+
+.tenant-list .tenant-row {
+  gap: 12px;
+  padding: 14px 15px;
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.maintenance-batch-actions {
+  border-color: var(--line-soft);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.maintenance-data-table,
+.maintenance-record-table {
+  table-layout: fixed;
+}
+
+#maintenance-list .maintenance-record-table th:nth-child(2),
+#maintenance-list .maintenance-record-table td:nth-child(2) {
+  width: 20%;
+}
+
+#maintenance-list .maintenance-record-table th:nth-child(3),
+#maintenance-list .maintenance-record-table td:nth-child(3) {
+  width: 32%;
+}
+
+#maintenance-list .maintenance-record-table th:nth-child(4),
+#maintenance-list .maintenance-record-table td:nth-child(4) {
+  width: 8%;
+}
+
+#maintenance-list .maintenance-record-table th:nth-child(5),
+#maintenance-list .maintenance-record-table td:nth-child(5) {
+  width: 10%;
+}
+
+#maintenance-list .maintenance-record-table th:nth-child(6),
+#maintenance-list .maintenance-record-table td:nth-child(6) {
+  width: 18%;
+}
+
+#maintenance-list .maintenance-record-table th:nth-child(7),
+#maintenance-list .maintenance-record-table td:nth-child(7) {
+  width: 124px;
+}
+
+.maintenance-status {
+  border-radius: 999px;
+}
+
+.maintenance-item-cell strong,
+.maintenance-meta-cell strong {
+  color: var(--ink);
+}
+
+.maintenance-batch-tag {
+  background: #eef8fc;
+  color: var(--blue);
+}
+
+.dialog-maintenance {
+  display: flex !important;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 18px;
+}
+
+.dialog-maintenance .maintenance-section {
+  padding: 16px 16px 15px;
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.dialog-maintenance .maintenance-section-core {
+  background: #f8fcfd;
+}
+
+.dialog-maintenance .maintenance-section-text {
+  background: #fff;
+}
+
+.dialog-maintenance .maintenance-section-result {
+  background: #fff7eb;
+  border-color: #efd5a4;
+}
+
+.dialog-maintenance .maintenance-section-media {
+  background: #f8fbfd;
+}
+
+.dialog-maintenance .maintenance-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.dialog-maintenance .maintenance-section-head span {
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.dialog-maintenance .maintenance-section-head small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.dialog-maintenance .maintenance-section-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.dialog-maintenance .maintenance-section-grid .full {
+  grid-column: 1 / -1;
+}
+
+.dialog-maintenance .maintenance-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.dialog-maintenance .maintenance-field .field-label {
+  margin: 0;
+}
+
+.dialog-maintenance .maintenance-field input,
+.dialog-maintenance .maintenance-field select,
+.dialog-maintenance .maintenance-field textarea {
+  margin-top: 0;
+  height: 44px;
+  border-radius: 10px;
+}
+
+.dialog-maintenance .maintenance-field textarea {
+  min-height: 96px;
+  padding-top: 11px;
+  padding-bottom: 11px;
+  resize: vertical;
+}
+
+.dialog-maintenance .field-roomId select {
+  background: #fff;
+}
+
+.dialog-maintenance .field-item input {
+  background: #fff;
+}
+
+.dialog-maintenance .field-note textarea {
+  min-height: 96px;
+}
+
+.dialog-maintenance .field-amount input {
+  color: var(--danger);
+  font-size: 24px;
+  font-weight: 900;
+  background: #fff5f5;
+  border-color: #efc6c6;
+}
+
+.dialog-maintenance .field-status select {
+  color: #12635f;
+  border-color: #bfe3de;
+  background: #eff8f7;
+  font-weight: 700;
+}
+
+.dialog-maintenance .field-reimbursementBatchId select {
+  font-weight: 700;
+}
+
+.dialog-maintenance .maintenance-media-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.dialog-maintenance .maintenance-media-field {
+  padding: 12px;
+  border: 1px dashed #d2e3ea;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.dialog-maintenance .maintenance-media-field input[type="file"] {
+  height: auto;
+  min-height: 42px;
+}
+
+.dialog-maintenance .maintenance-existing-image {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.dialog-maintenance .maintenance-existing-image .upload-preview {
+  width: 100%;
+  max-width: none;
+  height: 88px;
+  object-fit: cover;
+  border: 1px solid #dbe7ec;
+  border-radius: 10px;
+}
+
+.dialog-maintenance .maintenance-existing-image .small {
+  align-self: flex-start;
+}
+
+.maintenance-row {
+  position: relative;
+}
+
+.maintenance-row td:first-child {
+  border-left: 3px solid transparent;
+}
+
+.maintenance-row-pending td:first-child {
+  border-left-color: #e0b44f;
+}
+
+.maintenance-row-pending td {
+  background: #fffdf5;
+}
+
+.maintenance-row-done td:first-child {
+  border-left-color: #5eaed1;
+}
+
+.maintenance-row-done td {
+  background: #f6fbfe;
+}
+
+.maintenance-row-reimbursed td:first-child {
+  border-left-color: #6cb89d;
+}
+
+.maintenance-row-reimbursed td {
+  background: #f6fcf8;
+}
+
+.maintenance-meta-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.maintenance-meta-card > strong {
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.maintenance-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.maintenance-meta-row span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #f3f8fa;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.maintenance-type-chip {
+  color: #12635f !important;
+  background: #e8f4f2 !important;
+}
+
+.maintenance-type-new {
+  color: #8a5b12 !important;
+  background: #fff2d4 !important;
+}
+
+.maintenance-type-remove {
+  color: #8b3438 !important;
+  background: #ffe6e8 !important;
+}
+
+.maintenance-item-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.maintenance-item-cell strong {
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.maintenance-item-cell span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.maintenance-amount {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #efc6c6;
+  border-radius: 999px;
+  background: #fff3f3;
+  color: var(--danger);
+  font-size: 15px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.maintenance-evidence-grid > div > span {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.maintenance-data-table tbody tr {
+  transition: background-color .16s ease, box-shadow .16s ease;
+}
+
+.maintenance-data-table tbody tr:hover {
+  box-shadow: inset 0 0 0 9999px rgba(239, 246, 251, .45);
+}
+
+.maintenance-data-table td:nth-child(4),
+.maintenance-data-table td:nth-child(5) {
+  vertical-align: middle;
+}
+
+.dialog-head,
+.move-in-dialog .dialog-head,
+.renewal-record-dialog .dialog-head,
+.room-items-dialog .dialog-head,
+.room-maintenance-dialog .dialog-head,
+.room-photos-dialog .dialog-head {
+  border-bottom-color: var(--line-soft);
+  background: linear-gradient(180deg, #fbfefe 0%, #fff 100%);
+}
+
+.dialog-actions,
+.move-in-actions {
+  border-top-color: var(--line-soft);
+}
+
+dialog,
+#record-dialog,
+.move-in-dialog,
+.renewal-record-dialog,
+.room-items-dialog,
+.room-maintenance-dialog,
+.room-photos-dialog,
+#maintenance-batch-dialog,
+#image-preview-dialog {
+  border-radius: 16px;
+  box-shadow: var(--shadow-strong);
+}
+
+.template-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.template-side,
+.template-editor {
+  min-width: 0;
+}
+
+.template-side .segmented {
+  width: 100%;
+}
+
+.template-editor {
+  padding: 20px;
+}
+
+.settings-grid,
+.account-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.settings-grid form,
+.account-panel form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 760px) {
+  .main {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .page-head,
+  .ui-page-head,
+  .section-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .page-head h1,
+  .ui-page-head h1 {
+    font-size: 28px;
+  }
+
+  .filter-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .segmented {
+    width: 100%;
+  }
+
+  .segmented button {
+    flex: 1 1 auto;
+  }
+
+  .template-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-grid form,
+  .account-panel form {
+    grid-template-columns: 1fr;
+  }
+}

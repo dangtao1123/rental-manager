@@ -1,0 +1,14 @@
+{
+  "name": "rental-manager",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Rental management workspace for rooms, tenants, maintenance, billing, and reimbursements",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --check server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

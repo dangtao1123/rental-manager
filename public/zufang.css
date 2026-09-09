@@ -1,0 +1,309 @@
+:root{--ink:#172b35;--muted:#71818b;--line:#d9e4e8;--blue:#1679b1;--blue-soft:#eef8fc;--green:#157d72;--danger:#c54b4b;--surface:#fff}*{box-sizing:border-box}body{margin:0;background:#f2f6f7;color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif}.rental-shell{width:min(1240px,100%);margin:auto;padding:26px 24px 60px}.rental-header{display:flex;justify-content:space-between;align-items:end;padding-bottom:22px}.eyebrow{margin:0 0 6px;color:var(--blue);font-size:11px;letter-spacing:1.7px;font-weight:800}.rental-header h1{margin:0;font-size:30px}.rental-header p:last-child{margin:8px 0 0;color:var(--muted)}button{font:inherit;cursor:pointer}.ghost{height:40px;padding:0 15px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink)}.primary{height:40px;padding:0 16px;border:0;border-radius:6px;background:var(--blue);color:#fff;font-weight:700}.wide{width:100%;margin-top:12px}.tabs{display:flex;gap:4px;overflow:auto;padding:5px;border:1px solid var(--line);border-radius:8px;background:#fff}.tabs button,.template-tabs button{min-width:110px;height:40px;border:0;border-radius:5px;background:transparent;color:var(--muted)}.tabs button.active,.template-tabs button.active{background:var(--green);color:#fff;font-weight:700}.tab-panel{display:none;margin-top:16px}.tab-panel.active{display:block}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}.stats div{padding:17px;border:1px solid var(--line);border-radius:8px;background:#fff}.stats span{display:block;color:var(--muted);font-size:13px}.stats strong{display:block;margin-top:7px;color:var(--blue);font-size:28px}.panel-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:16px}.panel{padding:20px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}.panel-title{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:14px}.panel-title h2{margin:0;font-size:19px}.panel-title p{margin:5px 0 0;color:var(--muted);font-size:13px}.data-list,.todo-list{display:grid;gap:9px}.lease-card,.todo-card,.room-card{padding:13px;border:1px solid var(--line);border-radius:7px;background:#fbfdfe}.lease-card{display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:12px;align-items:center}.lease-card strong,.room-card strong{display:block}.meta{color:var(--muted);font-size:12px;margin-top:5px}.money{color:var(--blue);font-weight:800}.room-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.room-card{min-height:130px}.room-card .room-actions,.row-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.small{height:32px;padding:0 9px;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--blue);font-size:12px}.danger{color:var(--danger)}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:11px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;white-space:nowrap}.table th{color:var(--muted);font-weight:600;background:#f8fafb}.template-tabs{display:flex;gap:6px;margin-bottom:17px;border-bottom:1px solid var(--line)}.template-form{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.template-form label,.dialog-fields label,.maintenance-filters label{display:block;color:var(--muted);font-size:12px}.template-form input,.template-form select,.dialog-fields input,.dialog-fields select,.dialog-fields textarea,.maintenance-filters input,.maintenance-filters select{width:100%;height:40px;margin-top:6px;padding:0 10px;border:1px solid var(--line);border-radius:5px;outline:0;background:#fff;color:var(--ink)}.dialog-fields textarea{height:78px;padding:9px;resize:vertical}.template-form input:focus,.dialog-fields input:focus,.dialog-fields select:focus,.maintenance-filters input:focus,.maintenance-filters select:focus{border-color:var(--blue)}#template-output{width:100%;min-height:170px;margin-top:17px;padding:13px;border:1px solid var(--line);border-radius:6px;resize:vertical;line-height:1.7}.status{min-height:18px;color:var(--green);font-size:13px;text-align:center}.todo-card{display:flex;justify-content:space-between;gap:10px}.todo-card strong{font-size:14px}.todo-card span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.room-card{border-width:2px}.room-occupied{border-color:#67b69f;background:#eaf8f2}.room-vacant{border-color:#df7777;background:#fff0f0}.room-card-head{display:flex;justify-content:space-between;gap:8px;align-items:start}.room-status{font-size:12px;font-weight:800}.room-occupied .room-status{color:#14745f}.room-vacant .room-status{color:#b43c3c}.room-tenant{margin-top:10px;font-size:13px;line-height:1.7}.room-expiry{margin-top:8px;color:#5f717a;font-size:12px}.room-expiry.urgent{color:#c03d3d;font-weight:800}.maintenance-filters{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:15px;padding:12px;border:1px solid var(--line);border-radius:6px;background:#f8fafb}.image-badge{color:var(--blue);font-weight:700}.upload-preview{display:block;max-width:160px;max-height:100px;margin-top:8px;border-radius:5px;border:1px solid var(--line)}.panel-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.expiry-alert{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:13px 16px;border:1px solid #df7777;border-radius:8px;background:#fff0f0;color:#a92f2f}.expiry-alert[hidden]{display:none}.expiry-alert strong{white-space:nowrap}.expiry-alert span{font-size:13px;line-height:1.6}dialog{width:min(calc(100% - 30px),650px);max-height:calc(100vh - 30px);padding:0;border:0;border-radius:9px;box-shadow:0 20px 70px #123b4a44}dialog::backdrop{background:#12273188}dialog form{padding:23px;max-height:calc(100vh - 30px);overflow:auto}.dialog-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.dialog-head h2{margin:0;font-size:21px}.dialog-head button{width:32px;height:32px;border:0;border-radius:5px;background:#f1f5f6;color:var(--muted);font-size:22px}.dialog-fields{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.dialog-fields .full{grid-column:1/-1}.dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.error{min-height:18px;color:var(--danger);font-size:13px}@media(max-width:800px){.rental-shell{padding:18px 13px 42px}.rental-header{align-items:start}.rental-header h1{font-size:25px}.rental-header p:last-child{font-size:13px}.stats{grid-template-columns:repeat(2,1fr);gap:8px}.stats div{padding:12px}.stats strong{font-size:24px}.panel-grid{grid-template-columns:1fr}.room-grid{grid-template-columns:repeat(2,1fr);gap:9px}.lease-card{grid-template-columns:1fr 1fr}.template-form,.dialog-fields,.maintenance-filters{grid-template-columns:1fr}.dialog-fields .full{grid-column:auto}.maintenance-filters .ghost{width:100%}.panel-title{flex-wrap:wrap}.panel-title>.primary{width:100%}.panel-actions{width:100%;justify-content:stretch}.panel-actions button{flex:1}.table th,.table td{padding:9px 8px}}@media(max-width:450px){.room-grid{grid-template-columns:1fr}.tabs button{min-width:90px}.lease-card{grid-template-columns:1fr}.panel{padding:15px}.panel-title{align-items:start}.panel-title .primary{height:36px;padding:0 10px;font-size:12px}.rental-header .ghost{height:36px}.room-card{padding:12px}.dialog-fields input,.dialog-fields select{height:42px}}
+  /* authentication form */
+  .auth-field{display:block;color:var(--muted);font-size:13px}.auth-field input{display:block;width:100%;height:42px;margin-top:7px;padding:0 10px;border:1px solid var(--line);border-radius:5px;outline:0}.auth-field input:focus{border-color:var(--blue)}
+  .renewal-link{cursor:pointer}.renewal-link:hover{color:var(--blue);text-decoration:underline}
+  .room-maintenance{border-color:#d59b4b;background:#fff8e9}.room-maintenance .room-status{color:#a86600}.room-admin-link{background:#176d88;color:#fff;border-color:#176d88}.summary-field input{border:0;background:transparent;padding-left:0;font-weight:800;color:var(--ink)}.field-durationPreset{grid-column:1/-1}.field-amount input{border:0;background:#fff5f5;color:#c53d3d;font-weight:800}
+  .dialog-renewal{grid-template-columns:repeat(3,1fr)}.dialog-renewal .field-durationPreset{grid-column:1/-1}.dialog-renewal .field-durationValue{grid-column:1/-1}.dialog-renewal .field-amount input{border:0;background:transparent;padding-left:0;color:#c53d3d;font-size:20px;font-weight:800}.dialog-renewal .field-startDate,.dialog-renewal .field-endDate{grid-column:span 1}
+  .room-expiring{border-color:#e5a23c;background:#fff8e9}.room-expiring .room-status{color:#b56a00}.calculated-field input{color:#c53d3d;font-weight:800;background:#fff5f5}.field-durationPreset{padding:12px;border:2px solid var(--blue);border-radius:7px;background:#eef8fc}.field-durationPreset select{height:46px;font-size:16px;font-weight:800;color:var(--blue)}.field-amount input{font-size:20px}.room-admin-item{display:flex;align-items:center;gap:6px;margin:3px 0;min-width:150px}.room-admin-item .item-thumb{width:28px;height:28px}.field-waterStart,.field-waterEnd,.field-waterUnitPrice,.field-waterAmount,.field-electricityStart,.field-electricityEnd,.field-electricityUnitPrice,.field-electricityAmount,.field-propertyAmount,.field-otherAmount{padding:10px;border:1px solid var(--line);border-radius:6px;background:#f8fafb}.field-waterStart,.field-waterEnd,.field-waterUnitPrice,.field-waterAmount{border-top-color:#73b6d8}.field-electricityStart,.field-electricityEnd,.field-electricityUnitPrice,.field-electricityAmount{border-top-color:#e0b44f}.field-propertyAmount,.field-otherAmount{border-top-color:#9c91d8}
+  .dialog-renewal .summary-field input{border:0;background:transparent;color:var(--ink);padding-left:0;font-weight:800}.dialog-renewal .field-amount input{color:#c53d3d;background:transparent}
+  .item-preview-trigger{cursor:zoom-in}#image-preview{display:block;max-width:calc(100vw - 50px);max-height:75vh;margin:0 auto 20px;object-fit:contain}#image-preview-dialog{width:min(calc(100% - 30px),900px)}
+  .room-admin-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.room-admin-actions .small{margin:0}#room-items-dialog{width:min(calc(100% - 30px),780px)}.renewal-record-dialog{width:min(calc(100% - 30px),820px);border-top:4px solid var(--green)}.renewal-record-dialog .dialog-head{padding:20px 22px 14px;margin:0;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#f7fbfa,#fff)}.renewal-record-dialog .dialog-head h2{font-size:20px}.dialog-kicker{margin:0 0 4px;color:var(--green);font-size:11px;font-weight:800;letter-spacing:1px}.renewal-record-dialog .table-wrap{padding:6px 22px 22px}.renewal-record-dialog .table{font-size:13px}.renewal-record-dialog .table th{background:#f3f8f7;color:#4f6d69}.renewal-record-dialog .table td{padding:13px 10px}.renewal-empty{display:flex;flex-direction:column;gap:7px;padding:28px 6px 32px;color:var(--muted);text-align:center}.renewal-empty strong{color:var(--ink);font-size:15px}.audit-detail{min-width:360px;max-width:760px;white-space:normal;line-height:1.65;color:var(--ink)}
+  @media(max-width:800px){.dialog-renewal{grid-template-columns:repeat(2,minmax(0,1fr))}.dialog-renewal .field-roomNo,.dialog-renewal .field-tenantName,.dialog-renewal .field-tenantPhone{grid-column:1/-1}.dialog-renewal .field-durationPreset,.dialog-renewal .field-durationValue{grid-column:1/-1}}
+  .maintenance-batch-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:#f8fafb}.maintenance-batch-actions span{margin-right:auto;color:var(--muted);font-size:12px}.room-photos-list{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:8px 22px 22px}.room-photo-card{display:flex;flex-direction:column;gap:7px}.room-photo{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;border:1px solid var(--line)}#room-maintenance-dialog{width:min(calc(100% - 30px),900px)}#room-photos-dialog{width:min(calc(100% - 30px),780px)}@media(max-width:600px){.room-photos-list{grid-template-columns:repeat(2,1fr)}.maintenance-batch-actions span{width:100%;margin-right:0}}
+  #rental .panel-title>.primary,#tenants .panel-title>.primary,#overview .panel-title>.primary{display:none}.room-actions{gap:8px}.lease-due strong,.tenant-dates strong{display:block;font-size:19px;color:var(--danger);margin-top:3px}.room-expiry.urgent{font-size:14px}.dialog-leases{grid-template-columns:repeat(3,minmax(0,1fr))}.dialog-leases .field-roomNo,.dialog-leases .field-idCardFront,.dialog-leases .field-idCardBack,.dialog-leases .field-note{grid-column:1/-1}.dialog-leases .field-totalMonthly input{color:var(--danger);font-weight:800}.dialog-renewal{grid-template-columns:repeat(3,minmax(0,1fr))}.dialog-renewal .field-durationPreset,.dialog-renewal .field-note{grid-column:1/-1}.dialog-checkouts{grid-template-columns:repeat(2,minmax(0,1fr))}.dialog-checkouts .field-roomNo,.dialog-checkouts .field-bankHeading,.dialog-checkouts .field-otherHeading,.dialog-checkouts .field-otherItems,.dialog-checkouts .field-refundAmount,.dialog-checkouts .field-note{grid-column:1/-1}.form-section-heading{margin-top:8px;padding:10px 0 4px;border-bottom:1px solid var(--line);color:var(--ink);font-size:16px;font-weight:800}.other-item-row{display:grid;grid-template-columns:1fr 150px auto;gap:8px;margin:8px 0}.other-item-row input{height:36px!important;margin-top:0!important}.dialog-fields{min-height:0}.dialog-fields .field-idCardFront,.dialog-fields .field-idCardBack{display:block}.dialog-fields .field-idCardFront img,.dialog-fields .field-idCardBack img{max-width:120px}.dialog-fields .field-waterAmount input,.dialog-fields .field-electricityAmount input,.dialog-fields .field-refundAmount input{color:var(--danger);font-weight:800}.dialog-checkouts .field-electricityAmount input{color:#9b5a00}.dialog-checkouts .field-refundAmount input{font-size:20px}.room-card .room-admin-link{background:var(--green);border-color:var(--green);color:#fff}#record-dialog form{display:flex;flex-direction:column;max-height:calc(100vh - 30px);overflow:hidden}#record-dialog .dialog-head,#record-dialog .dialog-actions{flex:0 0 auto}#record-dialog .dialog-fields{flex:1 1 auto;overflow:auto;padding:0 2px 8px}#record-dialog .dialog-actions{padding-top:12px;border-top:1px solid var(--line);background:#fff}.renewal-record-dialog,.room-items-dialog,.room-maintenance-dialog,.room-photos-dialog,#image-preview-dialog{max-height:calc(100vh - 30px);overflow:hidden}.renewal-record-dialog .table-wrap,.room-items-dialog .table-wrap,.room-maintenance-dialog .table-wrap,.room-photos-dialog .room-photos-list{overflow:auto;max-height:calc(100vh - 150px)}
+  @media(max-width:800px){.dialog-leases,.dialog-renewal,.dialog-checkouts{grid-template-columns:repeat(2,minmax(0,1fr))}.dialog-leases .field-roomNo,.dialog-leases .field-idCardFront,.dialog-leases .field-idCardBack,.dialog-leases .field-note,.dialog-renewal .field-durationPreset,.dialog-renewal .field-note,.dialog-checkouts .field-roomNo,.dialog-checkouts .field-bankHeading,.dialog-checkouts .field-otherHeading,.dialog-checkouts .field-otherItems,.dialog-checkouts .field-refundAmount,.dialog-checkouts .field-note{grid-column:1/-1}.other-item-row{grid-template-columns:1fr 100px auto}}@media(max-width:450px){.dialog-leases,.dialog-renewal,.dialog-checkouts{grid-template-columns:1fr}.dialog-leases label,.dialog-renewal label,.dialog-checkouts label{grid-column:1/-1}.other-item-row{grid-template-columns:1fr}.other-item-row button{width:max-content}}
+  .income-text{color:#16845c!important}.expense-text{color:#c43f45!important}.income-summary strong{color:#16845c!important}.expense-summary strong{color:#c43f45!important}.pending-summary{border-color:#e5b24e!important;background:#fff9e9!important}.pending-summary strong{color:#b26a00!important}.pending-summary small{display:block;margin-top:4px;color:#a66d18}.overview-finance-panel{margin:16px 0}.overview-finance{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.overview-finance>div{padding:12px;border:1px solid var(--line);border-radius:6px;background:#fff}.overview-finance span{display:block;color:var(--muted);font-size:12px}.overview-finance strong{display:block;margin-top:5px;font-size:20px;color:var(--blue)}#overview .stats>div:nth-child(-n+3){cursor:pointer;transition:transform .15s,box-shadow .15s}#overview .stats>div:nth-child(-n+3):hover{transform:translateY(-2px);box-shadow:0 5px 14px #0b41521c}.item-chip-list{display:flex;flex-wrap:wrap;gap:6px}.item-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border:1px solid var(--line);border-radius:5px;background:#f8fafb}.item-chip .item-thumb{width:24px;height:24px;margin:0}.income-summary,.expense-summary{background:#fff}.table .income-text,.table .expense-text{font-weight:700}@media(max-width:800px){.overview-finance{grid-template-columns:repeat(2,1fr)}}@media(max-width:450px){.overview-finance{grid-template-columns:1fr}}
+  #maintenance-list td:nth-child(6),#cost-list td:nth-child(4),#checkout-list td:nth-child(4){color:var(--danger);font-weight:700}#checkout-list td:nth-child(5){color:var(--green);font-weight:700}
+
+  /* Checkout uses a wide, fixed-footer layout so the refund result stays visible while details scroll. */
+  #record-dialog.checkout-dialog{width:min(calc(100% - 24px),980px)}
+  .dialog-checkouts{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+  .dialog-checkouts .field-roomNo,.dialog-checkouts .field-bankHeading,.dialog-checkouts .field-otherHeading,.dialog-checkouts .field-otherItems,.dialog-checkouts .field-note{grid-column:1/-1}
+  .dialog-checkouts .field-tenantName,.dialog-checkouts .field-tenantPhone,.dialog-checkouts .field-leaseStart,.dialog-checkouts .field-leaseEnd,.dialog-checkouts .field-paidThrough{grid-column:span 1}
+  .dialog-checkouts .field-checkoutDate,.dialog-checkouts .field-waterHeading,.dialog-checkouts .field-electricityHeading,.dialog-checkouts .field-propertyAmount{grid-column:1/-1}
+  .dialog-checkouts .field-deposit{display:none}
+  .checkout-refund-summary{margin-right:auto;min-width:360px;max-width:540px;padding:9px 12px;border:1px solid #efc6c6;border-radius:7px;background:#fff8f8}
+  .checkout-refund-summary[hidden]{display:none}
+  .refund-summary-title{display:flex;justify-content:space-between;gap:12px;color:var(--danger);font-weight:800}
+  .refund-summary-title strong{font-size:20px}
+  .refund-summary-grid{display:flex;flex-wrap:wrap;gap:5px 14px;margin-top:5px;color:var(--muted);font-size:12px}
+  .refund-summary-grid span{white-space:nowrap}
+  #record-dialog.checkout-dialog .dialog-actions{flex-wrap:wrap}
+  @media(max-width:800px){.dialog-checkouts{grid-template-columns:repeat(2,minmax(0,1fr))}.checkout-refund-summary{min-width:0;flex:1 1 100%;order:-1}}
+  @media(max-width:450px){.dialog-checkouts{grid-template-columns:1fr}.checkout-refund-summary{order:-1}.refund-summary-grid{display:grid;grid-template-columns:1fr 1fr}}
+
+  #overview .stats{grid-template-columns:repeat(4,1fr)}
+  .ledger-summary{grid-template-columns:repeat(4,1fr)}
+  .overview-todo-panel{margin-top:16px}
+  .overview-todo-panel .todo-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .todo-link{width:100%;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+  .todo-link:hover{border-color:var(--blue);background:var(--blue-soft)}
+  @media(max-width:800px){#overview .stats,.ledger-summary{grid-template-columns:repeat(2,1fr)}.overview-todo-panel .todo-list{grid-template-columns:1fr}}
+  @media(max-width:450px){#overview .stats,.ledger-summary{grid-template-columns:1fr 1fr}}
+
+  /* Maintenance status and evidence presentation. */
+  .maintenance-status{display:inline-flex;align-items:center;min-height:28px;padding:3px 9px;border-radius:999px;font-weight:700;white-space:nowrap}
+  .maintenance-status.status-pending{color:#9b6500;background:#fff1cf;border:1px solid #efc36b}
+  .maintenance-status.status-done{color:#176ca3;background:#e7f3fb;border:1px solid #9bc9e6}
+  .maintenance-status.status-reimbursed{color:#16845c;background:#e5f7ef;border:1px solid #8fd8b6}
+  .maintenance-data-table td{vertical-align:middle;white-space:nowrap}
+  .maintenance-record-table td:nth-child(6){white-space:normal;min-width:150px;max-width:280px}
+  .maintenance-image-link{display:inline-flex;width:58px;height:44px;padding:0;border:1px solid var(--line);border-radius:5px;background:#f8fafb;overflow:hidden;cursor:zoom-in}
+  .maintenance-image-link img{width:100%;height:100%;object-fit:cover}
+  .maintenance-batch-form{display:flex!important;flex-direction:column;gap:12px;padding:0 2px 12px}
+  .maintenance-batch-intro{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border:1px solid #cfe0e7;border-radius:8px;background:#f5fafc;color:var(--muted);font-size:12px}
+  .maintenance-batch-intro strong{color:var(--ink);font-size:15px}
+  .maintenance-batch-row{display:grid;grid-template-columns:34px 1.2fr 1fr 1fr 1.2fr 1.2fr .7fr 1fr 1fr 1fr auto;align-items:end;gap:8px;padding:12px;border:1px solid #d6e4e9;border-radius:8px;background:#fff}
+  .maintenance-row-index{align-self:center;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-weight:800}
+  .maintenance-batch-row label{display:flex;flex-direction:column;gap:5px;min-width:0;color:var(--muted);font-size:11px}
+  .maintenance-batch-row input,.maintenance-batch-row select{width:100%;min-width:0;height:36px;padding:0 8px;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink)}
+  .maintenance-upload-field input{font-size:11px;padding:7px 4px}
+  .maintenance-row-remove{align-self:center;white-space:nowrap}
+  .maintenance-batch-add{align-self:flex-start}
+  .maintenance-existing-image{display:flex;align-items:center;gap:8px;margin-top:8px}
+  .maintenance-existing-image .upload-preview{width:76px;height:54px;object-fit:cover;border:1px solid var(--line);border-radius:5px}
+  @media(max-width:1100px){.maintenance-batch-row{grid-template-columns:34px repeat(3,minmax(0,1fr));}.maintenance-batch-row label:nth-of-type(n+4){grid-column:span 1}.maintenance-row-remove{grid-column:4}}
+  @media(max-width:640px){.maintenance-batch-row{grid-template-columns:1fr 1fr}.maintenance-row-index{grid-column:1/-1}.maintenance-batch-row label,.maintenance-row-remove{grid-column:auto}.maintenance-row-remove{justify-self:start}.maintenance-data-table{min-width:1180px}}
+
+  /* Keep maintenance actions usable on wide records without squeezing the data columns. */
+  #record-dialog.maintenance-dialog,#record-dialog.maintenance-batch-dialog{width:min(1500px,calc(100vw - 24px))}
+  #room-maintenance-dialog{width:min(calc(100% - 24px),1500px)}
+  .maintenance-data-table{min-width:1480px}
+  .maintenance-data-table td:last-child{min-width:250px}
+  .maintenance-data-table .row-actions{align-items:center;flex-wrap:nowrap;gap:6px;margin-top:0}
+  .maintenance-data-table .row-actions .small{white-space:nowrap}
+  .maintenance-data-table .icon-button,.maintenance-batch-row .icon-button{display:inline-flex;align-items:center;justify-content:center;width:36px;min-width:36px;height:36px;padding:0}
+  .maintenance-data-table .icon-button iconify-icon,.maintenance-batch-row .icon-button iconify-icon{font-size:16px;line-height:1}
+  /* Maintenance records stay readable within the viewport: stack secondary details and evidence. */
+  .maintenance-data-table{width:100%!important;min-width:0!important;table-layout:fixed}
+  .maintenance-data-table th,.maintenance-data-table td{white-space:normal!important;vertical-align:middle;overflow-wrap:anywhere}
+  .maintenance-record-table th:nth-child(1),.maintenance-record-table td:nth-child(1){width:38px;text-align:center}
+  .maintenance-record-table th:nth-child(2),.maintenance-record-table td:nth-child(2){width:18%}
+  .maintenance-record-table th:nth-child(3),.maintenance-record-table td:nth-child(3){width:31%}
+  .maintenance-record-table th:nth-child(4),.maintenance-record-table td:nth-child(4){width:7%;white-space:nowrap!important}
+  .maintenance-record-table th:nth-child(5),.maintenance-record-table td:nth-child(5){width:12%}
+  .maintenance-record-table th:nth-child(6),.maintenance-record-table td:nth-child(6){width:20%}
+  .maintenance-record-table th:nth-child(7),.maintenance-record-table td:nth-child(7){width:150px}
+  .maintenance-meta-cell{display:flex;flex-direction:column;gap:3px;line-height:1.35}
+  .maintenance-meta-cell strong{color:var(--ink);font-weight:700}
+  .maintenance-meta-cell span{color:var(--muted);font-size:12px}
+  .maintenance-item-cell{display:flex;flex-direction:column;gap:4px;line-height:1.35}
+  .maintenance-item-cell strong{color:var(--ink);font-weight:700}
+  .maintenance-item-cell span{color:var(--muted);font-size:12px}
+  .maintenance-evidence-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;align-items:start}
+  .maintenance-evidence-grid>div{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;color:var(--muted);font-size:10px}
+  .maintenance-evidence-grid .maintenance-image-link{width:46px;height:34px}
+  .maintenance-evidence-grid .meta{font-size:10px;white-space:nowrap}
+  .maintenance-data-table .row-actions{display:flex;align-items:center;justify-content:flex-start;gap:5px;flex-wrap:wrap;margin-top:0}
+  .maintenance-data-table .row-actions .small{white-space:nowrap;padding:0 7px}
+  .maintenance-data-table .row-actions .icon-button{width:32px;min-width:32px;height:32px;padding:0}
+  .room-maintenance-dialog .table-wrap{overflow-x:hidden!important}
+  .room-maintenance-dialog .table{width:100%!important;min-width:0!important;table-layout:fixed}
+  .room-maintenance-dialog .table th,.room-maintenance-dialog .table td{white-space:normal;overflow-wrap:anywhere}
+  .room-maintenance-dialog .table th:nth-child(1),.room-maintenance-dialog .table td:nth-child(1){width:11%}
+  .room-maintenance-dialog .table th:nth-child(2),.room-maintenance-dialog .table td:nth-child(2){width:15%}
+  .room-maintenance-dialog .table th:nth-child(3),.room-maintenance-dialog .table td:nth-child(3){width:24%}
+  .room-maintenance-dialog .table th:nth-child(4),.room-maintenance-dialog .table td:nth-child(4){width:9%}
+  .room-maintenance-dialog .table th:nth-child(5),.room-maintenance-dialog .table td:nth-child(5){width:14%}
+  .room-maintenance-dialog .table th:nth-child(6),.room-maintenance-dialog .table td:nth-child(6){width:17%}
+  .room-maintenance-dialog .table th:nth-child(7),.room-maintenance-dialog .table td:nth-child(7){width:170px}
+  .maintenance-batch-dialog .dialog-fields{overflow-x:hidden!important}
+  .maintenance-batch-dialog .maintenance-batch-row{position:relative;min-width:0!important;width:100%;box-sizing:border-box;grid-template-columns:repeat(4,minmax(0,1fr));padding-left:52px}
+  .maintenance-batch-dialog .maintenance-batch-row .maintenance-row-index{position:absolute;left:14px;top:14px}
+  .maintenance-batch-dialog .maintenance-batch-row label:nth-of-type(n){grid-column:span 1}
+  .maintenance-batch-dialog .maintenance-batch-row .maintenance-row-remove{grid-column:auto;justify-self:end}
+  @media(max-width:800px){#record-dialog.maintenance-dialog,#record-dialog.maintenance-batch-dialog{width:calc(100vw - 16px)}#room-maintenance-dialog{width:calc(100vw - 16px)}.maintenance-batch-dialog .maintenance-batch-row{grid-template-columns:1fr 1fr;gap:10px;padding-left:52px}.maintenance-batch-dialog .maintenance-batch-row .maintenance-row-index{grid-column:auto}.maintenance-batch-dialog .maintenance-batch-row label,.maintenance-batch-dialog .maintenance-batch-row .maintenance-row-remove{grid-column:auto}.maintenance-record-table th:nth-child(n),.maintenance-record-table td:nth-child(n){width:auto}.maintenance-record-table th:nth-child(7),.maintenance-record-table td:nth-child(7){width:128px}}
+  @media(max-width:800px){
+    #maintenance-list{overflow:visible}
+    #maintenance-list .maintenance-data-table{display:block;width:100%!important;min-width:0!important;border-collapse:separate;border-spacing:0}
+    #maintenance-list .maintenance-data-table thead{display:none}
+    #maintenance-list .maintenance-data-table tbody{display:block}
+    #maintenance-list .maintenance-data-table tr{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,auto);gap:0 10px;margin:0 0 12px;padding:9px 10px 9px 38px;border:1px solid #d5e2e7;border-radius:10px;background:#fff;box-shadow:0 3px 10px rgba(23,43,53,.06)}
+    #maintenance-list .maintenance-data-table tr::before{content:"";position:absolute;left:-1px;top:11px;bottom:11px;width:3px;border-radius:3px;background:var(--blue)}
+    #maintenance-list .maintenance-data-table td{display:block;width:auto!important;min-width:0;padding:6px 0;border:0;white-space:normal!important;overflow-wrap:anywhere;line-height:1.45;vertical-align:top}
+    #maintenance-list .maintenance-data-table td::before{display:block;margin-bottom:1px;color:var(--muted);font-size:11px;line-height:1.3}
+    #maintenance-list .maintenance-data-table td:nth-child(1){position:absolute;left:11px;top:13px;width:20px!important;padding:0;text-align:center}
+    #maintenance-list .maintenance-data-table td:nth-child(1)::before{display:none}
+    #maintenance-list .maintenance-record-table td:nth-child(2)::before{content:"房间 / 日期 / 类型"}
+    #maintenance-list .maintenance-record-table td:nth-child(3){grid-column:1 / span 2}
+    #maintenance-list .maintenance-record-table td:nth-child(3)::before{content:"事项 / 备注"}
+    #maintenance-list .maintenance-record-table td:nth-child(4){grid-column:3;align-self:start;justify-self:end;margin-top:3px;padding:4px 8px;border:1px solid #efc6c6;border-radius:999px;background:#fff3f3;color:var(--danger)!important;font-size:14px;white-space:nowrap!important}
+    #maintenance-list .maintenance-record-table td:nth-child(4)::before{display:none}
+    #maintenance-list .maintenance-record-table td:nth-child(5){grid-column:1 / span 2}
+    #maintenance-list .maintenance-record-table td:nth-child(5)::before{content:"状态"}
+    #maintenance-list .maintenance-record-table td:nth-child(6){grid-column:1/-1;margin-top:4px;padding-top:9px;border-top:1px solid #edf2f4}
+    #maintenance-list .maintenance-record-table td:nth-child(6)::before{content:"图片凭证"}
+    #maintenance-list .maintenance-record-table td:nth-child(7){grid-column:1/-1;padding-top:8px}
+    #maintenance-list .maintenance-record-table td:nth-child(7)::before{content:"操作"}
+    #maintenance-list .maintenance-record-table td:nth-child(7) .row-actions{gap:6px;margin-top:0}
+    #maintenance-list .maintenance-record-table td:nth-child(7) .row-actions .small{min-height:32px}
+    #maintenance-list .maintenance-data-table .maintenance-evidence-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+    #maintenance-list .maintenance-data-table .maintenance-evidence-grid>div{font-size:11px}
+    #maintenance-list .maintenance-data-table .maintenance-evidence-grid .maintenance-image-link{width:100%;height:56px}
+    #maintenance-list .maintenance-data-table .maintenance-evidence-grid .meta{font-size:11px;white-space:nowrap}
+  }
+  @media(max-width:420px){
+    #maintenance-list .maintenance-data-table tr{gap:0 8px;margin-bottom:10px;padding:8px 8px 8px 35px}
+    #maintenance-list .maintenance-data-table td:nth-child(1){left:9px;top:12px}
+    #maintenance-list .maintenance-record-table td:nth-child(4){padding:3px 6px;font-size:13px}
+    #maintenance-list .maintenance-data-table .maintenance-evidence-grid .maintenance-image-link{height:50px}
+  }
+  #room-maintenance-dialog .table-wrap{overflow-x:hidden!important}
+  #room-maintenance-dialog .table{width:100%!important;min-width:0!important;table-layout:fixed}
+  #room-maintenance-dialog .table th,#room-maintenance-dialog .table td{white-space:normal!important;overflow-wrap:anywhere;vertical-align:middle}
+  #room-maintenance-dialog .table th:nth-child(1),#room-maintenance-dialog .table td:nth-child(1){width:11%}
+  #room-maintenance-dialog .table th:nth-child(2),#room-maintenance-dialog .table td:nth-child(2){width:15%}
+  #room-maintenance-dialog .table th:nth-child(3),#room-maintenance-dialog .table td:nth-child(3){width:24%}
+  #room-maintenance-dialog .table th:nth-child(4),#room-maintenance-dialog .table td:nth-child(4){width:9%}
+  #room-maintenance-dialog .table th:nth-child(5),#room-maintenance-dialog .table td:nth-child(5){width:14%}
+  #room-maintenance-dialog .table th:nth-child(6),#room-maintenance-dialog .table td:nth-child(6){width:17%}
+  #room-maintenance-dialog .table th:nth-child(7),#room-maintenance-dialog .table td:nth-child(7){width:150px}
+
+  /* On desktop, keep every batch-maintenance record on one row. The row can use the wider dialog; mobile keeps the two-column form above. */
+  @media(min-width:1101px){
+    #record-dialog.maintenance-batch-dialog{width:min(1500px,calc(100vw - 24px))!important}
+    .maintenance-batch-dialog .maintenance-batch-row{
+      grid-template-columns:28px minmax(100px,1.2fr) minmax(86px,.9fr) minmax(105px,1.05fr) minmax(115px,1.2fr) minmax(95px,1fr) minmax(58px,.65fr) repeat(3,minmax(95px,1fr)) 34px;
+      padding-left:12px;
+      align-items:start;
+      min-height:110px!important;
+      min-width:0;
+      padding-top:14px!important;
+      padding-bottom:22px!important;
+      overflow:visible;
+    }
+    .maintenance-batch-dialog .maintenance-batch-row .maintenance-row-index{position:static;left:auto;top:auto;align-self:center}
+    .maintenance-batch-dialog .maintenance-batch-row label{display:grid!important;grid-template-rows:22px 44px;gap:8px;align-content:start;min-width:0;white-space:nowrap;overflow:hidden;line-height:22px;scroll-margin-block:28px}
+    .maintenance-batch-dialog .maintenance-batch-row input,.maintenance-batch-dialog .maintenance-batch-row select{min-width:0;max-width:100%;height:44px!important;box-sizing:border-box}
+    .maintenance-batch-dialog .maintenance-upload-field input{font-size:10px;padding-left:2px;padding-right:2px}
+    .maintenance-batch-dialog .maintenance-batch-row .maintenance-row-remove{grid-column:auto;justify-self:stretch;align-self:center}
+  }
+  @media(min-width:801px) and (max-width:1100px){
+    #record-dialog.maintenance-batch-dialog{width:calc(100vw - 24px)!important}
+    .maintenance-batch-dialog .dialog-fields{overflow-x:auto!important}
+    .maintenance-batch-dialog .maintenance-batch-row{grid-template-columns:34px repeat(3,minmax(180px,1fr));min-width:760px;min-height:86px;overflow:visible}
+  }
+  /* Keep a focused control and its label inside the scroll viewport instead of jumping the label away. */
+  .maintenance-batch-dialog .dialog-fields{scroll-padding-top:28px!important;scroll-padding-bottom:36px!important;overscroll-behavior:contain}
+  .maintenance-batch-dialog .maintenance-batch-row input,.maintenance-batch-dialog .maintenance-batch-row select{scroll-margin-top:28px;scroll-margin-bottom:28px}
+
+  /* Final maintenance batch layout: one readable row on PC, responsive wrapping on small screens. */
+  #record-dialog.maintenance-batch-dialog{
+    width:min(1500px,calc(100vw - 24px))!important;
+    max-width:calc(100vw - 24px)!important;
+  }
+  #record-dialog.maintenance-batch-dialog form{
+    display:flex!important;
+    flex-direction:column!important;
+    min-width:0!important;
+    max-height:calc(100vh - 30px)!important;
+    overflow:hidden!important;
+  }
+  #record-dialog.maintenance-batch-dialog .maintenance-batch-form{
+    display:flex!important;
+    flex:1 1 auto!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    min-width:0!important;
+    min-height:0!important;
+    overflow:auto!important;
+    overflow-anchor:none;
+    scroll-padding:32px 0 48px!important;
+  }
+  #record-dialog.maintenance-batch-dialog #maintenance-batch-rows{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:10px!important;
+    min-width:0!important;
+    overflow:visible!important;
+  }
+  #record-dialog.maintenance-batch-dialog .maintenance-batch-row{
+    display:grid!important;
+    grid-template-columns:28px 150px 120px 145px minmax(180px,1fr) 150px 88px 132px 132px 132px 40px!important;
+    align-items:start!important;
+    column-gap:10px!important;
+    row-gap:0!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:104px!important;
+    padding:14px 12px!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+    overflow-anchor:none;
+  }
+  #record-dialog.maintenance-batch-dialog .maintenance-batch-row label{
+    display:grid!important;
+    grid-template-rows:22px 44px!important;
+    align-content:start!important;
+    gap:8px!important;
+    min-width:0!important;
+    max-width:100%!important;
+    white-space:normal!important;
+    overflow:visible!important;
+    line-height:22px!important;
+    scroll-margin-block:32px!important;
+  }
+  #record-dialog.maintenance-batch-dialog .maintenance-batch-row label>input,
+  #record-dialog.maintenance-batch-dialog .maintenance-batch-row label>select,
+  #record-dialog.maintenance-batch-dialog .maintenance-batch-row label>[data-maint-item-wrap]{
+    min-width:0!important;
+    max-width:100%!important;
+    width:100%!important;
+  }
+  #record-dialog.maintenance-batch-dialog .maintenance-batch-row label>[data-maint-item-wrap]{
+    display:block!important;
+  }
+  #record-dialog.maintenance-batch-dialog .maintenance-batch-row label>[data-maint-item-wrap]>input,
+  #record-dialog.maintenance-batch-dialog .maintenance-batch-row label>[data-maint-item-wrap]>select{
+    height:44px!important;
+  }
+  #record-dialog.maintenance-batch-dialog .maintenance-batch-row input,
+  #record-dialog.maintenance-batch-dialog .maintenance-batch-row select{
+    height:44px!important;
+    box-sizing:border-box!important;
+    scroll-margin:32px 0!important;
+  }
+  #record-dialog.maintenance-batch-dialog .maintenance-upload-field input{
+    font-size:10px!important;
+    padding-left:3px!important;
+    padding-right:3px!important;
+  }
+  #record-dialog.maintenance-batch-dialog .maintenance-row-index{
+    position:static!important;
+    align-self:center!important;
+  }
+  #record-dialog.maintenance-batch-dialog .maintenance-row-remove{
+    align-self:center!important;
+    justify-self:stretch!important;
+    min-width:40px!important;
+  }
+
+  @media(min-width:801px) and (max-width:1100px){
+    #record-dialog.maintenance-batch-dialog .maintenance-batch-form{
+      overflow-x:auto!important;
+    }
+    #record-dialog.maintenance-batch-dialog .maintenance-batch-row{
+      min-width:1280px!important;
+    }
+  }
+  @media(max-width:800px){
+    #record-dialog.maintenance-batch-dialog{
+      width:calc(100vw - 16px)!important;
+      max-width:calc(100vw - 16px)!important;
+    }
+    #record-dialog.maintenance-batch-dialog .maintenance-batch-form{
+      overflow-x:hidden!important;
+    }
+    #record-dialog.maintenance-batch-dialog .maintenance-batch-row{
+      grid-template-columns:repeat(2,minmax(0,1fr))!important;
+      min-width:0!important;
+      min-height:0!important;
+      padding:14px 12px 16px 52px!important;
+      row-gap:10px!important;
+    }
+    #record-dialog.maintenance-batch-dialog .maintenance-row-index{
+      position:absolute!important;
+      left:14px!important;
+      top:14px!important;
+    }
+  }

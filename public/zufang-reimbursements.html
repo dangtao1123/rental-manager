@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>维护待报销明细</title>
+  <style>
+    :root{--ink:#17323d;--muted:#718791;--line:#d9e5e9;--blue:#1979b2;--blue-soft:#eaf6fb;--green:#198b71;--amber:#b87516;--amber-soft:#fff7e7;--danger:#c9484e;--surface:#fff;--surface-soft:#f7fafb;--shadow:0 8px 24px rgba(18,49,63,.06);--shadow-strong:0 22px 60px rgba(18,49,63,.16)}
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#eef4f5 0%,#edf2f4 100%);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;overflow-x:hidden}
+    .shell{width:min(1240px,100%);margin:auto;padding:32px 22px 54px}
+    .header{display:flex;justify-content:space-between;gap:18px;align-items:end;margin-bottom:18px}
+    .eyebrow{margin:0 0 6px;color:var(--blue);font-size:12px;font-weight:800;letter-spacing:1.6px}
+    h1{margin:0;font-size:32px;line-height:1.12}
+    .meta{color:var(--muted);font-size:13px}
+    .summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:16px}
+    .summary-card,.panel{border:1px solid #e3edf0;border-radius:12px;background:var(--surface);box-shadow:var(--shadow)}
+    .summary-card{padding:17px}
+    .summary-card span{display:block;color:var(--muted);font-size:13px}
+    .summary-card strong{display:block;margin-top:6px;font-size:30px;color:var(--blue)}
+    .summary-card.amount{border-color:#efc066;background:#fff8e9}
+    .summary-card.amount strong{color:#c57600}
+    .title-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .batch-badge{display:inline-flex;align-items:center;padding:5px 11px;border-radius:999px;background:#e9f6ff;color:var(--blue);font-size:12px;font-weight:800;line-height:1.2}
+    .panel{padding:20px}
+    .table-wrap{overflow:auto;border:1px solid #e3edf0;border-radius:12px}
+    table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+    th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    th{position:sticky;top:0;background:#f5f9fa;color:var(--muted);white-space:nowrap;z-index:1}
+    tbody tr:nth-child(even) td{background:#fcfeff}
+    tbody tr:hover td{background:#f3f8fb}
+    td{line-height:1.55;overflow-wrap:anywhere}
+    .amount-text{color:var(--danger);font-weight:800;white-space:nowrap}
+    .item-cell strong{display:block}
+    .item-cell span{display:block;margin-top:3px;color:#526874}
+    .image-grid{display:grid;grid-template-columns:repeat(3,76px);gap:8px}
+    .image-slot span{display:block;margin-bottom:4px;color:var(--muted);font-size:12px}
+    .image-slot button{display:block;width:72px;height:54px;padding:0;border:1px solid #e3edf0;border-radius:8px;background:#fff;cursor:zoom-in;overflow:hidden;box-shadow:var(--shadow)}
+    .image-slot img{width:100%;height:100%;object-fit:cover}
+    .missing{display:inline-flex;align-items:center;justify-content:center;width:72px;height:54px;border:1px dashed #d9e5e9;border-radius:8px;color:var(--muted);font-size:12px;text-align:center;background:#fff}
+    .empty{padding:34px 10px;color:var(--muted);text-align:center}
+    dialog{width:min(980px,calc(100% - 28px));padding:0;border:0;border-radius:16px;box-shadow:var(--shadow-strong)}
+    dialog::backdrop{background:#12273188}
+    .dialog-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+    .dialog-head h2{margin:0;font-size:18px}
+    .dialog-head button{width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:#f8fafb;color:var(--muted);font-size:22px;cursor:pointer}
+    #preview-image{display:block;max-width:calc(100vw - 54px);max-height:78vh;margin:18px auto;object-fit:contain}
+    @media(max-width:720px){
+      .shell{padding:22px 12px 40px}
+      .header{display:block}
+      .header h1{font-size:25px}
+      .header .meta{line-height:1.6}
+      .summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+      .summary-card{padding:13px 12px}
+      .summary-card strong{font-size:25px}
+      .panel{padding:12px}
+      .table-wrap{overflow:visible;border:0}
+      table,tbody{display:block}
+      thead{display:none}
+      tr{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,auto);gap:0 12px;margin-bottom:14px;padding:10px 12px 10px 16px;border:1px solid #d5e2e7;border-radius:12px;background:#fff;box-shadow:0 3px 10px rgba(23,43,53,.06)}
+      tr::before{content:"";position:absolute;left:-1px;top:12px;bottom:12px;width:3px;border-radius:3px;background:var(--blue)}
+      td{display:block;min-width:0;padding:7px 0;border:0;white-space:normal;overflow-wrap:anywhere;line-height:1.5}
+      td::before{display:block;margin-bottom:1px;color:var(--muted);font-size:11px;line-height:1.3}
+      td:nth-child(1)::before{content:"房间"}
+      td:nth-child(2)::before{content:"维护日期"}
+      td:nth-child(3)::before{content:"类型"}
+      td:nth-child(4)::before{content:"事项 / 备注"}
+      td:nth-child(5)::before{content:"金额"}
+      td:nth-child(6)::before{content:"图片凭证"}
+      td:nth-child(4){grid-column:1 / span 2}
+      td:nth-child(5){grid-column:3;align-self:start;justify-self:end}
+      td:nth-child(6){grid-column:1/-1;margin-top:5px;padding-top:9px;border-top:1px solid #edf2f4}
+      .amount-text{align-self:start;margin-top:4px;padding:4px 8px;border:1px solid #efc6c6;border-radius:999px;background:#fff3f3;font-size:14px}
+      .amount-text::before{display:none}
+      .item-cell strong{font-size:14px}
+      .item-cell span{font-size:12px;line-height:1.4}
+      .image-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+      .image-slot{min-width:0}
+      .image-slot span{margin-bottom:3px;font-size:11px}
+      .image-slot button,.missing{width:100%;height:54px}
+    }
+    @media(max-width:420px){
+      .summary{grid-template-columns:1fr}
+      tr{gap:0 8px;margin-bottom:11px;padding:8px 9px 8px 13px}
+      tr::before{top:10px;bottom:10px}
+      .amount-text{padding:3px 6px;font-size:13px}
+      .image-slot button,.missing{height:50px}
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="header">
+      <div>
+        <p class="eyebrow">REIMBURSEMENT</p>
+        <div class="title-line"><h1>维护待报销明细</h1><span id="batch-name" class="batch-badge" hidden></span></div>
+        <p class="meta">只读页面，仅展示系统中已完成但未报销的维护记录。</p>
+      </div>
+      <p id="generated-at" class="meta"></p>
+    </div>
+    <section class="summary" aria-label="待报销统计">
+      <div class="summary-card"><span>待报销条数</span><strong id="count">0</strong></div>
+      <div class="summary-card amount"><span>待报销总金额</span><strong id="total">0元</strong></div>
+    </section>
+    <section class="panel">
+      <div id="report-list" class="table-wrap"><p class="empty">正在加载明细...</p></div>
+    </section>
+  </main>
+  <dialog id="preview-dialog">
+    <div class="dialog-head"><h2 id="preview-title">图片预览</h2><button id="preview-close" type="button" aria-label="关闭">×</button></div>
+    <img id="preview-image" alt="维护图片预览" />
+  </dialog>
+  <script>
+    const esc = (value) => String(value ?? '').replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+    const money = (value) => `${Number(value || 0).toFixed(2).replace(/\.00$/, '')}元`;
+    const query = new URLSearchParams(location.search);
+    const normalizeFileUrl = (value) => {
+      if (typeof value !== 'string') return value;
+      if (!location.pathname.startsWith('/loan/')) return value;
+      if (value.startsWith('../api/zufang/files/')) return `/loan/${value.slice(3)}`;
+      if (value.startsWith('/api/zufang/files/')) return `/loan${value}`;
+      return value;
+    };
+    const apiBase = location.pathname.startsWith('/loan/') ? '/loan/api/zufang/' : '/api/zufang/';
+    const imageCell = (label, value) => value ? `<div class="image-slot"><span>${label}</span><button type="button" data-preview-image="${esc(value)}" data-preview-title="${label}"><img src="${esc(value)}" alt="${label}" /></button></div>` : `<div class="image-slot"><span>${label}</span><em class="missing">未上传</em></div>`;
+    const itemCell = (row) => `<div class="item-cell"><strong>${esc(row.item || '未填写事项')}</strong>${row.note ? `<span>${esc(row.note)}</span>` : ''}</div>`;
+    async function loadReport() {
+      const batchId = query.get('batch') || '';
+      const response = await fetch(`${apiBase}public/reimbursements${batchId ? `?batch=${encodeURIComponent(batchId)}` : ''}`, { headers: { Accept: 'application/json' } });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.message || `明细读取失败（${response.status}）`);
+      const data = payload.data || { count: 0, totalAmount: 0, rows: [] };
+      const batch = data.batch || null;
+      const rows = (data.rows || []).map((row) => ({ ...row, beforeImage: normalizeFileUrl(row.beforeImage), afterImage: normalizeFileUrl(row.afterImage), paymentProof: normalizeFileUrl(row.paymentProof) }));
+      document.querySelector('#count').textContent = data.count || 0;
+      document.querySelector('#total').textContent = money(data.totalAmount);
+      document.querySelector('#generated-at').textContent = data.generatedAt ? `生成时间：${new Date(data.generatedAt).toLocaleString('zh-CN')}` : '';
+      const batchName = document.querySelector('#batch-name');
+      if (batchName) {
+        batchName.hidden = !batch;
+        batchName.textContent = batch ? batch.name || '未命名批次' : '';
+      }
+      document.title = batch ? `${batch.name || '未命名批次'} · 维护报销批次` : '维护待报销明细';
+      document.querySelector('#report-list').innerHTML = rows.length ? `<table><thead><tr><th>房间</th><th>维护日期</th><th>类型</th><th>事项 / 备注</th><th>金额</th><th>图片凭证</th></tr></thead><tbody>${rows.map((row) => `<tr><td>${esc(row.roomLabel || row.roomNo || '')}</td><td>${esc(row.maintenanceDate || '')}</td><td>${esc(row.maintenanceTypeLabel || '')}</td><td>${itemCell(row)}</td><td class="amount-text">${money(row.amount)}</td><td><div class="image-grid">${imageCell('维护前', row.beforeImage)}${imageCell('维护后', row.afterImage)}${imageCell('付款', row.paymentProof)}</div></td></tr>`).join('')}</tbody></table>` : '<p class="empty">暂无待报销维护记录</p>';
+    }
+    document.addEventListener('click', (event) => {
+      const preview = event.target.closest('[data-preview-image]');
+      if (!preview) return;
+      document.querySelector('#preview-title').textContent = preview.dataset.previewTitle || '图片预览';
+      document.querySelector('#preview-image').src = preview.dataset.previewImage;
+      document.querySelector('#preview-dialog').showModal();
+    });
+    document.querySelector('#preview-close').addEventListener('click', () => document.querySelector('#preview-dialog').close());
+    loadReport().catch((error) => { document.querySelector('#report-list').innerHTML = `<p class="empty">${esc(error.message)}</p>`; });
+  </script>
+</body>
+</html>
