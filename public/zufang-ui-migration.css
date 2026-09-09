@@ -354,6 +354,105 @@ dialog table .small { margin-top: 0; margin-bottom: 0; }
   }
 }
 
+/* Shared console language for maintenance list, detail and navigation. */
+.sidebar {
+  background: #102f3a;
+}
+
+.sidebar .workspace-label {
+  color: #79c8c8;
+  letter-spacing: .14em;
+}
+
+.sidebar .nav-item {
+  min-height: 44px;
+  border-radius: 9px;
+  color: #b7cdd1;
+}
+
+.sidebar .nav-item:hover {
+  border-color: rgba(93, 190, 190, .35);
+  background: #174650;
+}
+
+.sidebar .nav-item.active {
+  border-color: #2d8589;
+  background: #1b6269;
+  box-shadow: inset 3px 0 #f0b44e, 0 6px 14px rgba(0, 0, 0, .14);
+}
+
+#record-dialog.maintenance-dialog .dialog-head {
+  border-left: 4px solid #18a2a2;
+  padding-left: 24px;
+}
+
+#record-dialog.maintenance-dialog .dialog-head h2 {
+  letter-spacing: -.02em;
+}
+
+#maintenance-list .maintenance-record-table {
+  border-collapse: separate;
+  border-spacing: 0 6px;
+}
+
+#maintenance-list .maintenance-record-table thead th {
+  border-bottom: 0;
+  background: #edf5f7;
+  color: #496b78;
+  font-size: 12px;
+  letter-spacing: .02em;
+}
+
+#maintenance-list .maintenance-record-table tbody tr {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(20, 52, 64, .05);
+}
+
+#maintenance-list .maintenance-record-table tbody tr:hover {
+  background: #f8fcfd;
+  box-shadow: 0 4px 12px rgba(20, 92, 112, .1);
+}
+
+#maintenance-list .maintenance-record-table tbody td {
+  border-top: 1px solid #e4eef1;
+  border-bottom: 1px solid #e4eef1;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+#maintenance-list .maintenance-record-table tbody td:first-child {
+  border-left: 3px solid #c8e5e4;
+  border-radius: 9px 0 0 9px;
+}
+
+#maintenance-list .maintenance-record-table tbody td:last-child {
+  border-right: 1px solid #e4eef1;
+  border-radius: 0 9px 9px 0;
+}
+
+#maintenance-list .maintenance-record-table .maintenance-item-cell strong {
+  font-size: 15px;
+  letter-spacing: -.01em;
+}
+
+#maintenance-list .maintenance-record-table .maintenance-amount {
+  min-height: 32px;
+  padding: 0 11px;
+  background: #fff5f3;
+  border-color: #f0c2bb;
+  color: #c84b43;
+}
+
+@media (max-width: 800px) {
+  #record-dialog.maintenance-dialog .dialog-head {
+    padding-left: 16px;
+  }
+
+  #maintenance-list .maintenance-record-table tbody tr {
+    box-shadow: 0 3px 10px rgba(20, 52, 64, .08);
+  }
+}
+
 /* UI polish pass: widen the workspace a little and make dense lists easier to scan. */
 .rental-shell {
   width: min(1360px, 100%);
@@ -1462,4 +1561,64 @@ dialog,
   .account-panel form {
     grid-template-columns: 1fr;
   }
+}
+
+/* Final shared console overrides. */
+.sidebar .nav-item {
+  min-height: 44px;
+  border-radius: 9px;
+}
+
+.sidebar .nav-item.active {
+  box-shadow: inset 3px 0 #f0b44e, 0 6px 14px rgba(0, 0, 0, .14);
+}
+
+#record-dialog.maintenance-dialog .dialog-head {
+  border-left: 4px solid #18a2a2;
+  padding-left: 24px;
+}
+
+#maintenance-list .maintenance-record-table {
+  border-collapse: separate;
+  border-spacing: 0 6px;
+}
+
+#maintenance-list .maintenance-record-table thead th {
+  border-bottom: 0;
+  background: #edf5f7;
+  color: #496b78;
+}
+
+#maintenance-list .maintenance-record-table tbody tr {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(20, 52, 64, .05);
+}
+
+#maintenance-list .maintenance-record-table tbody td {
+  border-top: 1px solid #e4eef1;
+  border-bottom: 1px solid #e4eef1;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+#maintenance-list .maintenance-record-table tbody td:first-child {
+  border-left: 3px solid #c8e5e4;
+  border-radius: 9px 0 0 9px;
+}
+
+#maintenance-list .maintenance-record-table tbody td:last-child {
+  border-right: 1px solid #e4eef1;
+  border-radius: 0 9px 9px 0;
+}
+
+#maintenance-list .maintenance-record-table .maintenance-item-cell strong {
+  font-size: 15px;
+}
+
+#maintenance-list .maintenance-record-table .maintenance-amount {
+  min-height: 32px;
+  padding: 0 11px;
+  background: #fff5f3;
+  border-color: #f0c2bb;
+  color: #c84b43;
 }
