@@ -443,6 +443,11 @@ dialog table .small { margin-top: 0; margin-bottom: 0; }
   color: #c84b43;
 }
 
+/* Absolute final container alignment; keep after all legacy migration rules. */
+body:has(#maintenance.tab-panel) .main > .rental-header,
+body:has(#maintenance.tab-panel) #maintenance > .panel { max-width: none !important; margin-left: 0 !important; margin-right: 0 !important; }
+body:has(#maintenance.tab-panel) #maintenance > .panel { width: 100% !important; }
+
 /* Final visual-diff corrections (must remain last in this stylesheet). */
 #record-dialog.maintenance-dialog .dialog-head { position: relative; border-left: 0; }
 #record-dialog.maintenance-dialog .dialog-head::before { content: ''; position: absolute; left: 40px; top: 36px; width: 6px; height: 80px; border-radius: 4px; background: #16a6b0; }
