@@ -660,4 +660,10 @@
   observeDynamicLists();
   normalizeArchiveButtons(document);
   setTimeout(() => refreshLocalIcons(document), 120);
+
+  const dismissibleDialogs = '#record-dialog, #renewal-dialog, #room-items-dialog, #room-maintenance-dialog, #room-photos-dialog, #image-preview-dialog, #maintenance-batch-dialog';
+  document.addEventListener('click', (event) => {
+    const dialog = event.target.closest(dismissibleDialogs);
+    if (dialog && event.target === dialog && dialog.open) dialog.close();
+  });
 })();

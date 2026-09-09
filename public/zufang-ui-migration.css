@@ -1078,6 +1078,87 @@ body {
   background: #f6fbfe;
 }
 
+/* Compact maintenance detail layout: keep the visual sections while reducing nested-card chrome. */
+.dialog-maintenance {
+  gap: 6px;
+  padding-top: 8px;
+}
+
+.dialog-maintenance .maintenance-section {
+  padding: 8px 0 9px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.dialog-maintenance .maintenance-section:last-child {
+  border-bottom: 0;
+}
+
+.dialog-maintenance .maintenance-section-core,
+.dialog-maintenance .maintenance-section-text,
+.dialog-maintenance .maintenance-section-result,
+.dialog-maintenance .maintenance-section-media {
+  background: transparent;
+}
+
+.dialog-maintenance .maintenance-section-result {
+  border-left: 3px solid #efd5a4;
+  padding-left: 10px;
+}
+
+.dialog-maintenance .maintenance-section-head {
+  margin-bottom: 7px;
+  padding-bottom: 6px;
+}
+
+.dialog-maintenance .maintenance-section-grid {
+  gap: 8px 12px;
+}
+
+.dialog-maintenance .maintenance-field {
+  gap: 4px;
+}
+
+.dialog-maintenance .maintenance-field input,
+.dialog-maintenance .maintenance-field select,
+.dialog-maintenance .maintenance-field textarea {
+  height: 40px;
+  border-radius: 8px;
+}
+
+.dialog-maintenance .maintenance-field textarea,
+.dialog-maintenance .field-note textarea {
+  min-height: 72px;
+}
+
+.dialog-maintenance .maintenance-media-field {
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.dialog-maintenance .maintenance-existing-image {
+  gap: 6px;
+  margin-top: 7px;
+}
+
+.dialog-maintenance .maintenance-existing-image .upload-preview {
+  height: 72px;
+  border-radius: 8px;
+}
+
+@media (max-width: 640px) {
+  .dialog-maintenance {
+    gap: 4px;
+  }
+
+  .dialog-maintenance .maintenance-section {
+    padding-top: 7px;
+    padding-bottom: 8px;
+  }
+}
+
 .maintenance-row-reimbursed td:first-child {
   border-left-color: #6cb89d;
 }
