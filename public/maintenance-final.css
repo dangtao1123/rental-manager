@@ -1,0 +1,38 @@
+/* Final page-level contract for daily maintenance. Loaded after legacy CSS. */
+body:has(#maintenance.tab-panel) .main > .rental-header,
+body:has(#maintenance.tab-panel) #maintenance > .panel {
+  max-width: none !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+body:has(#maintenance.tab-panel) > .sidebar {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table {
+  width: 100% !important;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid #dce8ed;
+  border-radius: 12px;
+  background: #fff;
+}
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr { box-shadow: none !important; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody td {
+  padding-top: 14px;
+  padding-bottom: 14px;
+  border-top: 0;
+  border-bottom: 1px solid #e5eef1;
+}
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr:last-child td { border-bottom: 0; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody td:first-child { border-left: 4px solid #19a879; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr.maintenance-row-pending td:first-child { border-left-color: #f0a21b; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr.maintenance-row-done td:first-child { border-left-color: #2f8fe2; }
+@media (max-width: 800px) {
+  body:has(#maintenance.tab-panel) { display: block; }
+  body:has(#maintenance.tab-panel) .main { padding-left: 12px; padding-right: 12px; }
+}
