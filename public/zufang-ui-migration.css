@@ -1084,6 +1084,52 @@ body {
   padding-top: 8px;
 }
 
+.dialog-maintenance .maintenance-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.dialog-maintenance .maintenance-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.dialog-maintenance .maintenance-step b {
+  display: inline-grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1px solid #cbdde5;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.dialog-maintenance .maintenance-step.active {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.dialog-maintenance .maintenance-step.active b {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #fff;
+}
+
+.dialog-maintenance .maintenance-stepper i {
+  height: 1px;
+  flex: 1 1 24px;
+  min-width: 14px;
+  background: #d8e5ea;
+}
+
 .dialog-maintenance .maintenance-section {
   padding: 8px 0 9px;
   border: 0;
@@ -1156,6 +1202,15 @@ body {
   .dialog-maintenance .maintenance-section {
     padding-top: 7px;
     padding-bottom: 8px;
+  }
+
+  .dialog-maintenance .maintenance-stepper {
+    gap: 4px;
+    overflow-x: auto;
+  }
+
+  .dialog-maintenance .maintenance-stepper i {
+    min-width: 8px;
   }
 }
 

@@ -444,6 +444,15 @@ const rows = [...groups.entries()].map(([roomNo, items]) => [roomLabel(roomNo), 
     fields.className = 'dialog-fields dialog-maintenance';
     const room = roomFor(record);
     fields.innerHTML = `
+      <div class="maintenance-stepper" aria-label="维护详情步骤">
+        <span class="maintenance-step active"><b>1</b>基础信息</span>
+        <i></i>
+        <span class="maintenance-step active"><b>2</b>维护内容</span>
+        <i></i>
+        <span class="maintenance-step"><b>3</b>费用与状态</span>
+        <i></i>
+        <span class="maintenance-step"><b>4</b>凭证</span>
+      </div>
       <section class="maintenance-section maintenance-section-core">
         <div class="maintenance-section-head"><span>维护信息</span><small>选择项</small></div>
         <div class="maintenance-section-grid">
