@@ -1,4 +1,9 @@
 /* Final page-level contract for daily maintenance. Loaded after legacy CSS. */
+body:has(#maintenance.tab-panel) > .main.rental-shell {
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
 body:has(#maintenance.tab-panel) .main > .rental-header,
 body:has(#maintenance.tab-panel) #maintenance > .panel {
   max-width: none !important;
