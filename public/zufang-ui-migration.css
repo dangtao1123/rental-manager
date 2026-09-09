@@ -443,6 +443,38 @@ dialog table .small { margin-top: 0; margin-bottom: 0; }
   color: #c84b43;
 }
 
+/* Daily maintenance list: light navigation + clean grouped table surface. */
+body:has(#maintenance.tab-panel) { grid-template-columns: 180px minmax(0, 1fr); }
+body:has(#maintenance.tab-panel) .sidebar {
+  width: 180px;
+  padding: 20px 8px 16px;
+  background: #fff;
+  color: #173548;
+  border-right: 1px solid #dce8ed;
+}
+body:has(#maintenance.tab-panel) .sidebar .brand { padding: 0 12px; color: #173548; font-size: 17px; }
+body:has(#maintenance.tab-panel) .sidebar .brand-mark { width: 30px; height: 30px; border-radius: 8px; background: #1aa3a5; color: #fff; }
+body:has(#maintenance.tab-panel) .sidebar .workspace-label { display: none; }
+body:has(#maintenance.tab-panel) .sidebar nav { margin-top: 28px; }
+body:has(#maintenance.tab-panel) .sidebar .nav-item { min-height: 42px; padding: 0 12px; border: 0; border-radius: 8px; color: #486473; }
+body:has(#maintenance.tab-panel) .sidebar .nav-item:hover { background: #f0f8f8; color: #167d77; }
+body:has(#maintenance.tab-panel) .sidebar .nav-item.active { border-left: 3px solid #18a7ae; background: #e6f5f6; color: #087a78; box-shadow: none; }
+body:has(#maintenance.tab-panel) .sidebar-footer { margin: auto 8px 0; padding: 13px 4px 0; border-top-color: #dce8ed; color: #385766; }
+body:has(#maintenance.tab-panel) .sidebar-footer small { color: #7b929d; }
+body:has(#maintenance.tab-panel) .main { padding-left: 28px; padding-right: 28px; }
+body:has(#maintenance.tab-panel) #maintenance > .panel { max-width: 1260px; margin: 0 auto; padding: 0; border: 0; background: transparent; }
+body:has(#maintenance.tab-panel) #maintenance > .panel .panel-title { margin-bottom: 16px; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table { border-spacing: 0; overflow: hidden; border: 1px solid #dce8ed; border-radius: 12px; background: #fff; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr { box-shadow: none; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody td { padding-top: 14px; padding-bottom: 14px; border-top: 0; border-bottom: 1px solid #e5eef1; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr:last-child td { border-bottom: 0; }
+@media (max-width: 800px) {
+  body:has(#maintenance.tab-panel) { display: block; }
+  body:has(#maintenance.tab-panel) .sidebar { width: 100%; padding: 10px 13px 9px; border-right: 0; border-bottom: 1px solid #dce8ed; }
+  body:has(#maintenance.tab-panel) .sidebar nav { margin-top: 9px; }
+  body:has(#maintenance.tab-panel) .main { padding-left: 12px; padding-right: 12px; }
+}
+
 /* Maintenance detail: label/control layout matching the focused product design. */
 #record-dialog.maintenance-dialog {
   width: min(980px, calc(100vw - 32px));
