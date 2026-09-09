@@ -578,6 +578,11 @@ const rows = [...groups.entries()].map(([roomNo, items]) => [roomLabel(roomNo), 
   openDialog = function (type, id = '', roomNo = '', seed = {}) {
     batchMaintenanceMode = type === 'maintenance' && !id;
     originalOpenDialog(type, id, roomNo, seed);
+    const subtitle = $('#dialog-subtitle');
+    if (subtitle) {
+      subtitle.textContent = type === 'maintenance' && !batchMaintenanceMode ? '记录房屋维护情况，用于费用管理与后续跟踪。' : '';
+      subtitle.hidden = !(type === 'maintenance' && !batchMaintenanceMode);
+    }
     if (type === 'maintenance') {
       const existing = (state.maintenance || []).find((item) => item.id === id);
       if (batchMaintenanceMode) renderMaintenanceBatch(existing || { roomNo }); else renderMaintenanceDetail(existing || seed);
