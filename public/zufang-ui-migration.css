@@ -1099,6 +1099,84 @@ body {
   padding: 8px 16px 10px;
 }
 
+#record-dialog .dialog-fields.dialog-maintenance input,
+#record-dialog .dialog-fields.dialog-maintenance select,
+#record-dialog .dialog-fields.dialog-maintenance textarea {
+  border: 1px solid #c7dbe4;
+  background: #fdfefe;
+  color: #173342;
+  box-shadow: inset 0 1px 1px rgba(18, 49, 63, .03);
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+
+#record-dialog .dialog-fields.dialog-maintenance input:hover,
+#record-dialog .dialog-fields.dialog-maintenance select:hover,
+#record-dialog .dialog-fields.dialog-maintenance textarea:hover {
+  border-color: #8ebdce;
+  background: #fff;
+}
+
+#record-dialog .dialog-fields.dialog-maintenance input:focus,
+#record-dialog .dialog-fields.dialog-maintenance select:focus,
+#record-dialog .dialog-fields.dialog-maintenance textarea:focus {
+  border-color: #1987b7;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(25, 135, 183, .12);
+  outline: 0;
+}
+
+#record-dialog .dialog-fields.dialog-maintenance .field-item input,
+#record-dialog .dialog-fields.dialog-maintenance .field-note textarea {
+  border-color: #9fc9d8;
+  background: #fafdff;
+}
+
+#record-dialog .dialog-fields.dialog-maintenance .field-amount input {
+  border-color: #e9b9b9;
+  background: #fff8f8;
+  color: #c83d45;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+#record-dialog .dialog-fields.dialog-maintenance .field-status select,
+#record-dialog .dialog-fields.dialog-maintenance .field-reimbursementBatchId select {
+  border-color: #a9d8d2;
+  background-color: #f3fbfa;
+  color: #12635f;
+  font-weight: 700;
+}
+
+#record-dialog.maintenance-dialog .dialog-actions {
+  gap: 8px;
+  padding: 10px 16px 12px;
+  background: #fff;
+}
+
+#record-dialog.maintenance-dialog .dialog-actions button {
+  min-height: 36px;
+  border-radius: 8px;
+  padding: 0 16px;
+  font-weight: 700;
+}
+
+#record-dialog.maintenance-dialog .dialog-actions .primary {
+  min-width: 108px;
+  border-color: #167eb5;
+  background: #167eb5;
+  box-shadow: 0 5px 14px rgba(22, 126, 181, .2);
+}
+
+#record-dialog.maintenance-dialog .dialog-actions .primary:hover {
+  background: #116c9d;
+}
+
+#record-dialog.maintenance-dialog .dialog-actions .ghost {
+  border-color: #c5d8e0;
+  background: #fff;
+  color: #496775;
+}
+
 .dialog-maintenance {
   gap: 6px;
   padding-top: 8px;
