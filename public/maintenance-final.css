@@ -37,6 +37,27 @@ body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbo
 body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody td:first-child { border-left: 4px solid #19a879; }
 body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr.maintenance-row-pending td:first-child { border-left-color: #f0a21b; }
 body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr.maintenance-row-done td:first-child { border-left-color: #2f8fe2; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody td:first-child { border-left: 0 !important; }
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr.maintenance-row-pending td:first-child,
+body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr.maintenance-row-done td:first-child { border-left-color: transparent !important; }
+body:has(#maintenance.tab-panel) .main > .rental-header { padding-top: 12px; padding-bottom: 12px; }
+body:has(#maintenance.tab-panel) .main > .rental-header h1 { font-size: 29px; }
+body:has(#maintenance.tab-panel) #maintenance > .panel > .panel-title { margin-bottom: 10px; }
+body:has(#maintenance.tab-panel) #maintenance .maintenance-view-switch { margin: 6px 0 10px; }
+body:has(#maintenance.tab-panel) #maintenance .maintenance-filters { margin-bottom: 10px; padding: 10px 12px; }
+body:has(#maintenance.tab-panel) #maintenance .maintenance-batch-actions { margin-bottom: 10px; padding: 9px 12px; }
+@media (max-width: 800px) {
+  body:has(#maintenance.tab-panel) .main > .rental-header { padding-top: 10px; padding-bottom: 10px; }
+  body:has(#maintenance.tab-panel) .main > .rental-header h1 { font-size: 25px; }
+  body:has(#maintenance.tab-panel) .main > .rental-header p:last-child { margin-top: 4px; }
+  body:has(#maintenance.tab-panel) #maintenance > .panel > .panel-title { margin-bottom: 8px; }
+  body:has(#maintenance.tab-panel) #maintenance > .panel > .panel-title .panel-actions { gap: 0; }
+  body:has(#maintenance.tab-panel) #maintenance > .panel > .panel-title .panel-actions button:first-child { display: none; }
+  body:has(#maintenance.tab-panel) #maintenance > .panel > .panel-title .panel-actions .primary { width: 100%; height: 40px; }
+  body:has(#maintenance.tab-panel) #maintenance .maintenance-view-switch { margin: 4px 0 8px; }
+  body:has(#maintenance.tab-panel) #maintenance .maintenance-filters { padding: 8px 10px; gap: 7px; }
+  body:has(#maintenance.tab-panel) #maintenance .maintenance-batch-actions { padding: 8px 10px; gap: 6px; }
+}
 @media (min-width: 801px) {
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table thead th {
     height: 48px;
