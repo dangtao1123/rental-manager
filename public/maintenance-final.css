@@ -69,8 +69,8 @@ body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbo
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-status { display: inline-flex; align-items: center; min-height: 30px; padding: 0 12px; border: 1px solid #75d6b1; border-radius: 999px; background: #effcf6; color: #008a62; font-size: 13px; font-weight: 800; white-space: nowrap; }
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-status.pending { border-color: #f1bd61; background: #fff8e8; color: #bd7200; }
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-status.done { border-color: #7ac5f3; background: #eef8ff; color: #087dc1; }
-  body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-evidence-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-evidence-grid > div { min-width: 0; text-align: center; }
+  body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table td:nth-child(6) .maintenance-evidence-grid { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; align-items: start; gap: 10px !important; }
+  body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table td:nth-child(6) .maintenance-evidence-grid > div { display: flex !important; min-width: 0; flex-direction: column; align-items: center; text-align: center; }
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-evidence-grid > div > span { display: block; margin-bottom: 5px; color: #647e8a; font-size: 11px; white-space: nowrap; }
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-image-link,
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-image-link img { width: 52px; height: 52px; border-radius: 7px; }
