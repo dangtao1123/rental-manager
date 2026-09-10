@@ -74,8 +74,12 @@ body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbo
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-evidence-grid > div > span { display: block; margin-bottom: 5px; color: #647e8a; font-size: 11px; white-space: nowrap; }
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-image-link,
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-image-link img { width: 52px; height: 52px; border-radius: 7px; }
+  body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-image-link { display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 1px solid #d7e4e9 !important; outline: 0 !important; box-shadow: none !important; overflow: hidden; background: #f7fafb; }
+  body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .maintenance-image-link img { display: block; border: 0 !important; outline: 0 !important; object-fit: cover; }
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .row-actions { gap: 8px; }
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .row-actions .small { width: 36px; height: 36px; border: 1px solid #c9dfe7; border-radius: 8px; background: #fff; color: #087dbd; }
+  body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .row-actions .icon-button { display: inline-flex !important; align-items: center; justify-content: center; padding: 0; }
+  body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .row-actions .icon-button iconify-icon { display: inline-flex !important; width: 18px; height: 18px; align-items: center; justify-content: center; color: currentColor; font-size: 18px !important; line-height: 1; }
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .row-actions .small.danger { color: #e34d54; }
 }
 @media (max-width: 800px) {
