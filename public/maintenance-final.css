@@ -3,6 +3,7 @@ body:has(#maintenance.tab-panel) > .main.rental-shell {
   width: auto !important;
   max-width: none !important;
   margin: 0 !important;
+  padding-top: 0 !important;
 }
 body:has(#maintenance.tab-panel) .main > .rental-header,
 body:has(#maintenance.tab-panel) #maintenance > .panel {
@@ -41,6 +42,7 @@ body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbo
 body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr.maintenance-row-pending td:first-child,
 body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody tr.maintenance-row-done td:first-child { border-left-color: transparent !important; }
 body:has(#maintenance.tab-panel) .main > .rental-header { padding-top: 12px; padding-bottom: 12px; }
+body:has(#maintenance.tab-panel) .main > .topbar { height: 52px; }
 body:has(#maintenance.tab-panel) .main > .rental-header h1 { font-size: 29px; }
 body:has(#maintenance.tab-panel) #maintenance > .panel > .panel-title { margin-bottom: 10px; }
 body:has(#maintenance.tab-panel) #maintenance .maintenance-view-switch { margin: 6px 0 10px; }
@@ -48,6 +50,7 @@ body:has(#maintenance.tab-panel) #maintenance .maintenance-filters { margin-bott
 body:has(#maintenance.tab-panel) #maintenance .maintenance-batch-actions { margin-bottom: 10px; padding: 9px 12px; }
 @media (max-width: 800px) {
   body:has(#maintenance.tab-panel) .main > .rental-header { padding-top: 10px; padding-bottom: 10px; }
+  body:has(#maintenance.tab-panel) .main > .topbar { height: 44px; }
   body:has(#maintenance.tab-panel) .main > .rental-header h1 { font-size: 25px; }
   body:has(#maintenance.tab-panel) .main > .rental-header p:last-child { margin-top: 4px; }
   body:has(#maintenance.tab-panel) #maintenance > .panel > .panel-title { margin-bottom: 8px; }
