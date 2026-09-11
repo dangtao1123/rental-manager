@@ -119,7 +119,8 @@
       checkout: ['MOVE IN / OUT', '入住 / 退房', '通过房间与租户关系生成入住、续费和退房记录'],
       templates: ['BUSINESS TEXT', '业务文字', '生成入住、续租和退房说明，一键复制发送'],
       settings: ['RENTAL SETTINGS', '租房设置', '统一设置到期提醒、水电单价与默认物业费'],
-      audit: ['AUDIT LOG', '操作日志', '记录关键业务变更，便于追溯与协作']
+      audit: ['AUDIT LOG', '操作日志', '记录关键业务变更，便于追溯与协作'],
+      archive: ['ARCHIVE', '已归档', '查看已归档的房源和租户，保留可追溯的历史记录']
     };
     Object.keys(meta).forEach((id) => document.getElementById(id)?.classList.add('view'));
 
@@ -221,6 +222,12 @@
     if (auditView && !auditView.querySelector(':scope > .page-head')) {
       const panel = oldPanel(auditView); const list = document.getElementById('audit-list'); const filter = auditView.querySelector('.ui-audit-filter');
       makeHead(auditView, ...meta.audit, null); panel?.remove(); if (filter) auditView.querySelector('.page-head').append(filter); if (list) auditView.append(panelWith(list));
+    }
+    const archive = document.getElementById('archive');
+    if (archive && !archive.querySelector(':scope > .page-head')) {
+      const panel = oldPanel(archive); const content = document.getElementById('archive-list');
+      makeHead(archive, ...meta.archive, null); panel?.remove();
+      if (content) archive.append(panelWith(content));
     }
     const rentalFilter = rental?.querySelector(':scope > .ui-rental-filter');
     const rentalList = rental?.querySelector(':scope > #room-list');

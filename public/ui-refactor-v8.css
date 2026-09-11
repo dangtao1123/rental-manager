@@ -119,6 +119,208 @@ body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .ro
   body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody td { height: auto !important; }
 }
 
+/* Application-wide page contract: all secondary workspaces use the same compact shell as daily maintenance. */
+#overview.view,
+#ledger.view,
+#checkout.view,
+#templates.view,
+#settings.view,
+#audit.view,
+#archive.view { max-width: 1280px !important; margin: 0 auto !important; padding: 0 0 28px !important; color: #173548 !important; }
+
+#overview.view > .page-head,
+#ledger.view > .page-head,
+#checkout.view > .page-head,
+#templates.view > .page-head,
+#settings.view > .page-head,
+#audit.view > .page-head,
+#archive.view > .page-head { min-height: 132px !important; margin: 0 0 18px !important; padding: 26px 4px 18px !important; border-bottom: 1px solid #d7e6eb !important; display: flex !important; align-items: flex-end !important; justify-content: space-between !important; gap: 18px !important; }
+#overview.view > .page-head .eyebrow,
+#ledger.view > .page-head .eyebrow,
+#checkout.view > .page-head .eyebrow,
+#templates.view > .page-head .eyebrow,
+#settings.view > .page-head .eyebrow,
+#audit.view > .page-head .eyebrow,
+#archive.view > .page-head .eyebrow { margin: 0 0 4px !important; color: #6e8794 !important; font-size: 11px !important; font-weight: 800 !important; letter-spacing: .12em !important; }
+#overview.view > .page-head h1,
+#ledger.view > .page-head h1,
+#checkout.view > .page-head h1,
+#templates.view > .page-head h1,
+#settings.view > .page-head h1,
+#audit.view > .page-head h1,
+#archive.view > .page-head h1 { margin: 0 !important; color: #102b3d !important; font-size: 30px !important; line-height: 1.15 !important; letter-spacing: -.03em !important; }
+#overview.view > .page-head .subtitle,
+#ledger.view > .page-head .subtitle,
+#checkout.view > .page-head .subtitle,
+#templates.view > .page-head .subtitle,
+#settings.view > .page-head .subtitle,
+#audit.view > .page-head .subtitle,
+#archive.view > .page-head .subtitle { margin: 7px 0 0 !important; color: #64808f !important; font-size: 13px !important; }
+
+#overview.view > .panel,
+#overview.view .dashboard-columns > .panel,
+#ledger.view > .panel,
+#checkout.view > .panel,
+#templates.view .template-layout > .panel,
+#settings.view > .panel,
+#settings.view > .account-panel,
+#audit.view > .panel,
+#archive.view > .panel { border: 1px solid #dce9ee !important; border-radius: 12px !important; background: #fff !important; box-shadow: 0 5px 16px rgba(24,66,82,.045) !important; }
+#overview.view .section-head,
+#overview.view .panel-title,
+#templates.view .section-head,
+#settings.view .section-head { min-height: 56px !important; padding: 14px 18px !important; border-bottom: 1px solid #e8f0f3 !important; }
+#overview.view .section-head h2,
+#overview.view .panel-title h2,
+#templates.view .section-head h2,
+#settings.view .section-head h2 { margin: 0 !important; color: #173548 !important; font-size: 16px !important; font-weight: 800 !important; }
+#overview.view .section-head p,
+#overview.view .panel-title p,
+#templates.view .section-head p,
+#settings.view .section-head p { margin: 4px 0 0 !important; color: #78909b !important; font-size: 12px !important; }
+
+#overview.view .stats-grid { display: grid !important; grid-template-columns: repeat(4,minmax(0,1fr)) !important; gap: 12px !important; margin-bottom: 14px !important; }
+#overview.view .stat-card { min-height: 118px !important; padding: 16px !important; border: 1px solid #dce9ee !important; border-radius: 12px !important; background: #fff !important; box-shadow: 0 5px 16px rgba(24,66,82,.04) !important; }
+#overview.view .stat-card .stat-icon { width: 34px !important; height: 34px !important; margin-bottom: 12px !important; border-radius: 9px !important; display: grid !important; place-items: center !important; color: #147e9c !important; background: #e8f7f9 !important; }
+#overview.view .stat-card span { display: block !important; color: #6f8996 !important; font-size: 12px !important; }
+#overview.view .stat-card strong { display: block !important; margin-top: 5px !important; color: #102b3d !important; font-size: 25px !important; line-height: 1 !important; }
+#overview.view .stat-card small { display: block !important; margin-top: 8px !important; color: #8ba0aa !important; font-size: 11px !important; }
+#overview.view .finance-panel { margin-bottom: 14px !important; }
+#overview.view .finance-grid { padding: 16px 18px !important; }
+#overview.view .dashboard-columns { display: grid !important; grid-template-columns: minmax(0,1.25fr) minmax(300px,.75fr) !important; gap: 14px !important; }
+#overview.view .todo-list { display: grid !important; gap: 0 !important; padding: 0 18px 12px !important; }
+#overview.view .todo-card { display: flex !important; justify-content: space-between !important; align-items: center !important; gap: 14px !important; padding: 13px 0 !important; border-bottom: 1px solid #edf3f5 !important; }
+#overview.view .todo-card strong { display: block !important; color: #173548 !important; font-size: 13px !important; }
+#overview.view .todo-card span { display: block !important; margin-top: 4px !important; color: #78909b !important; font-size: 11px !important; }
+#overview.view .todo-card b { color: #e05252 !important; font-size: 15px !important; white-space: nowrap !important; }
+#overview.view .quick-grid { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 10px !important; padding: 16px 18px 18px !important; }
+#overview.view .quick-action { min-height: 72px !important; border: 1px solid #cfe2e8 !important; border-radius: 9px !important; background: #f8fcfd !important; color: #1979b2 !important; font-size: 12px !important; }
+
+/* Cash-flow ledger: summary cards, filter bar, and dense list rows. */
+#ledger.view > .ledger-filters { display: grid !important; grid-template-columns: repeat(3,minmax(0,1fr)) auto !important; gap: 10px !important; margin: 0 0 14px !important; padding: 14px !important; border: 1px solid #dce9ee !important; border-radius: 12px !important; background: #f6fbfc !important; }
+#ledger.view .ledger-filters label { display: block !important; color: #698491 !important; font-size: 11px !important; font-weight: 700 !important; }
+#ledger.view .ledger-filters input,
+#ledger.view .ledger-filters select { height: 40px !important; margin-top: 6px !important; border: 1px solid #c6dce4 !important; border-radius: 8px !important; background: #fff !important; color: #173548 !important; font-size: 13px !important; }
+#ledger.view .ledger-summary { display: grid !important; grid-template-columns: repeat(4,minmax(0,1fr)) !important; gap: 10px !important; margin: 0 0 14px !important; }
+#ledger.view .ledger-summary > div { min-height: 88px !important; padding: 14px 16px !important; border: 1px solid #dce9ee !important; border-radius: 11px !important; background: #fff !important; box-shadow: 0 5px 16px rgba(24,66,82,.035) !important; }
+#ledger.view .ledger-summary span { display: block !important; color: #6c8793 !important; font-size: 12px !important; }
+#ledger.view .ledger-summary strong { display: block !important; margin-top: 7px !important; color: #173548 !important; font-size: 22px !important; }
+#ledger.view .ledger-summary .income strong { color: #0b9c73 !important; }
+#ledger.view .ledger-summary .expense strong { color: #e05252 !important; }
+#ledger.view .ledger-summary .balance strong { color: #1979b2 !important; }
+#ledger.view .ledger-summary .pending strong { color: #d18a19 !important; }
+#ledger.view .ledger-summary small { display: block !important; margin-top: 5px !important; color: #8aa0a9 !important; font-size: 11px !important; }
+#ledger.view > .table-panel { padding: 0 !important; overflow: hidden !important; }
+#ledger.view #ledger-list { overflow-x: auto !important; }
+#ledger.view #ledger-list table { width: 100% !important; min-width: 760px !important; border-collapse: collapse !important; }
+#ledger.view #ledger-list th { height: 44px !important; padding: 0 16px !important; background: #eff7f9 !important; color: #496d7d !important; font-size: 12px !important; font-weight: 800 !important; text-align: left !important; }
+#ledger.view #ledger-list td { min-height: 58px !important; padding: 13px 16px !important; border-bottom: 1px solid #e5eff2 !important; color: #365d6f !important; font-size: 12px !important; vertical-align: middle !important; }
+#ledger.view #ledger-list tr:last-child td { border-bottom: 0 !important; }
+#ledger.view #ledger-list .income-text { color: #0b9c73 !important; font-weight: 800 !important; }
+#ledger.view #ledger-list .expense-text { color: #e05252 !important; font-weight: 800 !important; }
+#ledger.view #ledger-list .small { height: 30px !important; min-height: 30px !important; padding: 0 9px !important; border-radius: 7px !important; font-size: 11px !important; }
+
+/* Remaining workspaces follow the same compact table and form language. */
+#checkout.view > .table-panel,
+#audit.view > .table-panel { padding: 0 !important; overflow: hidden !important; }
+#checkout.view #checkout-list,
+#audit.view #audit-list { overflow-x: auto !important; }
+#checkout.view table,
+#audit.view table { width: 100% !important; min-width: 760px !important; border-collapse: collapse !important; }
+#checkout.view th,
+#audit.view th { height: 44px !important; padding: 0 15px !important; background: #eff7f9 !important; color: #496d7d !important; font-size: 12px !important; font-weight: 800 !important; text-align: left !important; }
+#checkout.view td,
+#audit.view td { padding: 13px 15px !important; border-bottom: 1px solid #e5eff2 !important; color: #365d6f !important; font-size: 12px !important; }
+#checkout.view td:nth-child(4), #checkout.view td:nth-child(5) { color: #e05252 !important; font-weight: 800 !important; }
+#checkout.view .process-track { display: flex !important; align-items: center !important; gap: 8px !important; margin: 0 0 14px !important; padding: 12px 16px !important; border: 1px solid #dce9ee !important; border-radius: 12px !important; background: #f6fbfc !important; }
+#checkout.view .process-step { display: inline-flex !important; align-items: center !important; gap: 7px !important; color: #78909b !important; font-size: 12px !important; font-weight: 700 !important; }
+#checkout.view .process-step b { display: grid !important; width: 25px !important; height: 25px !important; place-items: center !important; border-radius: 50% !important; background: #e7f2f5 !important; color: #6b8996 !important; font-size: 10px !important; }
+#checkout.view .process-step.active,
+#checkout.view .process-step.complete { color: #147e9c !important; }
+#checkout.view .process-step.active b,
+#checkout.view .process-step.complete b { background: #147e9c !important; color: #fff !important; }
+#checkout.view .process-line { flex: 0 1 64px !important; height: 1px !important; background: #d5e5ea !important; }
+#checkout.view .process-line.complete { background: #65c8b2 !important; }
+#archive.view #archive-list { padding: 18px !important; }
+#archive.view #archive-list h2 { margin: 0 0 10px !important; color: #173548 !important; font-size: 15px !important; }
+#archive.view #archive-list h2.section-rule-title { margin-top: 22px !important; padding-top: 18px !important; border-top: 1px solid #e5eff2 !important; }
+#archive.view #archive-list table { width: 100% !important; border-collapse: collapse !important; }
+#archive.view #archive-list th { height: 40px !important; background: #eff7f9 !important; color: #496d7d !important; font-size: 11px !important; text-align: left !important; }
+#archive.view #archive-list td { padding: 11px 12px !important; border-bottom: 1px solid #e5eff2 !important; color: #365d6f !important; font-size: 12px !important; }
+#templates.view .template-layout { display: grid !important; grid-template-columns: 210px minmax(0,1fr) !important; gap: 14px !important; }
+#templates.view .template-side { padding: 10px !important; }
+#templates.view .template-side .segmented { display: grid !important; gap: 5px !important; }
+#templates.view .template-side .segmented button { min-height: 40px !important; padding: 0 12px !important; border: 0 !important; border-radius: 8px !important; color: #496d7d !important; background: transparent !important; text-align: left !important; font-size: 12px !important; }
+#templates.view .template-side .segmented button.active { color: #fff !important; background: #147e9c !important; }
+#templates.view .template-editor { padding: 18px !important; }
+#templates.view .template-editor .template-form { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 12px !important; }
+#templates.view .template-editor textarea,
+#templates.view .template-editor input,
+#settings.view input,
+#settings.view select,
+#settings.view textarea { width: 100% !important; min-height: 40px !important; border: 1px solid #c6dce4 !important; border-radius: 8px !important; background: #fff !important; color: #173548 !important; }
+#templates.view .template-editor #template-output { min-height: 160px !important; margin-top: 14px !important; padding: 14px !important; border: 1px solid #dce9ee !important; border-radius: 8px !important; background: #f8fcfd !important; color: #365d6f !important; white-space: pre-wrap !important; }
+#settings.view .settings-grid,
+#settings.view .account-panel { padding: 0 !important; margin-bottom: 14px !important; overflow: hidden !important; }
+#settings.view #rental-settings-form,
+#settings.view #rental-user-form { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 12px !important; padding: 18px !important; }
+#settings.view #rental-settings-form button,
+#settings.view #rental-user-form button { justify-self: start !important; }
+#settings.view #settings-status { margin: 0 18px 16px !important; color: #0b9c73 !important; font-size: 12px !important; }
+#settings.view #user-list { padding: 0 18px 18px !important; }
+#audit.view .ui-audit-filter { margin-left: auto !important; }
+
+@media (max-width: 760px) {
+  #overview.view,
+  #ledger.view,
+  #checkout.view,
+  #templates.view,
+  #settings.view,
+  #audit.view { padding: 0 10px 20px !important; }
+  #archive.view { padding: 0 10px 20px !important; }
+  #overview.view > .page-head,
+  #ledger.view > .page-head,
+  #checkout.view > .page-head,
+  #templates.view > .page-head,
+  #settings.view > .page-head,
+  #audit.view > .page-head { min-height: 88px !important; margin-bottom: 10px !important; padding: 14px 2px 12px !important; align-items: center !important; }
+  #overview.view > .page-head h1,
+  #ledger.view > .page-head h1,
+  #checkout.view > .page-head h1,
+  #templates.view > .page-head h1,
+  #settings.view > .page-head h1,
+  #audit.view > .page-head h1 { font-size: 23px !important; }
+  #archive.view > .page-head h1 { font-size: 23px !important; }
+  #overview.view > .page-head .subtitle,
+  #ledger.view > .page-head .subtitle,
+  #checkout.view > .page-head .subtitle,
+  #templates.view > .page-head .subtitle,
+  #settings.view > .page-head .subtitle,
+  #audit.view > .page-head .subtitle { display: none !important; }
+  #archive.view > .page-head .subtitle { display: none !important; }
+  #overview.view .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 8px !important; }
+  #overview.view .stat-card { min-height: 94px !important; padding: 12px !important; }
+  #overview.view .stat-card strong { font-size: 21px !important; }
+  #overview.view .dashboard-columns { grid-template-columns: 1fr !important; gap: 10px !important; }
+  #ledger.view > .ledger-filters { display: flex !important; overflow-x: auto !important; gap: 8px !important; padding: 9px !important; scrollbar-width: none !important; }
+  #ledger.view > .ledger-filters label { flex: 0 0 150px !important; }
+  #ledger.view > .ledger-filters .ghost { flex: 0 0 100px !important; height: 40px !important; margin-top: 17px !important; }
+  #ledger.view .ledger-summary { grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 8px !important; }
+  #ledger.view .ledger-summary > div { min-height: 76px !important; padding: 11px !important; }
+  #ledger.view .ledger-summary strong { font-size: 18px !important; }
+  #templates.view .template-layout { grid-template-columns: 1fr !important; gap: 10px !important; }
+  #templates.view .template-side .segmented { display: flex !important; overflow-x: auto !important; }
+  #templates.view .template-side .segmented button { flex: 0 0 auto !important; min-height: 34px !important; }
+  #templates.view .template-editor .template-form,
+  #settings.view #rental-settings-form,
+  #settings.view #rental-user-form { grid-template-columns: 1fr !important; }
+  #audit.view .ui-audit-filter { margin: 8px 0 0 !important; }
+  #checkout.view .process-track { overflow-x: auto !important; margin-bottom: 10px !important; padding: 9px 11px !important; }
+  #checkout.view .process-step { flex: 0 0 auto !important; }
+  #archive.view > .table-panel { overflow-x: auto !important; }
+  #archive.view #archive-list { min-width: 620px !important; }
+}
+
 @media (max-width: 450px) {
   .main > .topbar > div:first-child { font-size: 12px !important; }
   .main > .rental-header { padding-top: 12px !important; }
