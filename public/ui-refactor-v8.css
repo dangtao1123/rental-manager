@@ -16,6 +16,257 @@ body {
   font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif !important;
 }
 
+/* v11 final specificity guard. Some legacy migration selectors use body:has()
+ * and are declared later; these scoped rules are deliberately last so edits to
+ * one page cannot leak through a parent selector or resurrect an old layout. */
+body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view,
+body:has(#tenants.tab-panel) > .main #tenants.tab-panel.view,
+body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view,
+body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view,
+body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view,
+body:has(#templates.tab-panel) > .main #templates.tab-panel.view,
+body:has(#settings.tab-panel) > .main #settings.tab-panel.view,
+body:has(#audit.tab-panel) > .main #audit.tab-panel.view,
+body:has(#archive.tab-panel) > .main #archive.tab-panel.view {
+  width: min(1240px, 100%) !important;
+  max-width: 1240px !important;
+  margin: 0 auto !important;
+  padding: 0 0 28px !important;
+}
+body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view > .page-head,
+body:has(#tenants.tab-panel) > .main #tenants.tab-panel.view > .page-head,
+body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view > .page-head,
+body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view > .page-head,
+body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view > .page-head,
+body:has(#templates.tab-panel) > .main #templates.tab-panel.view > .page-head,
+body:has(#settings.tab-panel) > .main #settings.tab-panel.view > .page-head,
+body:has(#audit.tab-panel) > .main #audit.tab-panel.view > .page-head,
+body:has(#archive.tab-panel) > .main #archive.tab-panel.view > .page-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  min-height: 0 !important;
+  margin: 16px 0 14px !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view > .page-head h1,
+body:has(#tenants.tab-panel) > .main #tenants.tab-panel.view > .page-head h1,
+body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view > .page-head h1,
+body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view > .page-head h1,
+body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view > .page-head h1,
+body:has(#templates.tab-panel) > .main #templates.tab-panel.view > .page-head h1,
+body:has(#settings.tab-panel) > .main #settings.tab-panel.view > .page-head h1,
+body:has(#audit.tab-panel) > .main #audit.tab-panel.view > .page-head h1,
+body:has(#archive.tab-panel) > .main #archive.tab-panel.view > .page-head h1 { margin: 0 !important; color: #102b3d !important; font-size: 30px !important; line-height: 1.15 !important; }
+body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view > .page-head .subtitle,
+body:has(#tenants.tab-panel) > .main #tenants.tab-panel.view > .page-head .subtitle,
+body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view > .page-head .subtitle,
+body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view > .page-head .subtitle,
+body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view > .page-head .subtitle,
+body:has(#templates.tab-panel) > .main #templates.tab-panel.view > .page-head .subtitle,
+body:has(#settings.tab-panel) > .main #settings.tab-panel.view > .page-head .subtitle,
+body:has(#audit.tab-panel) > .main #audit.tab-panel.view > .page-head .subtitle,
+body:has(#archive.tab-panel) > .main #archive.tab-panel.view > .page-head .subtitle { margin: 7px 0 0 !important; color: #617e8d !important; font-size: 13px !important; }
+
+body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view > .table-panel,
+body:has(#tenants.tab-panel) > .main #tenants.tab-panel.view > .panel,
+body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view > .table-panel,
+body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view > .table-panel,
+body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view > .table-panel,
+body:has(#templates.tab-panel) > .main #templates.tab-panel.view .template-layout > .panel,
+body:has(#settings.tab-panel) > .main #settings.tab-panel.view > .panel,
+body:has(#audit.tab-panel) > .main #audit.tab-panel.view > .table-panel,
+body:has(#archive.tab-panel) > .main #archive.tab-panel.view > .table-panel { border: 1px solid #d7e6eb !important; border-radius: 12px !important; background: #fff !important; box-shadow: 0 5px 17px rgba(24,66,82,.045) !important; }
+body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view > .table-panel > #room-admin-list,
+body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view > .table-panel > #ledger-list,
+body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view > .table-panel > #maintenance-list,
+body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view > .table-panel > #checkout-list,
+body:has(#audit.tab-panel) > .main #audit.tab-panel.view > .table-panel > #audit-list { border: 0 !important; border-radius: 0 !important; box-shadow: none !important; padding: 0 !important; }
+body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view table,
+body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view table,
+body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view table,
+body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view table,
+body:has(#audit.tab-panel) > .main #audit.tab-panel.view table,
+body:has(#archive.tab-panel) > .main #archive.tab-panel.view table { border-collapse: collapse !important; }
+body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view thead th,
+body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view thead th,
+body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view thead th,
+body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view thead th,
+body:has(#audit.tab-panel) > .main #audit.tab-panel.view thead th,
+body:has(#archive.tab-panel) > .main #archive.tab-panel.view thead th { height: 45px !important; padding: 0 14px !important; color: #496d7d !important; background: #eff7f9 !important; font-size: 12px !important; font-weight: 800 !important; text-align: left !important; white-space: nowrap !important; }
+body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view tbody td,
+body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view tbody td,
+body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view tbody td,
+body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view tbody td,
+body:has(#audit.tab-panel) > .main #audit.tab-panel.view tbody td,
+body:has(#archive.tab-panel) > .main #archive.tab-panel.view tbody td { padding: 12px 14px !important; border-bottom: 1px solid #e5eff2 !important; color: #365d6f !important; background: #fff !important; font-size: 12px !important; line-height: 1.45 !important; vertical-align: middle !important; }
+body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view tbody tr:nth-child(even) td,
+body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view tbody tr:nth-child(even) td,
+body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view tbody tr:nth-child(even) td,
+body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view tbody tr:nth-child(even) td,
+body:has(#audit.tab-panel) > .main #audit.tab-panel.view tbody tr:nth-child(even) td,
+body:has(#archive.tab-panel) > .main #archive.tab-panel.view tbody tr:nth-child(even) td { background: #fbfdfe !important; }
+
+/* Ensure every status token has the same pill geometry, including dynamic lists. */
+body:has(#rooms.tab-panel) .status-chip,
+body:has(#tenants.tab-panel) .status-chip,
+body:has(#ledger.tab-panel) .status-chip,
+body:has(#maintenance.tab-panel) .status-chip,
+body:has(#checkout.tab-panel) .status-chip,
+body:has(#archive.tab-panel) .status-chip { display: inline-flex !important; align-items: center !important; min-height: 25px !important; padding: 0 9px !important; border: 1px solid currentColor !important; border-radius: 999px !important; font-size: 11px !important; font-weight: 800 !important; white-space: nowrap !important; }
+body:has(#rooms.tab-panel) .status-chip.success,
+body:has(#tenants.tab-panel) .status-chip.success,
+body:has(#ledger.tab-panel) .status-chip.success { color: #0a9b72 !important; background: #e8faf3 !important; }
+body:has(#rooms.tab-panel) .status-chip.warning,
+body:has(#tenants.tab-panel) .status-chip.warning,
+body:has(#ledger.tab-panel) .status-chip.warning { color: #bd7812 !important; background: #fff4df !important; }
+body:has(#rooms.tab-panel) .status-chip.danger,
+body:has(#tenants.tab-panel) .status-chip.danger { color: #d95353 !important; background: #fff0f0 !important; }
+body:has(#rooms.tab-panel) .status-chip.neutral,
+body:has(#tenants.tab-panel) .status-chip.neutral { color: #607d8b !important; background: #eef4f6 !important; }
+
+/* Native dialog guard, including the previously uncovered move-in/auth flows. */
+dialog#move-in-dialog,
+dialog#rental-auth-dialog,
+dialog#record-dialog,
+dialog#renewal-dialog,
+dialog#room-items-dialog,
+dialog#room-maintenance-dialog,
+dialog#room-photos-dialog,
+dialog#room-tenants-dialog,
+dialog#maintenance-batch-dialog,
+dialog#image-preview-dialog { box-sizing: border-box !important; border: 1px solid #cfe2e9 !important; border-radius: 15px !important; background: #fff !important; box-shadow: 0 26px 80px rgba(15,47,63,.26) !important; }
+dialog#move-in-dialog .dialog-head,
+dialog#rental-auth-dialog .dialog-head,
+dialog#record-dialog .dialog-head,
+dialog#renewal-dialog .dialog-head,
+dialog#room-items-dialog .dialog-head,
+dialog#room-maintenance-dialog .dialog-head,
+dialog#room-photos-dialog .dialog-head,
+dialog#room-tenants-dialog .dialog-head,
+dialog#maintenance-batch-dialog .dialog-head,
+dialog#image-preview-dialog .dialog-head { min-height: 68px !important; margin: 0 !important; padding: 17px 24px !important; border-bottom: 1px solid #e0ebef !important; background: #fff !important; }
+dialog#move-in-dialog .dialog-head h2,
+dialog#rental-auth-dialog .dialog-head h2,
+dialog#record-dialog .dialog-head h2,
+dialog#renewal-dialog .dialog-head h2,
+dialog#room-items-dialog .dialog-head h2,
+dialog#room-maintenance-dialog .dialog-head h2,
+dialog#room-photos-dialog .dialog-head h2,
+dialog#room-tenants-dialog .dialog-head h2,
+dialog#maintenance-batch-dialog .dialog-head h2,
+dialog#image-preview-dialog .dialog-head h2 { margin: 0 !important; color: #102b3d !important; font-size: 21px !important; line-height: 1.25 !important; font-weight: 850 !important; }
+dialog#move-in-dialog .dialog-actions,
+dialog#rental-auth-dialog .dialog-actions,
+dialog#record-dialog .dialog-actions,
+dialog#renewal-dialog .dialog-actions,
+dialog#room-items-dialog .dialog-actions,
+dialog#room-maintenance-dialog .dialog-actions,
+dialog#room-photos-dialog .dialog-actions,
+dialog#maintenance-batch-dialog .dialog-actions { min-height: 68px !important; margin: 0 !important; padding: 13px 24px !important; border-top: 1px solid #e0ebef !important; background: #fbfdfe !important; }
+
+@media (max-width: 760px) {
+  body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view,
+  body:has(#tenants.tab-panel) > .main #tenants.tab-panel.view,
+  body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view,
+  body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view,
+  body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view,
+  body:has(#templates.tab-panel) > .main #templates.tab-panel.view,
+  body:has(#settings.tab-panel) > .main #settings.tab-panel.view,
+  body:has(#audit.tab-panel) > .main #audit.tab-panel.view,
+  body:has(#archive.tab-panel) > .main #archive.tab-panel.view { width: 100% !important; max-width: none !important; padding: 0 10px 22px !important; }
+  body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view > .page-head,
+  body:has(#tenants.tab-panel) > .main #tenants.tab-panel.view > .page-head,
+  body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view > .page-head,
+  body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view > .page-head,
+  body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view > .page-head,
+  body:has(#templates.tab-panel) > .main #templates.tab-panel.view > .page-head,
+  body:has(#settings.tab-panel) > .main #settings.tab-panel.view > .page-head,
+  body:has(#audit.tab-panel) > .main #audit.tab-panel.view > .page-head,
+  body:has(#archive.tab-panel) > .main #archive.tab-panel.view > .page-head { align-items: flex-start !important; gap: 9px !important; margin: 10px 0 11px !important; }
+  body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view > .page-head h1,
+  body:has(#tenants.tab-panel) > .main #tenants.tab-panel.view > .page-head h1,
+  body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view > .page-head h1,
+  body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view > .page-head h1,
+  body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view > .page-head h1,
+  body:has(#templates.tab-panel) > .main #templates.tab-panel.view > .page-head h1,
+  body:has(#settings.tab-panel) > .main #settings.tab-panel.view > .page-head h1,
+  body:has(#audit.tab-panel) > .main #audit.tab-panel.view > .page-head h1,
+  body:has(#archive.tab-panel) > .main #archive.tab-panel.view > .page-head h1 { font-size: 24px !important; }
+  body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view > .page-head .subtitle,
+  body:has(#tenants.tab-panel) > .main #tenants.tab-panel.view > .page-head .subtitle,
+  body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view > .page-head .subtitle,
+  body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view > .page-head .subtitle,
+  body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view > .page-head .subtitle,
+  body:has(#templates.tab-panel) > .main #templates.tab-panel.view > .page-head .subtitle,
+  body:has(#settings.tab-panel) > .main #settings.tab-panel.view > .page-head .subtitle,
+  body:has(#audit.tab-panel) > .main #audit.tab-panel.view > .page-head .subtitle,
+  body:has(#archive.tab-panel) > .main #archive.tab-panel.view > .page-head .subtitle { display: none !important; }
+  body:has(#rooms.tab-panel) > .main #rooms.tab-panel.view > .page-head .ui-page-action,
+  body:has(#tenants.tab-panel) > .main #tenants.tab-panel.view > .page-head .ui-page-action,
+  body:has(#ledger.tab-panel) > .main #ledger.tab-panel.view > .page-head .ui-page-action,
+  body:has(#maintenance.tab-panel) > .main #maintenance.tab-panel.view > .page-head .ui-page-action,
+  body:has(#checkout.tab-panel) > .main #checkout.tab-panel.view > .page-head .ui-page-action,
+  body:has(#templates.tab-panel) > .main #templates.tab-panel.view > .page-head .ui-page-action,
+  body:has(#settings.tab-panel) > .main #settings.tab-panel.view > .page-head .ui-page-action,
+  body:has(#audit.tab-panel) > .main #audit.tab-panel.view > .page-head .ui-page-action,
+  body:has(#archive.tab-panel) > .main #archive.tab-panel.view > .page-head .ui-page-action { align-self: stretch !important; width: 100% !important; min-width: 0 !important; height: 38px !important; }
+  dialog#move-in-dialog,
+  dialog#rental-auth-dialog,
+  dialog#record-dialog,
+  dialog#renewal-dialog,
+  dialog#room-items-dialog,
+  dialog#room-maintenance-dialog,
+  dialog#room-photos-dialog,
+  dialog#room-tenants-dialog,
+  dialog#maintenance-batch-dialog,
+  dialog#image-preview-dialog { width: calc(100vw - 16px) !important; max-width: calc(100vw - 16px) !important; max-height: calc(100vh - 16px) !important; border-radius: 12px !important; }
+  dialog#move-in-dialog .dialog-head,
+  dialog#rental-auth-dialog .dialog-head,
+  dialog#record-dialog .dialog-head,
+  dialog#renewal-dialog .dialog-head,
+  dialog#room-items-dialog .dialog-head,
+  dialog#room-maintenance-dialog .dialog-head,
+  dialog#room-photos-dialog .dialog-head,
+  dialog#room-tenants-dialog .dialog-head,
+  dialog#maintenance-batch-dialog .dialog-head,
+  dialog#image-preview-dialog .dialog-head { min-height: 57px !important; padding: 13px 16px !important; }
+  dialog#move-in-dialog .dialog-head h2,
+  dialog#rental-auth-dialog .dialog-head h2,
+  dialog#record-dialog .dialog-head h2,
+  dialog#renewal-dialog .dialog-head h2,
+  dialog#room-items-dialog .dialog-head h2,
+  dialog#room-maintenance-dialog .dialog-head h2,
+  dialog#room-photos-dialog .dialog-head h2,
+  dialog#room-tenants-dialog .dialog-head h2,
+  dialog#maintenance-batch-dialog .dialog-head h2,
+  dialog#image-preview-dialog .dialog-head h2 { font-size: 18px !important; }
+  dialog#move-in-dialog .move-in-content,
+  dialog#record-dialog .dialog-fields,
+  dialog#maintenance-batch-dialog .dialog-body { padding: 15px 16px !important; }
+  dialog#move-in-dialog .move-in-grid { grid-template-columns: 1fr !important; gap: 11px !important; }
+  dialog#move-in-dialog .move-in-grid label.full,
+  dialog#move-in-dialog .move-in-amount.full { grid-column: auto !important; }
+  dialog#move-in-dialog .move-in-steps { justify-content: flex-start !important; overflow-x: auto !important; }
+  dialog#move-in-dialog .move-in-actions,
+  dialog#rental-auth-dialog .dialog-actions,
+  dialog#record-dialog .dialog-actions,
+  dialog#renewal-dialog .dialog-actions,
+  dialog#room-items-dialog .dialog-actions,
+  dialog#room-maintenance-dialog .dialog-actions,
+  dialog#room-photos-dialog .dialog-actions,
+  dialog#maintenance-batch-dialog .dialog-actions { min-height: 59px !important; gap: 6px !important; padding: 9px 16px !important; }
+  dialog#move-in-dialog .move-in-actions button,
+  dialog#rental-auth-dialog .dialog-actions button,
+  dialog#record-dialog .dialog-actions button,
+  dialog#renewal-dialog .dialog-actions button,
+  dialog#room-items-dialog .dialog-actions button,
+  dialog#room-maintenance-dialog .dialog-actions button,
+  dialog#room-photos-dialog .dialog-actions button,
+  dialog#maintenance-batch-dialog .dialog-actions button { min-width: 0 !important; flex: 1 1 0 !important; height: 38px !important; padding: 0 8px !important; font-size: 12px !important; }
+}
+
 /* Rental cards and lease workflows use the same state and action language as maintenance. */
 #rental.tab-panel.view #room-list .room-card {
   display: flex !important;
@@ -102,6 +353,569 @@ dialog#record-dialog.checkout-dialog .dialog-actions .primary { min-width: 124px
   dialog#record-dialog.lease-dialog .dialog-actions button,
   dialog#record-dialog.renewal-dialog .dialog-actions button,
   dialog#record-dialog.checkout-dialog .dialog-actions button { min-width: 0 !important; flex: 1 1 0 !important; height: 38px !important; }
+}
+
+/* v11 — unified rental workspace contract.
+ * This is intentionally the final layer in the file. Legacy page rules remain
+ * available for behavior, while every visible page and native dialog receives
+ * one predictable visual contract here. */
+:root {
+  --ux-ink: #102b3d;
+  --ux-muted: #617e8d;
+  --ux-line: #d7e6eb;
+  --ux-soft: #f3f8fa;
+  --ux-blue: #167db7;
+  --ux-teal: #128c8c;
+  --ux-green: #0a9b72;
+  --ux-amber: #bd7812;
+  --ux-red: #d95353;
+  --ux-radius: 12px;
+}
+
+/* Shared page frame: every menu keeps the same reading width and vertical rhythm. */
+main.rental-shell { min-width: 0 !important; }
+main.rental-shell > .tab-panel.view {
+  width: min(1240px, 100%) !important;
+  max-width: 1240px !important;
+  margin: 0 auto !important;
+  padding: 0 0 28px !important;
+  color: var(--ux-ink) !important;
+}
+main.rental-shell > .tab-panel.view > .page-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 20px !important;
+  min-height: 0 !important;
+  margin: 16px 0 14px !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+main.rental-shell > .tab-panel.view > .page-head > div { min-width: 0 !important; }
+main.rental-shell > .tab-panel.view > .page-head .eyebrow {
+  margin: 0 0 4px !important;
+  color: #6f8793 !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: .12em !important;
+}
+main.rental-shell > .tab-panel.view > .page-head h1 {
+  margin: 0 !important;
+  color: var(--ux-ink) !important;
+  font-size: 30px !important;
+  line-height: 1.15 !important;
+  letter-spacing: -.03em !important;
+}
+main.rental-shell > .tab-panel.view > .page-head .subtitle {
+  margin: 7px 0 0 !important;
+  color: var(--ux-muted) !important;
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+}
+main.rental-shell > .tab-panel.view > .page-head .ui-page-action,
+main.rental-shell > .tab-panel.view > .page-head > .button,
+main.rental-shell > .tab-panel.view > .page-head > .primary {
+  flex: 0 0 auto !important;
+  min-width: 126px !important;
+  height: 42px !important;
+  padding: 0 16px !important;
+  border: 1px solid var(--ux-blue) !important;
+  border-radius: 9px !important;
+  color: #fff !important;
+  background: var(--ux-blue) !important;
+  box-shadow: 0 7px 16px rgba(22,125,183,.16) !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}
+main.rental-shell > .tab-panel.view > .panel,
+main.rental-shell > .tab-panel.view > .table-panel,
+main.rental-shell > .tab-panel.view > .move-in-panel,
+main.rental-shell > .tab-panel.view > .template-layout > .panel {
+  border: 1px solid var(--ux-line) !important;
+  border-radius: var(--ux-radius) !important;
+  background: #fff !important;
+  box-shadow: 0 5px 17px rgba(24,66,82,.045) !important;
+}
+main.rental-shell > .tab-panel.view > .panel-title { margin-bottom: 14px !important; }
+main.rental-shell > .tab-panel.view .panel-title h2 { color: var(--ux-ink) !important; font-size: 17px !important; font-weight: 800 !important; }
+main.rental-shell > .tab-panel.view .panel-title p { color: var(--ux-muted) !important; font-size: 12px !important; line-height: 1.45 !important; }
+
+/* Shared filters and buttons. */
+main.rental-shell > .tab-panel.view > .filter-bar,
+main.rental-shell > .tab-panel.view > .ledger-filters,
+main.rental-shell > .tab-panel.view > .maintenance-filters,
+main.rental-shell > .tab-panel.view > .ui-room-filter,
+main.rental-shell > .tab-panel.view > .ui-audit-filter {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto !important;
+  align-items: end !important;
+  gap: 10px !important;
+  margin: 0 0 12px !important;
+  padding: 12px !important;
+  border: 1px solid var(--ux-line) !important;
+  border-radius: 11px !important;
+  background: var(--ux-soft) !important;
+}
+main.rental-shell > .tab-panel.view > .filter-bar label,
+main.rental-shell > .tab-panel.view > .ledger-filters label,
+main.rental-shell > .tab-panel.view > .maintenance-filters label { color: var(--ux-muted) !important; font-size: 11px !important; font-weight: 700 !important; }
+main.rental-shell > .tab-panel.view > .filter-bar input,
+main.rental-shell > .tab-panel.view > .filter-bar select,
+main.rental-shell > .tab-panel.view > .ledger-filters input,
+main.rental-shell > .tab-panel.view > .ledger-filters select,
+main.rental-shell > .tab-panel.view > .maintenance-filters input,
+main.rental-shell > .tab-panel.view > .maintenance-filters select,
+main.rental-shell > .tab-panel.view > .ui-room-filter input,
+main.rental-shell > .tab-panel.view > .ui-room-filter select,
+main.rental-shell > .tab-panel.view > .ui-audit-filter input,
+main.rental-shell > .tab-panel.view > .ui-audit-filter select {
+  width: 100% !important;
+  height: 40px !important;
+  margin-top: 6px !important;
+  padding: 0 11px !important;
+  border: 1px solid #c6dce4 !important;
+  border-radius: 8px !important;
+  color: var(--ux-ink) !important;
+  background: #fff !important;
+  font-size: 13px !important;
+}
+main.rental-shell > .tab-panel.view .filter-bar .button,
+main.rental-shell > .tab-panel.view .filter-bar button,
+main.rental-shell > .tab-panel.view .ledger-filters .button,
+main.rental-shell > .tab-panel.view .ledger-filters button,
+main.rental-shell > .tab-panel.view .maintenance-filters .button,
+main.rental-shell > .tab-panel.view .maintenance-filters button { height: 40px !important; border-radius: 8px !important; font-size: 12px !important; font-weight: 800 !important; }
+main.rental-shell > .tab-panel.view .button,
+main.rental-shell > .tab-panel.view button.primary,
+main.rental-shell > .tab-panel.view button.ghost,
+main.rental-shell > .tab-panel.view button.small {
+  box-sizing: border-box !important;
+  border-radius: 8px !important;
+  font-weight: 800 !important;
+}
+main.rental-shell > .tab-panel.view .button-outline,
+main.rental-shell > .tab-panel.view button.ghost,
+main.rental-shell > .tab-panel.view button.small {
+  border: 1px solid #c5dce5 !important;
+  color: var(--ux-blue) !important;
+  background: #fff !important;
+}
+main.rental-shell > .tab-panel.view .button-danger-outline { border-color: #efb9b9 !important; color: var(--ux-red) !important; background: #fff !important; }
+
+/* All tables use the same header, row height, and action alignment. */
+main.rental-shell > .tab-panel.view .table-panel { padding: 0 !important; overflow: hidden !important; }
+main.rental-shell > .tab-panel.view .table-panel > .table-panel { border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+main.rental-shell > .tab-panel.view .table-panel .table-wrap,
+main.rental-shell > .tab-panel.view .table-panel > div[id$="-list"] { overflow-x: auto !important; }
+main.rental-shell > .tab-panel.view .table-panel table {
+  width: 100% !important;
+  min-width: 760px !important;
+  border-collapse: collapse !important;
+}
+main.rental-shell > .tab-panel.view .table-panel thead th {
+  height: 45px !important;
+  padding: 0 14px !important;
+  border-bottom: 1px solid #d8e8ed !important;
+  color: #496d7d !important;
+  background: #eff7f9 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+}
+main.rental-shell > .tab-panel.view .table-panel tbody td {
+  min-height: 64px !important;
+  padding: 12px 14px !important;
+  border-bottom: 1px solid #e5eff2 !important;
+  color: #365d6f !important;
+  background: #fff !important;
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+  vertical-align: middle !important;
+}
+main.rental-shell > .tab-panel.view .table-panel tbody tr:nth-child(even) td { background: #fbfdfe !important; }
+main.rental-shell > .tab-panel.view .table-panel tbody tr:hover td { background: #f5fbfd !important; }
+main.rental-shell > .tab-panel.view .table-panel tbody tr:last-child td { border-bottom: 0 !important; }
+main.rental-shell > .tab-panel.view .table-panel td strong,
+main.rental-shell > .tab-panel.view .table-panel td small { display: block !important; }
+main.rental-shell > .tab-panel.view .table-panel td strong { color: var(--ux-ink) !important; font-size: 13px !important; font-weight: 800 !important; }
+main.rental-shell > .tab-panel.view .table-panel td small { margin-top: 4px !important; color: var(--ux-muted) !important; font-size: 11px !important; }
+main.rental-shell > .tab-panel.view .table-actions,
+main.rental-shell > .tab-panel.view .row-actions { display: flex !important; align-items: center !important; justify-content: flex-end !important; flex-wrap: wrap !important; gap: 6px !important; margin: 0 !important; }
+main.rental-shell > .tab-panel.view .table-actions .button,
+main.rental-shell > .tab-panel.view .row-actions .button,
+main.rental-shell > .tab-panel.view .row-actions .small { min-width: 32px !important; height: 32px !important; padding: 0 9px !important; font-size: 11px !important; }
+
+/* Room admin table and its compact mobile cards. */
+#rooms.tab-panel.view > .table-panel { overflow: hidden !important; }
+#rooms.tab-panel.view #room-admin-list { padding: 0 !important; }
+#rooms.tab-panel.view #room-admin-list .room-admin-table { overflow-x: auto !important; }
+#rooms.tab-panel.view #room-admin-list .room-admin-table table { min-width: 1080px !important; }
+#rooms.tab-panel.view #room-admin-list .room-admin-table td:nth-child(1) { min-width: 170px !important; }
+#rooms.tab-panel.view #room-admin-list .room-admin-table td:nth-child(9) { min-width: 250px !important; }
+#rooms.tab-panel.view #room-admin-list .room-admin-mobile-list { display: none !important; }
+
+/* Tenant directory and in-progress move-in list. */
+#tenants.tab-panel.view > .segmented,
+#tenants.tab-panel.view > .ui-tenant-segment {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+  margin: 0 0 12px !important;
+  padding: 3px !important;
+  border: 1px solid var(--ux-line) !important;
+  border-radius: 9px !important;
+  background: #fff !important;
+}
+#tenants.tab-panel.view > .segmented button,
+#tenants.tab-panel.view > .ui-tenant-segment button { min-height: 34px !important; padding: 0 14px !important; border: 0 !important; border-radius: 7px !important; color: var(--ux-muted) !important; background: transparent !important; font-size: 12px !important; font-weight: 800 !important; }
+#tenants.tab-panel.view > .segmented button.active,
+#tenants.tab-panel.view > .ui-tenant-segment button.active { color: #fff !important; background: var(--ux-teal) !important; }
+#tenants.tab-panel.view .move-in-panel { margin-bottom: 12px !important; padding: 16px 18px !important; }
+#tenants.tab-panel.view .move-in-panel .panel-title { margin-bottom: 12px !important; }
+#tenants.tab-panel.view #move-in-list { display: grid !important; gap: 8px !important; }
+#tenants.tab-panel.view .move-in-row { display: grid !important; grid-template-columns: minmax(0,1fr) auto auto auto !important; align-items: center !important; gap: 10px !important; min-height: 58px !important; padding: 10px 12px !important; border: 1px solid #d9e7ec !important; border-radius: 9px !important; background: #fbfdfe !important; }
+#tenants.tab-panel.view .move-in-row strong,
+#tenants.tab-panel.view .move-in-row small { display: block !important; }
+#tenants.tab-panel.view .move-in-row strong { color: var(--ux-ink) !important; font-size: 13px !important; }
+#tenants.tab-panel.view .move-in-row small { margin-top: 4px !important; color: var(--ux-muted) !important; font-size: 11px !important; }
+#tenants.tab-panel.view .move-in-row .button { min-height: 32px !important; font-size: 11px !important; }
+#tenants.tab-panel.view #tenant-list.tenant-list { display: grid !important; gap: 9px !important; }
+#tenants.tab-panel.view #tenant-list .tenant-row { grid-template-columns: 1.2fr .75fr 1.45fr .85fr .95fr .8fr .8fr auto !important; gap: 12px !important; min-height: 86px !important; padding: 13px 15px !important; border: 1px solid var(--ux-line) !important; border-radius: 10px !important; background: #fff !important; box-shadow: 0 3px 12px rgba(24,66,82,.035) !important; }
+#tenants.tab-panel.view #tenant-list .tenant-row .tenant-main h3 { color: var(--ux-ink) !important; font-size: 14px !important; }
+#tenants.tab-panel.view #tenant-list .tenant-row .tenant-main p { color: var(--ux-muted) !important; font-size: 11px !important; }
+#tenants.tab-panel.view #tenant-list .tenant-row > div > span { color: #78909b !important; font-size: 10px !important; }
+#tenants.tab-panel.view #tenant-list .tenant-row > div > strong { color: #173548 !important; font-size: 12px !important; }
+#tenants.tab-panel.view #tenant-list .tenant-row .table-actions { min-width: 234px !important; }
+#tenants.tab-panel.view #tenant-list .tenant-row .table-actions .button { min-height: 31px !important; }
+
+/* Ledger, maintenance, checkout, audit and archive surfaces. */
+#ledger.tab-panel.view .ledger-summary { gap: 10px !important; margin: 0 0 12px !important; }
+#ledger.tab-panel.view .ledger-summary > div { min-height: 86px !important; padding: 14px 16px !important; border: 1px solid var(--ux-line) !important; border-radius: 10px !important; background: #fff !important; }
+#ledger.tab-panel.view .ledger-summary span { color: var(--ux-muted) !important; font-size: 11px !important; }
+#ledger.tab-panel.view .ledger-summary strong { margin-top: 7px !important; font-size: 21px !important; }
+#ledger.tab-panel.view #ledger-list { padding: 0 !important; }
+#maintenance.tab-panel.view > .panel-title { margin-bottom: 12px !important; }
+#maintenance.tab-panel.view .maintenance-view-switch { margin: 0 0 10px !important; }
+#maintenance.tab-panel.view .maintenance-batch { display: flex !important; align-items: center !important; gap: 8px !important; margin: 0 0 12px !important; padding: 10px 12px !important; border: 1px solid #edd394 !important; border-radius: 10px !important; background: #fffaf0 !important; }
+#maintenance.tab-panel.view .maintenance-batch > span { margin-right: auto !important; color: #86651f !important; font-size: 12px !important; font-weight: 800 !important; }
+#maintenance.tab-panel.view #maintenance-list,
+#maintenance.tab-panel.view #cost-list { padding: 0 !important; }
+#maintenance.tab-panel.view .maintenance-status,
+#maintenance.tab-panel.view .maintenance-amount { display: inline-flex !important; align-items: center !important; min-height: 28px !important; padding: 0 10px !important; border-radius: 999px !important; font-size: 11px !important; font-weight: 800 !important; }
+#maintenance.tab-panel.view .maintenance-status { border: 1px solid #87d8bd !important; color: var(--ux-green) !important; background: #eafaf3 !important; }
+#maintenance.tab-panel.view .maintenance-amount { border: 1px solid #ffb8b3 !important; color: var(--ux-red) !important; background: #fff3f2 !important; }
+#checkout.tab-panel.view .process-track { margin: 0 auto 12px !important; padding: 11px 16px !important; border: 1px solid var(--ux-line) !important; border-radius: 10px !important; background: var(--ux-soft) !important; }
+#checkout.tab-panel.view #checkout-list { padding: 0 !important; }
+#audit.tab-panel.view > .page-head .ui-audit-filter { margin-left: auto !important; }
+#audit.tab-panel.view > .page-head .ui-audit-filter .search-field { min-width: 260px !important; }
+#archive.tab-panel.view #archive-list { padding: 17px 18px !important; }
+#archive.tab-panel.view #archive-list h2 { margin: 0 0 9px !important; color: var(--ux-ink) !important; font-size: 15px !important; }
+#archive.tab-panel.view #archive-list h2.section-rule-title { margin-top: 20px !important; padding-top: 17px !important; border-top: 1px solid #e4eef2 !important; }
+#archive.tab-panel.view #archive-list table { min-width: 600px !important; }
+
+/* Business text and settings share the same form language. */
+#templates.tab-panel.view .template-layout { grid-template-columns: 196px minmax(0,1fr) !important; gap: 12px !important; }
+#templates.tab-panel.view .template-side { padding: 10px !important; }
+#templates.tab-panel.view .template-editor { padding: 17px 18px !important; }
+#templates.tab-panel.view .template-editor .template-form,
+#settings.tab-panel.view #rental-settings-form,
+#settings.tab-panel.view #rental-user-form { gap: 12px !important; }
+#templates.tab-panel.view .template-editor label,
+#settings.tab-panel.view label { color: var(--ux-muted) !important; font-size: 12px !important; font-weight: 700 !important; }
+#templates.tab-panel.view .template-editor input,
+#templates.tab-panel.view .template-editor select,
+#templates.tab-panel.view .template-editor textarea,
+#settings.tab-panel.view input,
+#settings.tab-panel.view select,
+#settings.tab-panel.view textarea { box-sizing: border-box !important; border: 1px solid #c6dce4 !important; border-radius: 8px !important; color: var(--ux-ink) !important; background: #fff !important; font-size: 13px !important; }
+#templates.tab-panel.view .template-editor input,
+#templates.tab-panel.view .template-editor select,
+#settings.tab-panel.view input,
+#settings.tab-panel.view select { height: 40px !important; padding: 0 11px !important; }
+#templates.tab-panel.view .template-editor textarea { min-height: 170px !important; padding: 11px !important; line-height: 1.6 !important; }
+#templates.tab-panel.view #template-output { min-height: 150px !important; margin-top: 12px !important; padding: 12px !important; border: 1px solid var(--ux-line) !important; border-radius: 8px !important; background: #f8fcfd !important; }
+#settings.tab-panel.view .settings-grid,
+#settings.tab-panel.view .account-panel { overflow: hidden !important; }
+#settings.tab-panel.view #rental-settings-form,
+#settings.tab-panel.view #rental-user-form { padding: 17px 18px !important; }
+#settings.tab-panel.view .account-panel .section-head { padding: 15px 18px !important; border-bottom: 1px solid #e8f0f3 !important; }
+
+/* Native dialogs — one header, scroll body, and action footer for every workflow. */
+dialog#record-dialog,
+dialog#renewal-dialog,
+dialog#room-items-dialog,
+dialog#room-maintenance-dialog,
+dialog#room-photos-dialog,
+dialog#room-tenants-dialog,
+dialog#maintenance-batch-dialog,
+dialog#move-in-dialog,
+dialog#rental-auth-dialog,
+dialog#image-preview-dialog {
+  box-sizing: border-box !important;
+  max-width: calc(100vw - 28px) !important;
+  max-height: calc(100vh - 28px) !important;
+  padding: 0 !important;
+  border: 1px solid #cfE2e9 !important;
+  border-radius: 15px !important;
+  background: #fff !important;
+  box-shadow: 0 26px 80px rgba(15,47,63,.26) !important;
+}
+dialog#record-dialog::backdrop,
+dialog#renewal-dialog::backdrop,
+dialog#room-items-dialog::backdrop,
+dialog#room-maintenance-dialog::backdrop,
+dialog#room-photos-dialog::backdrop,
+dialog#room-tenants-dialog::backdrop,
+dialog#maintenance-batch-dialog::backdrop,
+dialog#move-in-dialog::backdrop,
+dialog#rental-auth-dialog::backdrop,
+dialog#image-preview-dialog::backdrop { background: rgba(16,43,61,.55) !important; backdrop-filter: blur(4px) !important; }
+dialog#record-dialog .dialog-head,
+dialog#renewal-dialog .dialog-head,
+dialog#room-items-dialog .dialog-head,
+dialog#room-maintenance-dialog .dialog-head,
+dialog#room-photos-dialog .dialog-head,
+dialog#room-tenants-dialog .dialog-head,
+dialog#maintenance-batch-dialog .dialog-head,
+dialog#move-in-dialog .dialog-head,
+dialog#rental-auth-dialog .dialog-head,
+dialog#image-preview-dialog .dialog-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  min-height: 68px !important;
+  margin: 0 !important;
+  padding: 17px 24px !important;
+  border-bottom: 1px solid #e0ebef !important;
+  background: #fff !important;
+}
+dialog#record-dialog .dialog-head h2,
+dialog#renewal-dialog .dialog-head h2,
+dialog#room-items-dialog .dialog-head h2,
+dialog#room-maintenance-dialog .dialog-head h2,
+dialog#room-photos-dialog .dialog-head h2,
+dialog#room-tenants-dialog .dialog-head h2,
+dialog#maintenance-batch-dialog .dialog-head h2,
+dialog#move-in-dialog .dialog-head h2,
+dialog#rental-auth-dialog .dialog-head h2,
+dialog#image-preview-dialog .dialog-head h2 { margin: 0 !important; color: var(--ux-ink) !important; font-size: 21px !important; line-height: 1.25 !important; font-weight: 850 !important; }
+dialog#record-dialog .dialog-head h2::before,
+dialog#move-in-dialog .dialog-head h2::before { content: ""; display: inline-block !important; width: 4px !important; height: 22px !important; margin-right: 10px !important; border-radius: 3px !important; vertical-align: -3px !important; background: var(--ux-teal) !important; }
+dialog#record-dialog .dialog-head button,
+dialog#renewal-dialog .dialog-head button,
+dialog#room-items-dialog .dialog-head button,
+dialog#room-maintenance-dialog .dialog-head button,
+dialog#room-photos-dialog .dialog-head button,
+dialog#room-tenants-dialog .dialog-head button,
+dialog#maintenance-batch-dialog .dialog-head button,
+dialog#move-in-dialog .dialog-head button,
+dialog#image-preview-dialog .dialog-head button { flex: 0 0 auto !important; width: 35px !important; height: 35px !important; padding: 0 !important; border: 1px solid #d4e3e9 !important; border-radius: 9px !important; color: #5d7785 !important; background: #f5fafb !important; font-size: 21px !important; }
+dialog#record-dialog > form,
+dialog#maintenance-batch-dialog > form,
+dialog#rental-auth-dialog > form { display: flex !important; flex-direction: column !important; max-height: calc(100vh - 28px) !important; overflow: hidden !important; }
+dialog#record-dialog .dialog-fields,
+dialog#maintenance-batch-dialog .dialog-body,
+dialog#move-in-dialog .move-in-content { min-height: 0 !important; overflow: auto !important; }
+dialog#record-dialog .dialog-fields,
+dialog#maintenance-batch-dialog .dialog-body { padding: 20px 24px !important; }
+dialog#record-dialog .dialog-fields input,
+dialog#record-dialog .dialog-fields select,
+dialog#record-dialog .dialog-fields textarea,
+dialog#maintenance-batch-dialog input,
+dialog#maintenance-batch-dialog select,
+dialog#maintenance-batch-dialog textarea,
+dialog#rental-auth-dialog input,
+dialog#move-in-dialog .move-in-grid input,
+dialog#move-in-dialog .move-in-grid select,
+dialog#move-in-dialog .move-in-grid textarea { box-sizing: border-box !important; width: 100% !important; border: 1px solid #c6dce4 !important; border-radius: 8px !important; color: var(--ux-ink) !important; background: #fff !important; font-size: 14px !important; }
+dialog#record-dialog .dialog-fields input,
+dialog#record-dialog .dialog-fields select,
+dialog#maintenance-batch-dialog input,
+dialog#maintenance-batch-dialog select,
+dialog#rental-auth-dialog input,
+dialog#move-in-dialog .move-in-grid input,
+dialog#move-in-dialog .move-in-grid select { height: 42px !important; padding: 0 12px !important; }
+dialog#record-dialog .dialog-fields textarea,
+dialog#maintenance-batch-dialog textarea,
+dialog#move-in-dialog .move-in-grid textarea { min-height: 100px !important; padding: 10px 12px !important; line-height: 1.55 !important; resize: vertical !important; }
+dialog#record-dialog .dialog-fields label,
+dialog#maintenance-batch-dialog .dialog-body label,
+dialog#rental-auth-dialog .auth-field,
+dialog#move-in-dialog .move-in-grid label { color: #5c7887 !important; font-size: 12px !important; font-weight: 700 !important; line-height: 1.35 !important; }
+dialog#record-dialog .dialog-fields input:focus,
+dialog#record-dialog .dialog-fields select:focus,
+dialog#record-dialog .dialog-fields textarea:focus,
+dialog#rental-auth-dialog input:focus,
+dialog#move-in-dialog .move-in-grid input:focus,
+dialog#move-in-dialog .move-in-grid select:focus,
+dialog#move-in-dialog .move-in-grid textarea:focus { border-color: var(--ux-blue) !important; outline: 0 !important; box-shadow: 0 0 0 3px rgba(22,125,183,.12) !important; }
+dialog#record-dialog .dialog-actions,
+dialog#renewal-dialog .dialog-actions,
+dialog#room-items-dialog .dialog-actions,
+dialog#room-maintenance-dialog .dialog-actions,
+dialog#room-photos-dialog .dialog-actions,
+dialog#maintenance-batch-dialog .dialog-actions,
+dialog#move-in-dialog .move-in-actions,
+dialog#rental-auth-dialog .dialog-actions { display: flex !important; align-items: center !important; justify-content: flex-end !important; gap: 9px !important; min-height: 68px !important; margin: 0 !important; padding: 13px 24px !important; border-top: 1px solid #e0ebef !important; background: #fbfdfe !important; }
+dialog#record-dialog .dialog-actions button,
+dialog#renewal-dialog .dialog-actions button,
+dialog#room-items-dialog .dialog-actions button,
+dialog#room-maintenance-dialog .dialog-actions button,
+dialog#room-photos-dialog .dialog-actions button,
+dialog#maintenance-batch-dialog .dialog-actions button,
+dialog#move-in-dialog .move-in-actions button,
+dialog#rental-auth-dialog .dialog-actions button { min-width: 96px !important; height: 40px !important; padding: 0 15px !important; border-radius: 8px !important; font-size: 13px !important; font-weight: 800 !important; }
+dialog#record-dialog .dialog-actions .primary,
+dialog#maintenance-batch-dialog .dialog-actions .primary,
+dialog#move-in-dialog .move-in-actions .primary,
+dialog#rental-auth-dialog .dialog-actions .primary { min-width: 120px !important; color: #fff !important; border-color: var(--ux-blue) !important; background: var(--ux-blue) !important; }
+
+/* Move-in is a three-step workflow, but shares the same compact form geometry. */
+dialog#move-in-dialog { width: min(900px, calc(100vw - 28px)) !important; }
+dialog#move-in-dialog .move-in-steps { display: flex !important; align-items: center !important; justify-content: center !important; gap: 10px !important; min-height: 62px !important; padding: 10px 22px !important; border-bottom: 1px solid #e4eef2 !important; background: #f7fbfc !important; }
+dialog#move-in-dialog .move-in-steps span { display: inline-flex !important; align-items: center !important; gap: 7px !important; color: #8aa0aa !important; font-size: 12px !important; font-weight: 800 !important; white-space: nowrap !important; }
+dialog#move-in-dialog .move-in-steps span b { display: grid !important; place-items: center !important; width: 27px !important; height: 27px !important; border: 1px solid #cfdee4 !important; border-radius: 50% !important; color: #78909b !important; background: #fff !important; font-size: 10px !important; }
+dialog#move-in-dialog .move-in-steps span.active,
+dialog#move-in-dialog .move-in-steps span.complete { color: var(--ux-teal) !important; }
+dialog#move-in-dialog .move-in-steps span.active b,
+dialog#move-in-dialog .move-in-steps span.complete b { border-color: var(--ux-teal) !important; color: #fff !important; background: var(--ux-teal) !important; }
+dialog#move-in-dialog .move-in-content { padding: 21px 24px !important; }
+dialog#move-in-dialog .move-in-section h3 { margin: 0 !important; color: var(--ux-ink) !important; font-size: 16px !important; font-weight: 850 !important; }
+dialog#move-in-dialog .move-in-section > .meta { margin: 6px 0 16px !important; color: var(--ux-muted) !important; font-size: 12px !important; line-height: 1.5 !important; }
+dialog#move-in-dialog .move-in-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 13px 15px !important; }
+dialog#move-in-dialog .move-in-grid label { display: grid !important; gap: 6px !important; min-width: 0 !important; }
+dialog#move-in-dialog .move-in-grid label.full,
+dialog#move-in-dialog .move-in-amount.full { grid-column: 1 / -1 !important; }
+dialog#move-in-dialog .move-in-inventory { margin: 0 0 15px !important; padding: 12px 14px !important; border: 1px solid var(--ux-line) !important; border-radius: 9px !important; background: #f8fcfd !important; }
+dialog#move-in-dialog .move-in-inventory .section-title { display: flex !important; align-items: center !important; justify-content: space-between !important; color: var(--ux-ink) !important; font-size: 12px !important; }
+dialog#move-in-dialog .inventory-inline { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; margin-top: 8px !important; }
+dialog#move-in-dialog .inventory-inline span { padding: 4px 8px !important; border-radius: 999px !important; color: #4c7080 !important; background: #eaf5f8 !important; font-size: 11px !important; }
+dialog#move-in-dialog .contract-status-card { display: grid !important; gap: 6px !important; margin: 15px 0 !important; padding: 14px !important; border: 1px solid #c9e0e8 !important; border-radius: 9px !important; background: #f5fafb !important; }
+dialog#move-in-dialog .contract-status-card span { color: var(--ux-muted) !important; font-size: 11px !important; }
+dialog#move-in-dialog .contract-status-card strong { color: var(--ux-ink) !important; font-size: 15px !important; }
+dialog#move-in-dialog .move-in-contract-actions { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; }
+dialog#move-in-dialog .move-in-amount { display: grid !important; gap: 5px !important; padding: 14px !important; border: 1px solid #f1c4c7 !important; border-radius: 9px !important; background: #fff5f5 !important; }
+dialog#move-in-dialog .move-in-amount span { color: #b45c5f !important; font-size: 11px !important; font-weight: 800 !important; }
+dialog#move-in-dialog .move-in-amount strong { color: #c94b52 !important; font-size: 13px !important; }
+dialog#move-in-dialog .move-in-amount b { color: var(--ux-red) !important; font-size: 24px !important; }
+dialog#move-in-dialog #move-in-status { margin-right: auto !important; color: var(--ux-amber) !important; font-size: 12px !important; font-weight: 800 !important; }
+
+/* Small screens keep the hierarchy while removing horizontal overflow. */
+@media (max-width: 760px) {
+  main.rental-shell > .tab-panel.view { width: 100% !important; max-width: none !important; padding: 0 10px 22px !important; }
+  main.rental-shell > .tab-panel.view > .page-head { align-items: flex-start !important; gap: 10px !important; margin: 10px 0 11px !important; }
+  main.rental-shell > .tab-panel.view > .page-head h1 { font-size: 24px !important; }
+  main.rental-shell > .tab-panel.view > .page-head .subtitle { display: none !important; }
+  main.rental-shell > .tab-panel.view > .page-head .ui-page-action,
+  main.rental-shell > .tab-panel.view > .page-head > .button,
+  main.rental-shell > .tab-panel.view > .page-head > .primary { align-self: stretch !important; min-width: 0 !important; width: 100% !important; height: 38px !important; }
+  main.rental-shell > .tab-panel.view > .filter-bar,
+  main.rental-shell > .tab-panel.view > .ledger-filters,
+  main.rental-shell > .tab-panel.view > .maintenance-filters,
+  main.rental-shell > .tab-panel.view > .ui-room-filter,
+  main.rental-shell > .tab-panel.view > .ui-audit-filter { display: flex !important; align-items: flex-end !important; overflow-x: auto !important; gap: 8px !important; margin-bottom: 9px !important; padding: 8px !important; scrollbar-width: none !important; }
+  main.rental-shell > .tab-panel.view > .filter-bar::-webkit-scrollbar,
+  main.rental-shell > .tab-panel.view > .ledger-filters::-webkit-scrollbar,
+  main.rental-shell > .tab-panel.view > .maintenance-filters::-webkit-scrollbar,
+  main.rental-shell > .tab-panel.view > .ui-room-filter::-webkit-scrollbar,
+  main.rental-shell > .tab-panel.view > .ui-audit-filter::-webkit-scrollbar { display: none !important; }
+  main.rental-shell > .tab-panel.view > .filter-bar label,
+  main.rental-shell > .tab-panel.view > .ledger-filters label,
+  main.rental-shell > .tab-panel.view > .maintenance-filters label { flex: 0 0 148px !important; }
+  main.rental-shell > .tab-panel.view > .filter-bar label:last-of-type,
+  main.rental-shell > .tab-panel.view > .ledger-filters label:last-of-type,
+  main.rental-shell > .tab-panel.view > .maintenance-filters label:last-of-type { flex-basis: 164px !important; }
+  main.rental-shell > .tab-panel.view > .filter-bar button,
+  main.rental-shell > .tab-panel.view > .ledger-filters button,
+  main.rental-shell > .tab-panel.view > .maintenance-filters button { flex: 0 0 92px !important; }
+  #rooms.tab-panel.view #room-admin-list .room-admin-table { display: none !important; }
+  #rooms.tab-panel.view #room-admin-list .room-admin-mobile-list { display: grid !important; gap: 9px !important; padding: 9px !important; }
+  #rooms.tab-panel.view #room-admin-list .room-admin-mobile-card { display: block !important; padding: 13px !important; border: 1px solid var(--ux-line) !important; border-radius: 10px !important; background: #fff !important; }
+  #rooms.tab-panel.view #room-admin-list .room-mobile-meta { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 10px !important; margin-top: 12px !important; }
+  #rooms.tab-panel.view #room-admin-list .room-mobile-meta span { color: #78909b !important; font-size: 10px !important; }
+  #rooms.tab-panel.view #room-admin-list .room-mobile-meta b { display: block !important; margin-top: 3px !important; color: var(--ux-ink) !important; font-size: 12px !important; }
+  #rooms.tab-panel.view #room-admin-list .card-actions { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; margin-top: 12px !important; padding-top: 10px !important; border-top: 1px solid #edf3f5 !important; }
+  #rooms.tab-panel.view #room-admin-list .card-actions .button { flex: 1 1 calc(50% - 6px) !important; min-width: 0 !important; height: 32px !important; font-size: 11px !important; }
+  #tenants.tab-panel.view > .segmented,
+  #tenants.tab-panel.view > .ui-tenant-segment { display: flex !important; overflow-x: auto !important; width: 100% !important; scrollbar-width: none !important; }
+  #tenants.tab-panel.view > .segmented::-webkit-scrollbar,
+  #tenants.tab-panel.view > .ui-tenant-segment::-webkit-scrollbar { display: none !important; }
+  #tenants.tab-panel.view > .segmented button,
+  #tenants.tab-panel.view > .ui-tenant-segment button { flex: 0 0 auto !important; }
+  #tenants.tab-panel.view .move-in-panel { padding: 13px !important; }
+  #tenants.tab-panel.view .move-in-row { grid-template-columns: minmax(0,1fr) auto !important; }
+  #tenants.tab-panel.view .move-in-row .status-chip { justify-self: end !important; }
+  #tenants.tab-panel.view .move-in-row .button-outline { grid-column: 1 !important; }
+  #tenants.tab-panel.view .move-in-row .button-danger-outline { grid-column: 2 !important; grid-row: 2 !important; }
+  #tenants.tab-panel.view #tenant-list .tenant-row { grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 10px 13px !important; min-height: 0 !important; padding: 13px !important; }
+  #tenants.tab-panel.view #tenant-list .tenant-row .tenant-main,
+  #tenants.tab-panel.view #tenant-list .tenant-row .table-actions { grid-column: 1 / -1 !important; }
+  #tenants.tab-panel.view #tenant-list .tenant-row .table-actions { min-width: 0 !important; justify-content: flex-start !important; padding-top: 9px !important; border-top: 1px solid #edf3f5 !important; }
+  #tenants.tab-panel.view #tenant-list .tenant-row .table-actions .button { flex: 1 1 calc(50% - 6px) !important; min-width: 0 !important; }
+  #templates.tab-panel.view .template-layout { grid-template-columns: 1fr !important; }
+  #templates.tab-panel.view .template-side { padding: 8px !important; }
+  #templates.tab-panel.view .template-side .segmented { display: flex !important; overflow-x: auto !important; }
+  #templates.tab-panel.view .template-side .segmented button { flex: 0 0 auto !important; }
+  #settings.tab-panel.view #rental-settings-form,
+  #settings.tab-panel.view #rental-user-form { grid-template-columns: 1fr !important; }
+  #audit.tab-panel.view > .page-head .ui-audit-filter { width: 100% !important; margin: 0 !important; }
+  #audit.tab-panel.view > .page-head .ui-audit-filter .search-field { min-width: 0 !important; }
+  dialog#record-dialog,
+  dialog#renewal-dialog,
+  dialog#room-items-dialog,
+  dialog#room-maintenance-dialog,
+  dialog#room-photos-dialog,
+  dialog#room-tenants-dialog,
+  dialog#maintenance-batch-dialog,
+  dialog#move-in-dialog,
+  dialog#rental-auth-dialog,
+  dialog#image-preview-dialog { width: calc(100vw - 16px) !important; max-width: calc(100vw - 16px) !important; max-height: calc(100vh - 16px) !important; border-radius: 12px !important; }
+  dialog#record-dialog .dialog-head,
+  dialog#renewal-dialog .dialog-head,
+  dialog#room-items-dialog .dialog-head,
+  dialog#room-maintenance-dialog .dialog-head,
+  dialog#room-photos-dialog .dialog-head,
+  dialog#room-tenants-dialog .dialog-head,
+  dialog#maintenance-batch-dialog .dialog-head,
+  dialog#move-in-dialog .dialog-head,
+  dialog#rental-auth-dialog .dialog-head,
+  dialog#image-preview-dialog .dialog-head { min-height: 57px !important; padding: 13px 16px !important; }
+  dialog#record-dialog .dialog-head h2,
+  dialog#renewal-dialog .dialog-head h2,
+  dialog#room-items-dialog .dialog-head h2,
+  dialog#room-maintenance-dialog .dialog-head h2,
+  dialog#room-photos-dialog .dialog-head h2,
+  dialog#room-tenants-dialog .dialog-head h2,
+  dialog#maintenance-batch-dialog .dialog-head h2,
+  dialog#move-in-dialog .dialog-head h2,
+  dialog#rental-auth-dialog .dialog-head h2,
+  dialog#image-preview-dialog .dialog-head h2 { font-size: 18px !important; }
+  dialog#record-dialog .dialog-fields,
+  dialog#maintenance-batch-dialog .dialog-body,
+  dialog#move-in-dialog .move-in-content { padding: 15px 16px !important; }
+  dialog#move-in-dialog .move-in-steps { justify-content: flex-start !important; overflow-x: auto !important; padding: 9px 16px !important; }
+  dialog#move-in-dialog .move-in-grid { grid-template-columns: 1fr !important; gap: 11px !important; }
+  dialog#move-in-dialog .move-in-grid label.full,
+  dialog#move-in-dialog .move-in-amount.full { grid-column: auto !important; }
+  dialog#record-dialog .dialog-actions,
+  dialog#renewal-dialog .dialog-actions,
+  dialog#room-items-dialog .dialog-actions,
+  dialog#room-maintenance-dialog .dialog-actions,
+  dialog#room-photos-dialog .dialog-actions,
+  dialog#maintenance-batch-dialog .dialog-actions,
+  dialog#move-in-dialog .move-in-actions,
+  dialog#rental-auth-dialog .dialog-actions { min-height: 59px !important; gap: 6px !important; padding: 9px 16px !important; }
+  dialog#record-dialog .dialog-actions button,
+  dialog#renewal-dialog .dialog-actions button,
+  dialog#room-items-dialog .dialog-actions button,
+  dialog#room-maintenance-dialog .dialog-actions button,
+  dialog#room-photos-dialog .dialog-actions button,
+  dialog#maintenance-batch-dialog .dialog-actions button,
+  dialog#move-in-dialog .move-in-actions button,
+  dialog#rental-auth-dialog .dialog-actions button { min-width: 0 !important; flex: 1 1 0 !important; height: 38px !important; padding: 0 9px !important; font-size: 12px !important; }
+  dialog#move-in-dialog #move-in-status { flex: 1 1 100% !important; order: -1 !important; margin: 0 !important; }
 }
 
 /* Workbench concept: four status cards, one finance summary surface, then action-oriented panels. */
@@ -1530,4 +2344,213 @@ dialog#image-preview-dialog { width: min(820px, calc(100vw - 32px)) !important; 
   dialog#room-items-dialog .table-wrap,
   dialog#room-maintenance-dialog .table-wrap,
   dialog#room-tenants-dialog .table-wrap { padding: 12px !important; }
+}
+
+/* v11-end: the last cascade boundary. */
+body > .main.rental-shell > #rooms.tab-panel.view,
+body > .main.rental-shell > #tenants.tab-panel.view,
+body > .main.rental-shell > #ledger.tab-panel.view,
+body > .main.rental-shell > #maintenance.tab-panel.view,
+body > .main.rental-shell > #checkout.tab-panel.view,
+body > .main.rental-shell > #templates.tab-panel.view,
+body > .main.rental-shell > #settings.tab-panel.view,
+body > .main.rental-shell > #audit.tab-panel.view,
+body > .main.rental-shell > #archive.tab-panel.view { width: min(1240px,100%) !important; max-width: 1240px !important; margin: 0 auto !important; padding: 0 0 28px !important; }
+body > .main.rental-shell > #rooms.tab-panel.view > .page-head,
+body > .main.rental-shell > #tenants.tab-panel.view > .page-head,
+body > .main.rental-shell > #ledger.tab-panel.view > .page-head,
+body > .main.rental-shell > #maintenance.tab-panel.view > .page-head,
+body > .main.rental-shell > #checkout.tab-panel.view > .page-head,
+body > .main.rental-shell > #templates.tab-panel.view > .page-head,
+body > .main.rental-shell > #settings.tab-panel.view > .page-head,
+body > .main.rental-shell > #audit.tab-panel.view > .page-head,
+body > .main.rental-shell > #archive.tab-panel.view > .page-head { display:flex !important; align-items:center !important; justify-content:space-between !important; min-height:0 !important; margin:16px 0 14px !important; padding:0 !important; border:0 !important; }
+body > .main.rental-shell > #rooms.tab-panel.view > .page-head h1,
+body > .main.rental-shell > #tenants.tab-panel.view > .page-head h1,
+body > .main.rental-shell > #ledger.tab-panel.view > .page-head h1,
+body > .main.rental-shell > #maintenance.tab-panel.view > .page-head h1,
+body > .main.rental-shell > #checkout.tab-panel.view > .page-head h1,
+body > .main.rental-shell > #templates.tab-panel.view > .page-head h1,
+body > .main.rental-shell > #settings.tab-panel.view > .page-head h1,
+body > .main.rental-shell > #audit.tab-panel.view > .page-head h1,
+body > .main.rental-shell > #archive.tab-panel.view > .page-head h1 { margin:0 !important; color:#102b3d !important; font-size:30px !important; line-height:1.15 !important; }
+body > .main.rental-shell > #rooms.tab-panel.view > .page-head .subtitle,
+body > .main.rental-shell > #tenants.tab-panel.view > .page-head .subtitle,
+body > .main.rental-shell > #ledger.tab-panel.view > .page-head .subtitle,
+body > .main.rental-shell > #maintenance.tab-panel.view > .page-head .subtitle,
+body > .main.rental-shell > #checkout.tab-panel.view > .page-head .subtitle,
+body > .main.rental-shell > #templates.tab-panel.view > .page-head .subtitle,
+body > .main.rental-shell > #settings.tab-panel.view > .page-head .subtitle,
+body > .main.rental-shell > #audit.tab-panel.view > .page-head .subtitle,
+body > .main.rental-shell > #archive.tab-panel.view > .page-head .subtitle { margin:7px 0 0 !important; color:#617e8d !important; font-size:13px !important; }
+
+body > .main.rental-shell > #rooms.tab-panel.view > .table-panel,
+body > .main.rental-shell > #tenants.tab-panel.view > .panel,
+body > .main.rental-shell > #ledger.tab-panel.view > .table-panel,
+body > .main.rental-shell > #maintenance.tab-panel.view > .table-panel,
+body > .main.rental-shell > #checkout.tab-panel.view > .table-panel,
+body > .main.rental-shell > #templates.tab-panel.view .template-layout > .panel,
+body > .main.rental-shell > #settings.tab-panel.view > .panel,
+body > .main.rental-shell > #audit.tab-panel.view > .table-panel,
+body > .main.rental-shell > #archive.tab-panel.view > .table-panel { border:1px solid #d7e6eb !important; border-radius:12px !important; background:#fff !important; box-shadow:0 5px 17px rgba(24,66,82,.045) !important; }
+body > .main.rental-shell > #rooms.tab-panel.view thead th,
+body > .main.rental-shell > #tenants.tab-panel.view thead th,
+body > .main.rental-shell > #ledger.tab-panel.view thead th,
+body > .main.rental-shell > #maintenance.tab-panel.view thead th,
+body > .main.rental-shell > #checkout.tab-panel.view thead th,
+body > .main.rental-shell > #audit.tab-panel.view thead th,
+body > .main.rental-shell > #archive.tab-panel.view thead th { height:45px !important; padding:0 14px !important; border-bottom:1px solid #d8e8ed !important; color:#496d7d !important; background:#eff7f9 !important; font-size:12px !important; font-weight:800 !important; text-align:left !important; white-space:nowrap !important; }
+body > .main.rental-shell > #rooms.tab-panel.view tbody td,
+body > .main.rental-shell > #tenants.tab-panel.view tbody td,
+body > .main.rental-shell > #ledger.tab-panel.view tbody td,
+body > .main.rental-shell > #maintenance.tab-panel.view tbody td,
+body > .main.rental-shell > #checkout.tab-panel.view tbody td,
+body > .main.rental-shell > #audit.tab-panel.view tbody td,
+body > .main.rental-shell > #archive.tab-panel.view tbody td { min-height:64px !important; padding:12px 14px !important; border-bottom:1px solid #e5eff2 !important; color:#365d6f !important; background:#fff !important; font-size:12px !important; line-height:1.45 !important; vertical-align:middle !important; }
+body > .main.rental-shell > #rooms.tab-panel.view tbody tr:nth-child(even) td,
+body > .main.rental-shell > #tenants.tab-panel.view tbody tr:nth-child(even) td,
+body > .main.rental-shell > #ledger.tab-panel.view tbody tr:nth-child(even) td,
+body > .main.rental-shell > #maintenance.tab-panel.view tbody tr:nth-child(even) td,
+body > .main.rental-shell > #checkout.tab-panel.view tbody tr:nth-child(even) td,
+body > .main.rental-shell > #audit.tab-panel.view tbody tr:nth-child(even) td,
+body > .main.rental-shell > #archive.tab-panel.view tbody tr:nth-child(even) td { background:#fbfdfe !important; }
+
+dialog#move-in-dialog,
+dialog#rental-auth-dialog,
+dialog#record-dialog,
+dialog#renewal-dialog,
+dialog#room-items-dialog,
+dialog#room-maintenance-dialog,
+dialog#room-photos-dialog,
+dialog#room-tenants-dialog,
+dialog#maintenance-batch-dialog,
+dialog#image-preview-dialog { box-sizing:border-box !important; border:1px solid #cfe2e9 !important; border-radius:15px !important; background:#fff !important; box-shadow:0 26px 80px rgba(15,47,63,.26) !important; }
+dialog#move-in-dialog .dialog-head,
+dialog#rental-auth-dialog .dialog-head,
+dialog#record-dialog .dialog-head,
+dialog#renewal-dialog .dialog-head,
+dialog#room-items-dialog .dialog-head,
+dialog#room-maintenance-dialog .dialog-head,
+dialog#room-photos-dialog .dialog-head,
+dialog#room-tenants-dialog .dialog-head,
+dialog#maintenance-batch-dialog .dialog-head,
+dialog#image-preview-dialog .dialog-head { min-height:68px !important; margin:0 !important; padding:17px 24px !important; border-bottom:1px solid #e0ebef !important; background:#fff !important; }
+dialog#move-in-dialog .dialog-actions,
+dialog#rental-auth-dialog .dialog-actions,
+dialog#record-dialog .dialog-actions,
+dialog#renewal-dialog .dialog-actions,
+dialog#room-items-dialog .dialog-actions,
+dialog#room-maintenance-dialog .dialog-actions,
+dialog#room-photos-dialog .dialog-actions,
+dialog#maintenance-batch-dialog .dialog-actions { min-height:68px !important; margin:0 !important; padding:13px 24px !important; border-top:1px solid #e0ebef !important; background:#fbfdfe !important; }
+
+@media (max-width:760px) {
+  body > .main.rental-shell > #rooms.tab-panel.view,
+  body > .main.rental-shell > #tenants.tab-panel.view,
+  body > .main.rental-shell > #ledger.tab-panel.view,
+  body > .main.rental-shell > #maintenance.tab-panel.view,
+  body > .main.rental-shell > #checkout.tab-panel.view,
+  body > .main.rental-shell > #templates.tab-panel.view,
+  body > .main.rental-shell > #settings.tab-panel.view,
+  body > .main.rental-shell > #audit.tab-panel.view,
+  body > .main.rental-shell > #archive.tab-panel.view { width:100% !important; max-width:none !important; padding:0 10px 22px !important; }
+  body > .main.rental-shell > #rooms.tab-panel.view > .page-head,
+  body > .main.rental-shell > #tenants.tab-panel.view > .page-head,
+  body > .main.rental-shell > #ledger.tab-panel.view > .page-head,
+  body > .main.rental-shell > #maintenance.tab-panel.view > .page-head,
+  body > .main.rental-shell > #checkout.tab-panel.view > .page-head,
+  body > .main.rental-shell > #templates.tab-panel.view > .page-head,
+  body > .main.rental-shell > #settings.tab-panel.view > .page-head,
+  body > .main.rental-shell > #audit.tab-panel.view > .page-head,
+  body > .main.rental-shell > #archive.tab-panel.view > .page-head { align-items:flex-start !important; gap:9px !important; margin:10px 0 11px !important; }
+  body > .main.rental-shell > #rooms.tab-panel.view > .page-head h1,
+  body > .main.rental-shell > #tenants.tab-panel.view > .page-head h1,
+  body > .main.rental-shell > #ledger.tab-panel.view > .page-head h1,
+  body > .main.rental-shell > #maintenance.tab-panel.view > .page-head h1,
+  body > .main.rental-shell > #checkout.tab-panel.view > .page-head h1,
+  body > .main.rental-shell > #templates.tab-panel.view > .page-head h1,
+  body > .main.rental-shell > #settings.tab-panel.view > .page-head h1,
+  body > .main.rental-shell > #audit.tab-panel.view > .page-head h1,
+  body > .main.rental-shell > #archive.tab-panel.view > .page-head h1 { font-size:24px !important; }
+  body > .main.rental-shell > #rooms.tab-panel.view > .page-head .subtitle,
+  body > .main.rental-shell > #tenants.tab-panel.view > .page-head .subtitle,
+  body > .main.rental-shell > #ledger.tab-panel.view > .page-head .subtitle,
+  body > .main.rental-shell > #maintenance.tab-panel.view > .page-head .subtitle,
+  body > .main.rental-shell > #checkout.tab-panel.view > .page-head .subtitle,
+  body > .main.rental-shell > #templates.tab-panel.view > .page-head .subtitle,
+  body > .main.rental-shell > #settings.tab-panel.view > .page-head .subtitle,
+  body > .main.rental-shell > #audit.tab-panel.view > .page-head .subtitle,
+  body > .main.rental-shell > #archive.tab-panel.view > .page-head .subtitle { display:none !important; }
+  body > .main.rental-shell > #rooms.tab-panel.view > .page-head .ui-page-action,
+  body > .main.rental-shell > #tenants.tab-panel.view > .page-head .ui-page-action,
+  body > .main.rental-shell > #ledger.tab-panel.view > .page-head .ui-page-action,
+  body > .main.rental-shell > #maintenance.tab-panel.view > .page-head .ui-page-action,
+  body > .main.rental-shell > #checkout.tab-panel.view > .page-head .ui-page-action,
+  body > .main.rental-shell > #templates.tab-panel.view > .page-head .ui-page-action,
+  body > .main.rental-shell > #settings.tab-panel.view > .page-head .ui-page-action,
+  body > .main.rental-shell > #audit.tab-panel.view > .page-head .ui-page-action,
+  body > .main.rental-shell > #archive.tab-panel.view > .page-head .ui-page-action { align-self:stretch !important; width:100% !important; min-width:0 !important; height:38px !important; }
+  dialog#move-in-dialog,
+  dialog#rental-auth-dialog,
+  dialog#record-dialog,
+  dialog#renewal-dialog,
+  dialog#room-items-dialog,
+  dialog#room-maintenance-dialog,
+  dialog#room-photos-dialog,
+  dialog#room-tenants-dialog,
+  dialog#maintenance-batch-dialog,
+  dialog#image-preview-dialog { width:calc(100vw - 16px) !important; max-width:calc(100vw - 16px) !important; max-height:calc(100vh - 16px) !important; border-radius:12px !important; }
+  dialog#move-in-dialog .dialog-head,
+  dialog#rental-auth-dialog .dialog-head,
+  dialog#record-dialog .dialog-head,
+  dialog#renewal-dialog .dialog-head,
+  dialog#room-items-dialog .dialog-head,
+  dialog#room-maintenance-dialog .dialog-head,
+  dialog#room-photos-dialog .dialog-head,
+  dialog#room-tenants-dialog .dialog-head,
+  dialog#maintenance-batch-dialog .dialog-head,
+  dialog#image-preview-dialog .dialog-head { min-height:57px !important; padding:13px 16px !important; }
+  dialog#move-in-dialog .dialog-actions,
+  dialog#rental-auth-dialog .dialog-actions,
+  dialog#record-dialog .dialog-actions,
+  dialog#renewal-dialog .dialog-actions,
+  dialog#room-items-dialog .dialog-actions,
+  dialog#room-maintenance-dialog .dialog-actions,
+  dialog#room-photos-dialog .dialog-actions,
+  dialog#maintenance-batch-dialog .dialog-actions { min-height:59px !important; gap:6px !important; padding:9px 16px !important; }
+}
+
+/* v11-end controls for dialog-only content and dynamic table wrappers. */
+dialog#rental-auth-dialog { width: min(430px, calc(100vw - 28px)) !important; }
+dialog#rental-auth-dialog > form > .meta { margin: 0 !important; padding: 18px 24px 0 !important; color: #617e8d !important; font-size: 12px !important; line-height: 1.5 !important; }
+dialog#rental-auth-dialog > form > .auth-field { display: block !important; margin: 13px 24px 0 !important; }
+dialog#rental-auth-dialog > form > .error { min-height: 18px !important; margin: 10px 24px 0 !important; color: #d95353 !important; font-size: 12px !important; }
+dialog#image-preview-dialog { width: min(820px, calc(100vw - 28px)) !important; }
+dialog#image-preview-dialog #image-preview { display: block !important; max-width: calc(100% - 36px) !important; max-height: calc(100vh - 170px) !important; margin: 18px auto !important; object-fit: contain !important; border-radius: 9px !important; }
+dialog#renewal-dialog .table-wrap,
+dialog#room-items-dialog .table-wrap,
+dialog#room-maintenance-dialog .table-wrap,
+dialog#room-tenants-dialog .table-wrap { max-height: calc(100vh - 150px) !important; margin: 0 !important; padding: 17px 20px !important; overflow: auto !important; }
+dialog#renewal-dialog table,
+dialog#room-items-dialog table,
+dialog#room-maintenance-dialog table,
+dialog#room-tenants-dialog table { width: 100% !important; min-width: 620px !important; border-collapse: collapse !important; }
+dialog#renewal-dialog th,
+dialog#room-items-dialog th,
+dialog#room-maintenance-dialog th,
+dialog#room-tenants-dialog th { height: 42px !important; padding: 0 11px !important; color: #496d7d !important; background: #eff7f9 !important; font-size: 11px !important; font-weight: 800 !important; text-align: left !important; }
+dialog#renewal-dialog td,
+dialog#room-items-dialog td,
+dialog#room-maintenance-dialog td,
+dialog#room-tenants-dialog td { padding: 10px 11px !important; border-bottom: 1px solid #e5eff2 !important; color: #365d6f !important; font-size: 12px !important; vertical-align: middle !important; }
+dialog#room-photos-dialog .room-photos-list { display: grid !important; grid-template-columns: repeat(3, minmax(0,1fr)) !important; gap: 12px !important; max-height: calc(100vh - 190px) !important; margin: 0 !important; padding: 18px 22px !important; overflow: auto !important; }
+dialog#room-photos-dialog .room-photo-card { min-width: 0 !important; padding: 9px !important; border: 1px solid #d9e7ec !important; border-radius: 9px !important; background: #fbfdfe !important; }
+dialog#room-photos-dialog .room-photo-card img { display: block !important; width: 100% !important; aspect-ratio: 4 / 3 !important; object-fit: cover !important; border-radius: 6px !important; }
+dialog#room-photos-dialog #room-photos-status { margin: 0 22px 10px !important; color: #617e8d !important; font-size: 12px !important; }
+@media (max-width: 760px) {
+  dialog#rental-auth-dialog > form > .meta { padding: 15px 16px 0 !important; }
+  dialog#rental-auth-dialog > form > .auth-field { margin-left: 16px !important; margin-right: 16px !important; }
+  dialog#rental-auth-dialog > form > .error { margin-left: 16px !important; margin-right: 16px !important; }
+  dialog#room-photos-dialog .room-photos-list { grid-template-columns: repeat(2, minmax(0,1fr)) !important; padding: 14px 16px !important; }
+  dialog#room-photos-dialog #room-photos-status { margin-left: 16px !important; margin-right: 16px !important; }
 }
