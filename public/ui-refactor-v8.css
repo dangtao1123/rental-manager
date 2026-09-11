@@ -624,3 +624,404 @@ body:has(#maintenance.tab-panel) > .main.rental-shell {
   #maintenance.tab-panel.view #maintenance-list .maintenance-evidence-grid .meta { width: 70px !important; min-height: 58px !important; padding-top: 18px !important; text-align: center !important; }
   #maintenance.tab-panel.view #maintenance-list .row-actions { gap: 7px !important; }
 }
+
+/* Shared page standard for rental, room archive and tenant directory. */
+#rental.view,
+#rooms.view,
+#tenants.view {
+  width: min(1240px, 100%) !important;
+  margin: 0 auto !important;
+  padding: 0 0 32px !important;
+}
+#rental.view > .page-head,
+#rooms.view > .page-head,
+#tenants.view > .page-head {
+  min-height: 0 !important;
+  margin: 16px 0 14px !important;
+  padding: 0 !important;
+  align-items: center !important;
+}
+#rental.view > .page-head .eyebrow,
+#rooms.view > .page-head .eyebrow,
+#tenants.view > .page-head .eyebrow { display: none !important; }
+#rental.view > .page-head h1,
+#rooms.view > .page-head h1,
+#tenants.view > .page-head h1 {
+  margin: 0 !important;
+  color: #102b3d !important;
+  font-size: 30px !important;
+  font-weight: 800 !important;
+  line-height: 1.18 !important;
+  letter-spacing: -.5px !important;
+}
+#rental.view > .page-head .subtitle,
+#rooms.view > .page-head .subtitle,
+#tenants.view > .page-head .subtitle {
+  margin: 5px 0 0 !important;
+  color: #647f8d !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+#rental.view > .page-head .ui-page-action,
+#rooms.view > .page-head .ui-page-action,
+#tenants.view > .page-head .ui-page-action {
+  min-width: 126px !important;
+  height: 42px !important;
+  padding: 0 16px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+}
+#rental.view > .filter-bar,
+#rooms.view > .filter-bar {
+  min-height: 64px !important;
+  margin: 0 0 14px !important;
+  padding: 11px 14px !important;
+  border: 1px solid #dce9ee !important;
+  border-radius: 10px !important;
+  background: #f8fcfd !important;
+  box-shadow: none !important;
+}
+#rental.view > .filter-bar .search-field { min-width: 220px !important; }
+#rental.view > .filter-bar input,
+#rental.view > .filter-bar select,
+#rooms.view > .filter-bar input,
+#rooms.view > .filter-bar select {
+  height: 40px !important;
+  border-color: #c8dce5 !important;
+  border-radius: 7px !important;
+  color: #173548 !important;
+  font-size: 13px !important;
+}
+#rental.view > .filter-bar .button,
+#rooms.view > .filter-bar .button {
+  height: 40px !important;
+  border-radius: 7px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+#rental.view #room-list.room-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+#rental.view #room-list .room-card {
+  min-height: 224px !important;
+  padding: 16px !important;
+  border: 1px solid #d6e6eb !important;
+  border-top: 3px solid #b9dbe5 !important;
+  border-radius: 11px !important;
+  background: #fff !important;
+  box-shadow: 0 5px 16px rgba(34, 78, 94, .05) !important;
+}
+#rental.view #room-list .room-card.room-occupied { border-top-color: #28b58a !important; background: #fbfffd !important; }
+#rental.view #room-list .room-card.room-vacant { border-top-color: #ee8f8d !important; }
+#rental.view #room-list .room-card.room-maintenance { border-top-color: #e5ae4e !important; }
+#rental.view #room-list .room-card-head { align-items: flex-start !important; gap: 10px !important; }
+#rental.view #room-list .room-card-head h3 { margin: 0 !important; color: #102b3d !important; font-size: 16px !important; font-weight: 800 !important; line-height: 1.35 !important; }
+#rental.view #room-list .room-card-head-meta { display: flex !important; flex-direction: column !important; align-items: flex-end !important; gap: 5px !important; }
+#rental.view #room-list .room-card .room-tenant,
+#rental.view #room-list .room-card .room-vacant-note { margin-top: 13px !important; color: #4f6e7d !important; font-size: 13px !important; line-height: 1.55 !important; }
+#rental.view #room-list .room-card .room-payment-row { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 8px !important; margin-top: 13px !important; }
+#rental.view #room-list .room-card .room-payment-row span { display: block !important; color: #78909b !important; font-size: 11px !important; }
+#rental.view #room-list .room-card .room-payment-row strong { display: block !important; margin-top: 4px !important; color: #173548 !important; font-size: 12px !important; line-height: 1.35 !important; }
+#rental.view #room-list .room-card .room-actions { display: flex !important; flex-wrap: wrap !important; gap: 7px !important; margin-top: auto !important; padding-top: 14px !important; }
+#rental.view #room-list .room-card .room-actions .button { min-height: 32px !important; height: 32px !important; padding: 0 10px !important; border-radius: 7px !important; font-size: 12px !important; }
+#rental.view #room-list .room-card .room-actions .button-dark { color: #fff !important; background: #147e9c !important; border-color: #147e9c !important; }
+
+#rooms.view > .table-panel {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid #d8e7ed !important;
+  border-radius: 11px !important;
+  background: #fff !important;
+  box-shadow: 0 7px 20px rgba(34, 78, 94, .05) !important;
+}
+#rooms.view #room-admin-list { overflow-x: auto !important; padding: 0 !important; }
+#rooms.view #room-admin-list .room-admin-table { min-width: 0 !important; overflow: visible !important; }
+#rooms.view #room-admin-list .room-admin-table table { width: 100% !important; min-width: 940px !important; table-layout: fixed !important; border-collapse: collapse !important; }
+#rooms.view #room-admin-list .room-admin-table th,
+#rooms.view #room-admin-list .room-admin-table td {
+  height: 64px !important;
+  padding: 10px 12px !important;
+  border-bottom: 1px solid #e4eef2 !important;
+  color: #173548 !important;
+  font-size: 12px !important;
+  vertical-align: middle !important;
+}
+#rooms.view #room-admin-list .room-admin-table th { height: 44px !important; background: #eff7f9 !important; color: #496d7d !important; font-size: 12px !important; font-weight: 800 !important; }
+#rooms.view #room-admin-list .room-admin-table tr:last-child td { border-bottom: 0 !important; }
+#rooms.view #room-admin-list .room-admin-table td strong { display: block !important; color: #102b3d !important; font-size: 14px !important; font-weight: 800 !important; }
+#rooms.view #room-admin-list .room-admin-table td small { display: block !important; margin-top: 4px !important; color: #6a8490 !important; font-size: 11px !important; }
+#rooms.view #room-admin-list .room-admin-table td .table-actions { display: flex !important; gap: 6px !important; margin: 0 !important; white-space: nowrap !important; }
+#rooms.view #room-admin-list .room-admin-table td .button { height: 32px !important; min-height: 32px !important; padding: 0 9px !important; border-radius: 7px !important; font-size: 12px !important; }
+#rooms.view #room-admin-list .room-admin-mobile-list { display: none !important; }
+
+#tenants.view > .segmented {
+  display: inline-flex !important;
+  gap: 4px !important;
+  margin: 0 0 14px !important;
+  padding: 4px !important;
+  border: 1px solid #d8e7ed !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  box-shadow: 0 4px 12px rgba(34, 78, 94, .04) !important;
+}
+#tenants.view > .segmented button {
+  min-height: 36px !important;
+  padding: 0 15px !important;
+  border-radius: 7px !important;
+  color: #5a7785 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+#tenants.view > .segmented button.active { color: #fff !important; background: #147e9c !important; }
+#tenants.view #tenant-list.tenant-list { display: grid !important; gap: 10px !important; }
+#tenants.view #tenant-list .tenant-row {
+  display: grid !important;
+  grid-template-columns: minmax(190px, 1.35fr) .8fr 1.25fr .9fr .9fr .8fr .75fr auto !important;
+  align-items: center !important;
+  gap: 14px !important;
+  min-height: 82px !important;
+  padding: 13px 15px !important;
+  border: 1px solid #d8e7ed !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  box-shadow: 0 4px 14px rgba(34, 78, 94, .04) !important;
+}
+#tenants.view #tenant-list .tenant-row > div { min-width: 0 !important; }
+#tenants.view #tenant-list .tenant-row h3 { margin: 0 !important; color: #102b3d !important; font-size: 14px !important; font-weight: 800 !important; }
+#tenants.view #tenant-list .tenant-row p { margin: 4px 0 0 !important; color: #6a8490 !important; font-size: 11px !important; }
+#tenants.view #tenant-list .tenant-row > div > span { display: block !important; color: #78909b !important; font-size: 11px !important; }
+#tenants.view #tenant-list .tenant-row > div > strong { display: block !important; margin-top: 5px !important; color: #173548 !important; font-size: 12px !important; }
+#tenants.view #tenant-list .tenant-row .table-actions { display: flex !important; flex-wrap: wrap !important; justify-content: flex-end !important; gap: 5px !important; margin: 0 !important; }
+#tenants.view #tenant-list .tenant-row .table-actions .button { height: 31px !important; min-height: 31px !important; padding: 0 8px !important; border-radius: 7px !important; font-size: 11px !important; }
+
+/* Shared dialog standard for room, tenant, lease, renewal and checkout workflows. */
+dialog#record-dialog,
+dialog#renewal-dialog,
+dialog#room-items-dialog,
+dialog#room-maintenance-dialog,
+dialog#room-photos-dialog,
+dialog#room-tenants-dialog,
+dialog#maintenance-batch-dialog {
+  width: min(760px, calc(100vw - 32px)) !important;
+  max-width: calc(100vw - 32px) !important;
+  max-height: calc(100vh - 32px) !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid #d5e5eb !important;
+  border-radius: 15px !important;
+  background: #fff !important;
+  box-shadow: 0 24px 70px rgba(18, 53, 68, .24) !important;
+}
+dialog#record-dialog::backdrop,
+dialog#renewal-dialog::backdrop,
+dialog#room-items-dialog::backdrop,
+dialog#room-maintenance-dialog::backdrop,
+dialog#room-photos-dialog::backdrop,
+dialog#room-tenants-dialog::backdrop,
+dialog#maintenance-batch-dialog::backdrop { background: rgba(16, 43, 61, .52) !important; backdrop-filter: blur(3px) !important; }
+dialog#record-dialog > form { display: flex !important; flex-direction: column !important; max-height: calc(100vh - 32px) !important; padding: 0 !important; overflow: hidden !important; }
+dialog#record-dialog .dialog-head,
+dialog#renewal-dialog .dialog-head,
+dialog#room-items-dialog .dialog-head,
+dialog#room-maintenance-dialog .dialog-head,
+dialog#room-photos-dialog .dialog-head,
+dialog#room-tenants-dialog .dialog-head,
+dialog#maintenance-batch-dialog .dialog-head {
+  flex: 0 0 auto !important;
+  min-height: 70px !important;
+  margin: 0 !important;
+  padding: 18px 24px !important;
+  border-bottom: 1px solid #e0ebef !important;
+  background: #fff !important;
+}
+dialog#record-dialog .dialog-head h2,
+dialog#renewal-dialog .dialog-head h2,
+dialog#room-items-dialog .dialog-head h2,
+dialog#room-maintenance-dialog .dialog-head h2,
+dialog#room-photos-dialog .dialog-head h2,
+dialog#room-tenants-dialog .dialog-head h2,
+dialog#maintenance-batch-dialog .dialog-head h2 { margin: 0 !important; color: #102b3d !important; font-size: 21px !important; font-weight: 800 !important; line-height: 1.25 !important; }
+dialog#record-dialog .dialog-head button,
+dialog#renewal-dialog .dialog-head button,
+dialog#room-items-dialog .dialog-head button,
+dialog#room-maintenance-dialog .dialog-head button,
+dialog#room-photos-dialog .dialog-head button,
+dialog#room-tenants-dialog .dialog-head button,
+dialog#maintenance-batch-dialog .dialog-head button {
+  width: 34px !important;
+  height: 34px !important;
+  border: 1px solid #d4e3e9 !important;
+  border-radius: 8px !important;
+  background: #f7fafb !important;
+  color: #647f8d !important;
+  font-size: 21px !important;
+}
+dialog#record-dialog .dialog-fields,
+dialog#maintenance-batch-dialog .dialog-body {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+  padding: 20px 24px !important;
+}
+dialog#record-dialog .dialog-fields { gap: 14px !important; }
+dialog#record-dialog .dialog-fields > label:not(.maintenance-field),
+dialog#maintenance-batch-dialog .dialog-body > label { min-width: 0 !important; color: #5e7987 !important; font-size: 12px !important; line-height: 1.35 !important; }
+dialog#record-dialog .dialog-fields input,
+dialog#record-dialog .dialog-fields select,
+dialog#record-dialog .dialog-fields textarea,
+dialog#maintenance-batch-dialog .dialog-body input,
+dialog#maintenance-batch-dialog .dialog-body select,
+dialog#maintenance-batch-dialog .dialog-body textarea {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin-top: 6px !important;
+  border: 1px solid #c8dce5 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: #173548 !important;
+  font-size: 14px !important;
+}
+dialog#record-dialog .dialog-fields input,
+dialog#record-dialog .dialog-fields select,
+dialog#maintenance-batch-dialog .dialog-body input,
+dialog#maintenance-batch-dialog .dialog-body select { height: 42px !important; padding: 0 12px !important; }
+dialog#record-dialog .dialog-fields textarea,
+dialog#maintenance-batch-dialog .dialog-body textarea { min-height: 100px !important; padding: 10px 12px !important; resize: vertical !important; }
+dialog#record-dialog .dialog-actions,
+dialog#maintenance-batch-dialog .dialog-actions {
+  flex: 0 0 auto !important;
+  min-height: 70px !important;
+  margin: 0 !important;
+  padding: 14px 24px !important;
+  border-top: 1px solid #e0ebef !important;
+  background: #fbfdfe !important;
+}
+dialog#record-dialog .dialog-actions button,
+dialog#maintenance-batch-dialog .dialog-actions button,
+dialog#renewal-dialog .dialog-actions button { min-width: 96px !important; height: 40px !important; border-radius: 8px !important; font-size: 13px !important; font-weight: 800 !important; }
+dialog#record-dialog .dialog-actions .primary,
+dialog#maintenance-batch-dialog .dialog-actions .primary { min-width: 118px !important; }
+dialog#record-dialog .dialog-fields .field-label { color: #5e7987 !important; font-size: 12px !important; font-weight: 600 !important; }
+dialog#record-dialog .dialog-fields .form-section-heading { margin: 4px 0 0 !important; padding: 12px 0 8px !important; color: #173548 !important; font-size: 16px !important; }
+dialog#record-dialog.lease-dialog .dialog-fields,
+dialog#record-dialog.rooms-dialog .dialog-fields { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+dialog#record-dialog.renewal-dialog .dialog-fields { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+dialog#record-dialog.checkout-dialog .dialog-fields { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+dialog#renewal-dialog .table-wrap,
+dialog#room-items-dialog .table-wrap,
+dialog#room-maintenance-dialog .table-wrap,
+dialog#room-tenants-dialog .table-wrap { max-height: calc(100vh - 180px) !important; overflow: auto !important; padding: 16px 20px !important; }
+dialog#renewal-dialog table,
+dialog#room-items-dialog table,
+dialog#room-maintenance-dialog table,
+dialog#room-tenants-dialog table { width: 100% !important; border-collapse: collapse !important; font-size: 12px !important; }
+dialog#renewal-dialog th,
+dialog#renewal-dialog td,
+dialog#room-items-dialog th,
+dialog#room-items-dialog td,
+dialog#room-maintenance-dialog th,
+dialog#room-maintenance-dialog td,
+dialog#room-tenants-dialog th,
+dialog#room-tenants-dialog td { padding: 10px 11px !important; border-bottom: 1px solid #e4eef2 !important; vertical-align: middle !important; }
+dialog#renewal-dialog th,
+dialog#room-items-dialog th,
+dialog#room-maintenance-dialog th,
+dialog#room-tenants-dialog th { background: #eff7f9 !important; color: #496d7d !important; font-weight: 800 !important; }
+dialog#room-photos-dialog .room-photos-list { padding: 18px 22px !important; }
+dialog#image-preview-dialog { width: min(820px, calc(100vw - 32px)) !important; padding: 18px !important; border-radius: 14px !important; }
+
+@media (max-width: 760px) {
+  #rental.view,
+  #rooms.view,
+  #tenants.view { padding-bottom: 20px !important; }
+  #rental.view > .page-head,
+  #rooms.view > .page-head,
+  #tenants.view > .page-head { flex-direction: row !important; align-items: center !important; margin: 9px 0 10px !important; }
+  #rental.view > .page-head > div,
+  #rooms.view > .page-head > div,
+  #tenants.view > .page-head > div { flex: 1 1 auto !important; min-width: 0 !important; width: auto !important; }
+  #rental.view > .page-head h1,
+  #rooms.view > .page-head h1,
+  #tenants.view > .page-head h1 { font-size: 24px !important; }
+  #rental.view > .page-head .subtitle,
+  #rooms.view > .page-head .subtitle,
+  #tenants.view > .page-head .subtitle { display: none !important; }
+  #rental.view > .page-head .ui-page-action,
+  #rooms.view > .page-head .ui-page-action,
+  #tenants.view > .page-head .ui-page-action { width: auto !important; min-width: 102px !important; height: 38px !important; padding: 0 10px !important; font-size: 12px !important; }
+  #rental.view > .filter-bar,
+  #rooms.view > .filter-bar { overflow-x: auto !important; display: flex !important; flex-wrap: nowrap !important; gap: 8px !important; min-height: 56px !important; margin-bottom: 10px !important; padding: 8px !important; scrollbar-width: none !important; }
+  #rental.view > .filter-bar::-webkit-scrollbar,
+  #rooms.view > .filter-bar::-webkit-scrollbar { display: none !important; }
+  #rental.view > .filter-bar .search-field,
+  #rental.view > .filter-bar select,
+  #rooms.view > .filter-bar .search-field,
+  #rooms.view > .filter-bar select { flex: 0 0 150px !important; min-width: 150px !important; }
+  #rental.view > .filter-bar .button,
+  #rooms.view > .filter-bar .button { flex: 0 0 92px !important; }
+  #rental.view #room-list.room-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+  #rental.view #room-list .room-card { min-height: 0 !important; padding: 14px !important; }
+  #rental.view #room-list .room-card .room-payment-row { gap: 6px !important; }
+  #rental.view #room-list .room-card .room-actions .button { flex: 1 1 calc(50% - 7px) !important; }
+  #rooms.view > .table-panel { overflow: visible !important; border: 0 !important; background: transparent !important; box-shadow: none !important; }
+  #rooms.view #room-admin-list { display: block !important; overflow: visible !important; }
+  #rooms.view #room-admin-list .room-admin-table { display: none !important; }
+  #rooms.view #room-admin-list .room-admin-mobile-list { display: grid !important; gap: 10px !important; }
+  #rooms.view #room-admin-list .room-admin-mobile-list .room-admin-mobile-card { display: block !important; padding: 14px !important; border: 1px solid #d8e7ed !important; border-radius: 10px !important; background: #fff !important; box-shadow: 0 4px 14px rgba(34,78,94,.04) !important; }
+  #rooms.view #room-admin-list .room-admin-mobile-list .room-card-head { display: flex !important; justify-content: space-between !important; gap: 8px !important; }
+  #rooms.view #room-admin-list .room-admin-mobile-list h3 { margin: 0 !important; color: #102b3d !important; font-size: 15px !important; }
+  #rooms.view #room-admin-list .room-admin-mobile-list p { margin: 4px 0 0 !important; color: #6a8490 !important; font-size: 11px !important; }
+  #rooms.view #room-admin-list .room-mobile-meta { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 10px !important; margin-top: 14px !important; }
+  #rooms.view #room-admin-list .room-mobile-meta span { display: block !important; color: #78909b !important; font-size: 11px !important; }
+  #rooms.view #room-admin-list .room-mobile-meta b { display: block !important; margin-top: 4px !important; color: #173548 !important; font-size: 12px !important; }
+  #rooms.view #room-admin-list .room-admin-mobile-list .card-actions { display: flex !important; flex-wrap: wrap !important; gap: 7px !important; margin-top: 13px !important; }
+  #rooms.view #room-admin-list .room-admin-mobile-list .card-actions .button { flex: 1 1 calc(50% - 7px) !important; height: 32px !important; min-height: 32px !important; padding: 0 8px !important; font-size: 11px !important; }
+  #tenants.view > .segmented { display: flex !important; overflow-x: auto !important; width: 100% !important; margin-bottom: 10px !important; scrollbar-width: none !important; }
+  #tenants.view > .segmented::-webkit-scrollbar { display: none !important; }
+  #tenants.view > .segmented button { flex: 0 0 auto !important; min-height: 34px !important; padding: 0 12px !important; font-size: 12px !important; }
+  #tenants.view #tenant-list .tenant-row { grid-template-columns: minmax(0,1fr) auto !important; gap: 10px !important; min-height: 0 !important; padding: 13px !important; }
+  #tenants.view #tenant-list .tenant-row > div:not(.tenant-main):not(.table-actions) { display: none !important; }
+  #tenants.view #tenant-list .tenant-row .tenant-main { grid-column: 1 !important; }
+  #tenants.view #tenant-list .tenant-row .table-actions { grid-column: 1 / -1 !important; justify-content: flex-start !important; padding-top: 8px !important; border-top: 1px solid #edf3f5 !important; }
+  dialog#record-dialog,
+  dialog#renewal-dialog,
+  dialog#room-items-dialog,
+  dialog#room-maintenance-dialog,
+  dialog#room-photos-dialog,
+  dialog#room-tenants-dialog,
+  dialog#maintenance-batch-dialog { width: calc(100vw - 16px) !important; max-width: calc(100vw - 16px) !important; max-height: calc(100vh - 16px) !important; border-radius: 12px !important; }
+  dialog#record-dialog > form { max-height: calc(100vh - 16px) !important; }
+  dialog#record-dialog .dialog-head,
+  dialog#renewal-dialog .dialog-head,
+  dialog#room-items-dialog .dialog-head,
+  dialog#room-maintenance-dialog .dialog-head,
+  dialog#room-photos-dialog .dialog-head,
+  dialog#room-tenants-dialog .dialog-head,
+  dialog#maintenance-batch-dialog .dialog-head { min-height: 58px !important; padding: 14px 16px !important; }
+  dialog#record-dialog .dialog-head h2,
+  dialog#renewal-dialog .dialog-head h2,
+  dialog#room-items-dialog .dialog-head h2,
+  dialog#room-maintenance-dialog .dialog-head h2,
+  dialog#room-photos-dialog .dialog-head h2,
+  dialog#room-tenants-dialog .dialog-head h2,
+  dialog#maintenance-batch-dialog .dialog-head h2 { font-size: 18px !important; }
+  dialog#record-dialog .dialog-fields,
+  dialog#maintenance-batch-dialog .dialog-body { padding: 15px 16px !important; }
+  dialog#record-dialog.lease-dialog .dialog-fields,
+  dialog#record-dialog.rooms-dialog .dialog-fields,
+  dialog#record-dialog.renewal-dialog .dialog-fields,
+  dialog#record-dialog.checkout-dialog .dialog-fields { grid-template-columns: 1fr !important; }
+  dialog#record-dialog .dialog-fields .full { grid-column: auto !important; }
+  dialog#record-dialog .dialog-actions,
+  dialog#maintenance-batch-dialog .dialog-actions { min-height: 60px !important; padding: 10px 16px !important; gap: 7px !important; }
+  dialog#record-dialog .dialog-actions button,
+  dialog#maintenance-batch-dialog .dialog-actions button { min-width: 0 !important; flex: 1 1 auto !important; height: 38px !important; padding: 0 9px !important; font-size: 12px !important; }
+  dialog#renewal-dialog .table-wrap,
+  dialog#room-items-dialog .table-wrap,
+  dialog#room-maintenance-dialog .table-wrap,
+  dialog#room-tenants-dialog .table-wrap { padding: 12px !important; }
+}
