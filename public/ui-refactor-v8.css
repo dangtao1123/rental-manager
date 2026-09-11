@@ -16,6 +16,94 @@ body {
   font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif !important;
 }
 
+/* Rental cards and lease workflows use the same state and action language as maintenance. */
+#rental.tab-panel.view #room-list .room-card {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 238px !important;
+  border-width: 1px !important;
+  border-top-width: 4px !important;
+  border-style: solid !important;
+}
+#rental.tab-panel.view #room-list .room-card.room-occupied { border-color: #bfe7dc !important; border-top-color: #20aa82 !important; background: #f5fcf9 !important; }
+#rental.tab-panel.view #room-list .room-card.room-vacant { border-color: #f0c9c9 !important; border-top-color: #e56f6b !important; background: #fff9f9 !important; }
+#rental.tab-panel.view #room-list .room-card.room-expiring,
+#rental.tab-panel.view #room-list .room-card.room-maintenance { border-color: #efd8ad !important; border-top-color: #df9a25 !important; background: #fffaf1 !important; }
+#rental.tab-panel.view #room-list .room-card.room-move-in-pending { border-color: #c5dff0 !important; border-top-color: #398ed2 !important; background: #f7fbff !important; }
+#rental.tab-panel.view #room-list .room-card .status-chip { display: inline-flex !important; align-items: center !important; min-height: 25px !important; padding: 0 9px !important; border: 1px solid currentColor !important; border-radius: 999px !important; font-size: 11px !important; font-weight: 800 !important; white-space: nowrap !important; }
+#rental.tab-panel.view #room-list .room-card .status-chip.success { color: #0b9c73 !important; background: #e8faf3 !important; }
+#rental.tab-panel.view #room-list .room-card .status-chip.danger { color: #d45555 !important; background: #fff0f0 !important; }
+#rental.tab-panel.view #room-list .room-card .status-chip.warning { color: #bc7812 !important; background: #fff4df !important; }
+#rental.tab-panel.view #room-list .room-card .room-card-days { color: #c17b13 !important; font-size: 11px !important; }
+#rental.tab-panel.view #room-list .room-card .room-actions { align-items: stretch !important; margin-top: auto !important; padding-top: 14px !important; border-top: 1px solid rgba(184,211,220,.62) !important; }
+#rental.tab-panel.view #room-list .room-card .room-actions .button { flex: 1 1 0 !important; min-width: 0 !important; white-space: nowrap !important; }
+
+dialog#record-dialog.lease-dialog,
+dialog#record-dialog.renewal-dialog,
+dialog#record-dialog.checkout-dialog {
+  width: min(900px, calc(100vw - 32px)) !important;
+}
+dialog#record-dialog.lease-dialog .dialog-head,
+dialog#record-dialog.renewal-dialog .dialog-head,
+dialog#record-dialog.checkout-dialog .dialog-head { padding: 20px 26px !important; border-bottom-color: #cfe1e8 !important; }
+dialog#record-dialog.lease-dialog .dialog-head h2,
+dialog#record-dialog.renewal-dialog .dialog-head h2,
+dialog#record-dialog.checkout-dialog .dialog-head h2 { font-size: 22px !important; letter-spacing: -.2px !important; }
+dialog#record-dialog.lease-dialog .dialog-fields,
+dialog#record-dialog.renewal-dialog .dialog-fields,
+dialog#record-dialog.checkout-dialog .dialog-fields { padding: 22px 26px !important; gap: 16px !important; }
+dialog#record-dialog.lease-dialog .dialog-fields > label,
+dialog#record-dialog.renewal-dialog .dialog-fields > label,
+dialog#record-dialog.checkout-dialog .dialog-fields > label { color: #4f6e7d !important; font-size: 12px !important; font-weight: 700 !important; }
+dialog#record-dialog.lease-dialog .dialog-fields input,
+dialog#record-dialog.lease-dialog .dialog-fields select,
+dialog#record-dialog.lease-dialog .dialog-fields textarea,
+dialog#record-dialog.renewal-dialog .dialog-fields input,
+dialog#record-dialog.renewal-dialog .dialog-fields select,
+dialog#record-dialog.renewal-dialog .dialog-fields textarea,
+dialog#record-dialog.checkout-dialog .dialog-fields input,
+dialog#record-dialog.checkout-dialog .dialog-fields select,
+dialog#record-dialog.checkout-dialog .dialog-fields textarea { border-color: #bfd7e1 !important; border-radius: 9px !important; }
+dialog#record-dialog.lease-dialog .dialog-fields input:focus,
+dialog#record-dialog.lease-dialog .dialog-fields select:focus,
+dialog#record-dialog.lease-dialog .dialog-fields textarea:focus,
+dialog#record-dialog.renewal-dialog .dialog-fields input:focus,
+dialog#record-dialog.renewal-dialog .dialog-fields select:focus,
+dialog#record-dialog.renewal-dialog .dialog-fields textarea:focus,
+dialog#record-dialog.checkout-dialog .dialog-fields input:focus,
+dialog#record-dialog.checkout-dialog .dialog-fields select:focus,
+dialog#record-dialog.checkout-dialog .dialog-fields textarea:focus { border-color: #1689ad !important; box-shadow: 0 0 0 3px rgba(22,137,173,.12) !important; }
+dialog#record-dialog.lease-dialog .dialog-actions,
+dialog#record-dialog.renewal-dialog .dialog-actions,
+dialog#record-dialog.checkout-dialog .dialog-actions { min-height: 72px !important; padding: 15px 26px !important; }
+dialog#record-dialog.lease-dialog .dialog-actions button,
+dialog#record-dialog.renewal-dialog .dialog-actions button,
+dialog#record-dialog.checkout-dialog .dialog-actions button { min-width: 102px !important; height: 42px !important; border-radius: 9px !important; }
+dialog#record-dialog.lease-dialog .dialog-actions .primary,
+dialog#record-dialog.renewal-dialog .dialog-actions .primary,
+dialog#record-dialog.checkout-dialog .dialog-actions .primary { min-width: 124px !important; }
+
+@media (max-width: 760px) {
+  #rental.tab-panel.view #room-list .room-card { min-height: 0 !important; }
+  #rental.tab-panel.view #room-list .room-card .room-actions { gap: 7px !important; }
+  #rental.tab-panel.view #room-list .room-card .room-actions .button { flex-basis: calc(50% - 4px) !important; }
+  dialog#record-dialog.lease-dialog,
+  dialog#record-dialog.renewal-dialog,
+  dialog#record-dialog.checkout-dialog { width: calc(100vw - 16px) !important; max-width: calc(100vw - 16px) !important; }
+  dialog#record-dialog.lease-dialog .dialog-head,
+  dialog#record-dialog.renewal-dialog .dialog-head,
+  dialog#record-dialog.checkout-dialog .dialog-head { padding: 16px 18px !important; }
+  dialog#record-dialog.lease-dialog .dialog-fields,
+  dialog#record-dialog.renewal-dialog .dialog-fields,
+  dialog#record-dialog.checkout-dialog .dialog-fields { grid-template-columns: 1fr !important; padding: 16px 18px !important; gap: 12px !important; }
+  dialog#record-dialog.lease-dialog .dialog-actions,
+  dialog#record-dialog.renewal-dialog .dialog-actions,
+  dialog#record-dialog.checkout-dialog .dialog-actions { padding: 10px 16px !important; }
+  dialog#record-dialog.lease-dialog .dialog-actions button,
+  dialog#record-dialog.renewal-dialog .dialog-actions button,
+  dialog#record-dialog.checkout-dialog .dialog-actions button { min-width: 0 !important; flex: 1 1 0 !important; height: 38px !important; }
+}
+
 /* Workbench concept: four status cards, one finance summary surface, then action-oriented panels. */
 #overview.tab-panel.view {
   width: min(1240px, 100%) !important;
