@@ -16,6 +16,118 @@ body {
   font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif !important;
 }
 
+/* Final shared page-head alignment. Secondary pages must use the exact same title rhythm as maintenance. */
+#overview.tab-panel.view > .page-head,
+#ledger.tab-panel.view > .page-head,
+#checkout.tab-panel.view > .page-head,
+#templates.tab-panel.view > .page-head,
+#settings.tab-panel.view > .page-head,
+#audit.tab-panel.view > .page-head,
+#archive.tab-panel.view > .page-head {
+  min-height: 0 !important;
+  margin: 16px 0 14px !important;
+  padding: 0 !important;
+  align-items: center !important;
+}
+#overview.tab-panel.view > .page-head .eyebrow,
+#ledger.tab-panel.view > .page-head .eyebrow,
+#checkout.tab-panel.view > .page-head .eyebrow,
+#templates.tab-panel.view > .page-head .eyebrow,
+#settings.tab-panel.view > .page-head .eyebrow,
+#audit.tab-panel.view > .page-head .eyebrow,
+#archive.tab-panel.view > .page-head .eyebrow { display: none !important; }
+#overview.tab-panel.view > .page-head h1,
+#ledger.tab-panel.view > .page-head h1,
+#checkout.tab-panel.view > .page-head h1,
+#templates.tab-panel.view > .page-head h1,
+#settings.tab-panel.view > .page-head h1,
+#audit.tab-panel.view > .page-head h1,
+#archive.tab-panel.view > .page-head h1 {
+  margin: 0 !important;
+  color: #102b3d !important;
+  font-size: 30px !important;
+  font-weight: 800 !important;
+  line-height: 1.18 !important;
+  letter-spacing: -.5px !important;
+}
+#overview.tab-panel.view > .page-head .subtitle,
+#ledger.tab-panel.view > .page-head .subtitle,
+#checkout.tab-panel.view > .page-head .subtitle,
+#templates.tab-panel.view > .page-head .subtitle,
+#settings.tab-panel.view > .page-head .subtitle,
+#audit.tab-panel.view > .page-head .subtitle,
+#archive.tab-panel.view > .page-head .subtitle {
+  margin: 5px 0 0 !important;
+  color: #647f8d !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+#overview.tab-panel.view > .page-head .ui-page-action,
+#overview.tab-panel.view > .page-head button.primary,
+#ledger.tab-panel.view > .page-head .ui-page-action,
+#ledger.tab-panel.view > .page-head button.primary,
+#checkout.tab-panel.view > .page-head .ui-page-action,
+#checkout.tab-panel.view > .page-head button.primary,
+#templates.tab-panel.view > .page-head .ui-page-action,
+#templates.tab-panel.view > .page-head button.primary,
+#settings.tab-panel.view > .page-head .ui-page-action,
+#settings.tab-panel.view > .page-head button.primary,
+#audit.tab-panel.view > .page-head .ui-page-action,
+#audit.tab-panel.view > .page-head button.primary,
+#archive.tab-panel.view > .page-head .ui-page-action,
+#archive.tab-panel.view > .page-head button.primary {
+  flex: 0 0 auto !important;
+  min-width: 132px !important;
+  height: 42px !important;
+  padding: 0 16px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+}
+
+@media (max-width: 760px) {
+  #overview.tab-panel.view > .page-head,
+  #ledger.tab-panel.view > .page-head,
+  #checkout.tab-panel.view > .page-head,
+  #templates.tab-panel.view > .page-head,
+  #settings.tab-panel.view > .page-head,
+  #audit.tab-panel.view > .page-head,
+  #archive.tab-panel.view > .page-head {
+    min-height: 0 !important;
+    margin: 9px 0 10px !important;
+    padding: 0 !important;
+    align-items: center !important;
+  }
+  #overview.tab-panel.view > .page-head h1,
+  #ledger.tab-panel.view > .page-head h1,
+  #checkout.tab-panel.view > .page-head h1,
+  #templates.tab-panel.view > .page-head h1,
+  #settings.tab-panel.view > .page-head h1,
+  #audit.tab-panel.view > .page-head h1,
+  #archive.tab-panel.view > .page-head h1 { font-size: 24px !important; }
+  #overview.tab-panel.view > .page-head .subtitle,
+  #ledger.tab-panel.view > .page-head .subtitle,
+  #checkout.tab-panel.view > .page-head .subtitle,
+  #templates.tab-panel.view > .page-head .subtitle,
+  #settings.tab-panel.view > .page-head .subtitle,
+  #audit.tab-panel.view > .page-head .subtitle,
+  #archive.tab-panel.view > .page-head .subtitle { display: none !important; }
+  #overview.tab-panel.view > .page-head .ui-page-action,
+  #overview.tab-panel.view > .page-head button.primary,
+  #ledger.tab-panel.view > .page-head .ui-page-action,
+  #ledger.tab-panel.view > .page-head button.primary,
+  #checkout.tab-panel.view > .page-head .ui-page-action,
+  #checkout.tab-panel.view > .page-head button.primary,
+  #templates.tab-panel.view > .page-head .ui-page-action,
+  #templates.tab-panel.view > .page-head button.primary,
+  #settings.tab-panel.view > .page-head .ui-page-action,
+  #settings.tab-panel.view > .page-head button.primary,
+  #audit.tab-panel.view > .page-head .ui-page-action,
+  #audit.tab-panel.view > .page-head button.primary,
+  #archive.tab-panel.view > .page-head .ui-page-action,
+  #archive.tab-panel.view > .page-head button.primary { min-width: 104px !important; height: 38px !important; padding: 0 10px !important; font-size: 12px !important; }
+}
+
 /* Page frame reset for the maintenance surface. */
 body:has(#maintenance.tab-panel) { grid-template-columns: 216px minmax(0, 1fr) !important; }
 body:has(#maintenance.tab-panel) > .sidebar { width: 216px !important; box-sizing: border-box !important; }
