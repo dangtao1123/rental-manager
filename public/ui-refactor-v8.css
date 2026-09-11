@@ -983,9 +983,12 @@ dialog#image-preview-dialog { width: min(820px, calc(100vw - 32px)) !important; 
   #tenants.view > .segmented { display: flex !important; overflow-x: auto !important; width: 100% !important; margin-bottom: 10px !important; scrollbar-width: none !important; }
   #tenants.view > .segmented::-webkit-scrollbar { display: none !important; }
   #tenants.view > .segmented button { flex: 0 0 auto !important; min-height: 34px !important; padding: 0 12px !important; font-size: 12px !important; }
-  #tenants.view #tenant-list .tenant-row { grid-template-columns: minmax(0,1fr) auto !important; gap: 10px !important; min-height: 0 !important; padding: 13px !important; }
-  #tenants.view #tenant-list .tenant-row > div:not(.tenant-main):not(.table-actions) { display: none !important; }
-  #tenants.view #tenant-list .tenant-row .tenant-main { grid-column: 1 !important; }
+  #tenants.view #tenant-list .tenant-row { grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 10px 14px !important; min-height: 0 !important; padding: 13px !important; }
+  #tenants.view #tenant-list .tenant-row > div:not(.tenant-main):not(.table-actions) { display: flex !important; min-width: 0 !important; flex-direction: column !important; gap: 3px !important; }
+  #tenants.view #tenant-list .tenant-row > div:not(.tenant-main):not(.table-actions) span { color: #78909b !important; font-size: 10px !important; }
+  #tenants.view #tenant-list .tenant-row > div:not(.tenant-main):not(.table-actions) strong { color: #173548 !important; font-size: 11px !important; line-height: 1.35 !important; }
+  #tenants.view #tenant-list .tenant-row > div:not(.tenant-main):not(.table-actions) em { color: #e05252 !important; font-size: 10px !important; }
+  #tenants.view #tenant-list .tenant-row .tenant-main { grid-column: 1 / -1 !important; }
   #tenants.view #tenant-list .tenant-row .table-actions { grid-column: 1 / -1 !important; justify-content: flex-start !important; padding-top: 8px !important; border-top: 1px solid #edf3f5 !important; }
   dialog#record-dialog,
   dialog#renewal-dialog,
