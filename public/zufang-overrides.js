@@ -551,10 +551,14 @@ const rows = [...groups.entries()].map(([roomNo, items]) => [roomLabel(roomNo), 
     const list = state.maintenance.filter((item) => !item.archivedAt && (!filter.month || String(item.maintenanceDate || '').startsWith(filter.month)) && (!filter.date || item.maintenanceDate === filter.date) && (!filter.room || item.roomNo === filter.room));
     const pendingReimburse = state.maintenance.filter((item) => !item.archivedAt && item.status === 'done');
     const batchSummary = state.maintenanceBatches.filter((item) => !item.archivedAt);
-    const summaryText = recordsMode
-      ? `已完成待报销 ${pendingReimburse.length} 条，共 ${money(pendingReimburse.reduce((sum, item) => sum + Number(item.amount || 0), 0))}`
-      : `共 ${batchSummary.length} 个批次，${batchSummary.reduce((sum, item) => sum + Number(item.count || 0), 0)} 条维护，合计 ${money(batchSummary.reduce((sum, item) => sum + Number(item.totalAmount || 0), 0))}`;
-    const summary = $('#maintenance-batch-count'); if (summary) summary.textContent = summaryText;
+    const summaryTotal = pendingReimburse.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+    const formatSummaryAmount = (value) => Number(value || 0).toFixed(2).replace(/\.00$/, '');
+    const summary = $('#maintenance-batch-count');
+    if (summary) {
+      summary.innerHTML = recordsMode
+        ? `<span class="summary-label">已完成待报销</span><strong>${pendingReimburse.length}</strong><span>条，共</span><strong>${formatSummaryAmount(summaryTotal)}</strong><span>元</span>`
+        : `<span class="summary-label">共</span><strong>${batchSummary.length}</strong><span>个批次，</span><strong>${batchSummary.reduce((sum, item) => sum + Number(item.count || 0), 0)}</strong><span>条维护，合计</span><strong>${formatSummaryAmount(batchSummary.reduce((sum, item) => sum + Number(item.totalAmount || 0), 0))}</strong><span>元</span>`;
+    }
     if (!recordsMode) {
       const rows = batchSummary.map((batch) => `<tr data-batch-id="${esc(batch.id)}"><td><strong>${esc(batch.name || '未命名批次')}</strong>${batch.note ? `<div class="meta">${esc(batch.note)}</div>` : ''}</td><td>${esc(batch.count || 0)}</td><td class="expense-text">${money(batch.totalAmount)}</td><td>${esc(chinaDateTime(batch.createdAt || batch.updatedAt || ''))}</td><td><div class="row-actions"><button class="small" data-open-batch="${esc(batch.id)}">查看</button><button class="small" data-copy-batch="${esc(batch.id)}">复制链接</button></div></td><td><div class="row-actions"><button class="small" data-edit-batch="${esc(batch.id)}">重命名</button><button class="small danger" data-delete-batch="${esc(batch.id)}">归档</button></div></td></tr>`).join('');
       target.innerHTML = `<div class="row-actions" style="justify-content:flex-end;margin-bottom:10px"><button class="small" data-batch-create>+ 新建批次</button></div>${rows ? `<table class="table maintenance-data-table"><thead><tr><th>批次名称</th><th>条数</th><th>金额</th><th>创建时间</th><th>链接</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="meta">暂无报销批次</p>'}`;
@@ -565,7 +569,7 @@ const rows = [...groups.entries()].map(([roomNo, items]) => [roomLabel(roomNo), 
     const itemCell = (item) => `<div class="maintenance-item-cell"><strong>${esc(item.item || '未填写事项')}</strong>${item.note ? `<span>${esc(item.note)}</span>` : ''}${item.reimbursementBatchId ? `<span class="maintenance-batch-tag">批次：${esc(maintenanceBatchName(item.reimbursementBatchId) || '未命名批次')}</span>` : ''}</div>`;
     const metaCell = (item) => `<div class="maintenance-meta-card"><strong>${esc(roomLabel(item.roomNo))}</strong><div class="maintenance-meta-row"><span>${esc(item.maintenanceDate || '')}</span><span class="maintenance-type-chip maintenance-type-${esc(item.maintenanceType || 'repair')}">${esc(maintenanceTypeLabels[item.maintenanceType] || '房间日常维护')}</span></div></div>`;
     const rows = list.map((item) => `<tr class="maintenance-row maintenance-row-${esc(item.status || 'pending')}" data-maintenance-detail="${esc(item.id)}"><td>${item.status === 'reimbursed' ? '' : `<input type="checkbox" class="maintenance-check" value="${esc(item.id)}" />`}</td><td>${metaCell(item)}</td><td>${itemCell(item)}</td><td><span class="maintenance-amount">${money(item.amount)}</span></td><td><span class="maintenance-status ${maintenanceStatusClass(item.status)}">${maintenanceStatusLabels[item.status] || '待处理'}</span></td><td>${evidenceCell(item)}</td><td><div class="row-actions">${item.status === 'pending' ? `<button class="small" data-maint-complete="${esc(item.id)}">完成维护</button>` : ''}${item.status === 'done' ? `<button class="small" data-maint-reimburse="${esc(item.id)}">已报销</button>` : ''}<button class="small icon-button" data-edit="maintenance" data-id="${esc(item.id)}" title="详情/编辑" aria-label="详情/编辑"><iconify-icon icon="hugeicons:edit-02" aria-hidden="true"></iconify-icon></button><button class="small danger icon-button" data-delete="maintenance" data-id="${esc(item.id)}" title="删除" aria-label="删除"><iconify-icon icon="hugeicons:delete-02" aria-hidden="true"></iconify-icon></button></div></td></tr>`).join('');
-    target.innerHTML = rows ? `<table class="table maintenance-data-table maintenance-record-table"><thead><tr>${['选择', '房间 / 日期 / 类型', '事项 / 备注', '金额', '状态', '图片凭证', '操作'].map((header) => `<th>${header}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>` : '<p class="meta">暂无维护记录</p>';
+    target.innerHTML = rows ? `<table class="table maintenance-data-table maintenance-record-table"><thead><tr><th><input type="checkbox" class="maintenance-select-all" aria-label="全选维护记录" /></th>${['房间 / 日期 / 类型', '事项 / 备注', '金额', '状态', '图片凭证', '操作'].map((header) => `<th>${header}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>` : '<p class="meta">暂无维护记录</p>';
   }
   function renderMaintenanceBatchManagement() {
     renderMaintenanceTable();
@@ -653,6 +657,14 @@ const rows = [...groups.entries()].map(([roomNo, items]) => [roomLabel(roomNo), 
       openMaintenanceBatchDialog(selected);
     }
   }, true);
+
+  document.addEventListener('change', (event) => {
+    const selectAll = event.target.closest('.maintenance-select-all');
+    if (!selectAll) return;
+    document.querySelectorAll('#maintenance-list .maintenance-check').forEach((input) => {
+      if (!input.disabled) input.checked = selectAll.checked;
+    });
+  });
 
   document.addEventListener('click', async (event) => {
     const viewButton = event.target.closest('[data-maintenance-view]');

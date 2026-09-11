@@ -124,3 +124,499 @@ body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .ro
   .main > .rental-header { padding-top: 12px !important; }
   body:has(#maintenance.tab-panel) #maintenance .maintenance-view-switch button { height: 34px !important; padding: 0 12px !important; font-size: 12px !important; }
 }
+
+/* Maintenance page contract — targets the DOM rebuilt by zufang-ui.js, not the legacy panel. */
+body:has(#maintenance.tab-panel) > .main.rental-shell {
+  max-width: none !important;
+  padding-top: 0 !important;
+}
+
+#maintenance.tab-panel.view {
+  width: min(1240px, 100%) !important;
+  margin: 0 auto !important;
+  padding: 0 0 32px !important;
+}
+
+#maintenance.tab-panel.view > .page-head {
+  min-height: 0 !important;
+  margin: 16px 0 14px !important;
+  padding: 0 !important;
+  align-items: center !important;
+}
+
+#maintenance.tab-panel.view > .page-head .eyebrow { display: none !important; }
+#maintenance.tab-panel.view > .page-head h1 {
+  margin: 0 !important;
+  color: #102b3d !important;
+  font-size: 30px !important;
+  font-weight: 800 !important;
+  line-height: 1.18 !important;
+  letter-spacing: -.5px !important;
+}
+#maintenance.tab-panel.view > .page-head .subtitle {
+  margin: 5px 0 0 !important;
+  color: #647f8d !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+#maintenance.tab-panel.view > .page-head .ui-page-action,
+#maintenance.tab-panel.view > .page-head button.primary {
+  flex: 0 0 auto !important;
+  min-width: 132px !important;
+  height: 42px !important;
+  padding: 0 16px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+}
+
+#maintenance.tab-panel.view > .maintenance-view-switch {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 0 10px !important;
+}
+#maintenance.tab-panel.view > .maintenance-view-switch button {
+  height: 36px !important;
+  padding: 0 16px !important;
+  border: 1px solid #d1e1e7 !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: #5b7785 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+#maintenance.tab-panel.view > .maintenance-view-switch button.active {
+  border-color: #167db7 !important;
+  background: #167db7 !important;
+  color: #fff !important;
+}
+
+#maintenance.tab-panel.view > .maintenance-filters.filter-bar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.12fr) auto !important;
+  gap: 10px !important;
+  align-items: end !important;
+  margin: 0 0 12px !important;
+  padding: 12px 14px !important;
+  border: 1px solid #dce9ee !important;
+  border-radius: 10px !important;
+  background: #f8fcfd !important;
+  box-shadow: none !important;
+}
+#maintenance.tab-panel.view > .maintenance-filters.filter-bar label {
+  min-width: 0 !important;
+  color: #5e7987 !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+}
+#maintenance.tab-panel.view > .maintenance-filters.filter-bar input,
+#maintenance.tab-panel.view > .maintenance-filters.filter-bar select {
+  height: 40px !important;
+  margin-top: 5px !important;
+  padding: 0 12px !important;
+  border: 1px solid #c8dce5 !important;
+  border-radius: 7px !important;
+  background: #fff !important;
+  color: #173548 !important;
+  font-size: 13px !important;
+}
+#maintenance.tab-panel.view > .maintenance-filters.filter-bar > button {
+  height: 40px !important;
+  padding: 0 15px !important;
+  border-radius: 7px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+}
+
+#maintenance.tab-panel.view > .maintenance-batch-actions.maintenance-batch {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 58px !important;
+  margin: 0 0 12px !important;
+  padding: 9px 12px !important;
+  border: 1px solid #dce9ee !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  box-shadow: 0 5px 16px rgba(34, 78, 94, .05) !important;
+}
+#maintenance.tab-panel.view > .maintenance-batch-actions.maintenance-batch #maintenance-batch-count {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 5px !important;
+  margin-right: auto !important;
+  color: #627f8d !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+#maintenance.tab-panel.view > .maintenance-batch-actions.maintenance-batch #maintenance-batch-count strong {
+  color: #117cb9 !important;
+  font-size: 23px !important;
+  font-weight: 800 !important;
+  letter-spacing: -.3px !important;
+}
+#maintenance.tab-panel.view > .maintenance-batch-actions.maintenance-batch .small {
+  height: 34px !important;
+  padding: 0 12px !important;
+  border: 1px solid #bfd9e6 !important;
+  border-radius: 7px !important;
+  color: #0879ba !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+}
+
+#maintenance.tab-panel.view > .table-panel {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid #d8e7ed !important;
+  border-radius: 11px !important;
+  background: #fff !important;
+  box-shadow: 0 7px 20px rgba(34, 78, 94, .05) !important;
+}
+#maintenance.tab-panel.view #maintenance-list {
+  overflow: visible !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table {
+  width: 100% !important;
+  min-width: 0 !important;
+  table-layout: fixed !important;
+  border: 0 !important;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  background: #fff !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table thead th {
+  position: static !important;
+  height: 46px !important;
+  padding: 0 12px !important;
+  border: 0 !important;
+  border-bottom: 1px solid #dce9ee !important;
+  background: #eff7f9 !important;
+  color: #496d7d !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody tr {
+  box-shadow: none !important;
+  background: #fff !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody tr:nth-child(even) td { background: #fff !important; }
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody tr:hover td { background: #f8fcfd !important; }
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody td {
+  height: 90px !important;
+  padding: 10px 12px !important;
+  border: 0 !important;
+  border-bottom: 1px solid #e4eef2 !important;
+  background: #fff !important;
+  vertical-align: middle !important;
+  white-space: normal !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody tr:last-child td { border-bottom: 0 !important; }
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody td:first-child,
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody td:last-child {
+  border-radius: 0 !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table th:nth-child(1),
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table td:nth-child(1) { width: 44px !important; padding-left: 12px !important; padding-right: 4px !important; text-align: center !important; }
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table th:nth-child(2),
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table td:nth-child(2) { width: 21% !important; }
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table th:nth-child(3),
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table td:nth-child(3) { width: 30% !important; }
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table th:nth-child(4),
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table td:nth-child(4) { width: 9% !important; text-align: center !important; }
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table th:nth-child(5),
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table td:nth-child(5) { width: 10% !important; text-align: center !important; }
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table th:nth-child(6),
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table td:nth-child(6) { width: 20% !important; }
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table th:nth-child(7),
+#maintenance.tab-panel.view #maintenance-list .maintenance-record-table td:nth-child(7) { width: 108px !important; padding-right: 14px !important; text-align: right !important; }
+
+#maintenance.tab-panel.view #maintenance-list .maintenance-select-all,
+#maintenance.tab-panel.view #maintenance-list .maintenance-check {
+  display: inline-block !important;
+  width: 18px !important;
+  height: 18px !important;
+  margin: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  position: static !important;
+  accent-color: #0d98a0 !important;
+  cursor: pointer !important;
+  vertical-align: middle !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-meta-card > strong {
+  display: block !important;
+  margin-bottom: 6px !important;
+  color: #112c3e !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-meta-row {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-meta-row > span:first-child {
+  color: #65808e !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-type-chip {
+  padding: 3px 7px !important;
+  border-radius: 999px !important;
+  background: #e6f7f7 !important;
+  color: #0b888a !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-item-cell { min-width: 0 !important; }
+#maintenance.tab-panel.view #maintenance-list .maintenance-item-cell strong {
+  display: block !important;
+  overflow: hidden !important;
+  color: #102b3d !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-item-cell span {
+  display: block !important;
+  overflow: hidden !important;
+  margin-top: 4px !important;
+  color: #66808e !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 1.32 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-item-cell .maintenance-batch-tag {
+  margin-top: 5px !important;
+  padding: 3px 8px !important;
+  border-radius: 999px !important;
+  background: #edf8fb !important;
+  color: #5b7c8a !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-amount {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 32px !important;
+  padding: 0 11px !important;
+  border: 1px solid #ffbbb5 !important;
+  border-radius: 999px !important;
+  background: #fff5f4 !important;
+  color: #e54b44 !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-status {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 30px !important;
+  padding: 0 11px !important;
+  border: 1px solid #75d6b1 !important;
+  border-radius: 999px !important;
+  background: #effcf6 !important;
+  color: #008a62 !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-status.status-pending { border-color: #f1bd61 !important; background: #fff8e8 !important; color: #bd7200 !important; }
+#maintenance.tab-panel.view #maintenance-list .maintenance-status.status-done { border-color: #7ac5f3 !important; background: #eef8ff !important; color: #087dc1 !important; }
+#maintenance.tab-panel.view #maintenance-list .maintenance-evidence-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-evidence-grid > div {
+  display: flex !important;
+  min-width: 0 !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-evidence-grid > div > span {
+  overflow: hidden !important;
+  width: 100% !important;
+  color: #67808d !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-image-link,
+#maintenance.tab-panel.view #maintenance-list .maintenance-image-link img {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 7px !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-image-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 52px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid #d8e6eb !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: #f7fafb !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-image-link img {
+  display: block !important;
+  border: 0 !important;
+  object-fit: cover !important;
+}
+#maintenance.tab-panel.view #maintenance-list .maintenance-evidence-grid .meta {
+  min-height: 52px !important;
+  padding-top: 17px !important;
+  color: #66808e !important;
+  font-size: 11px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+#maintenance.tab-panel.view #maintenance-list .row-actions {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+#maintenance.tab-panel.view #maintenance-list .row-actions .small {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 0 !important;
+  border: 1px solid #c9dfe7 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: #087dbd !important;
+}
+#maintenance.tab-panel.view #maintenance-list .row-actions .small.danger { color: #e34d54 !important; }
+#maintenance.tab-panel.view #maintenance-list .row-actions .icon-button iconify-icon {
+  display: inline-flex !important;
+  width: 18px !important;
+  height: 18px !important;
+  color: currentColor !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+}
+
+@media (max-width: 760px) {
+  #maintenance.tab-panel.view { width: 100% !important; padding-bottom: 20px !important; }
+  #maintenance.tab-panel.view > .page-head {
+    flex-direction: row !important;
+    align-items: center !important;
+    margin: 9px 0 10px !important;
+  }
+  #maintenance.tab-panel.view > .page-head h1 { font-size: 24px !important; }
+  #maintenance.tab-panel.view > .page-head .subtitle { display: none !important; }
+  #maintenance.tab-panel.view > .page-head .ui-page-action,
+  #maintenance.tab-panel.view > .page-head button.primary { min-width: 104px !important; height: 38px !important; padding: 0 10px !important; font-size: 12px !important; }
+  #maintenance.tab-panel.view > .maintenance-view-switch { margin-bottom: 8px !important; }
+  #maintenance.tab-panel.view > .maintenance-view-switch button { height: 34px !important; padding: 0 13px !important; font-size: 12px !important; }
+  #maintenance.tab-panel.view > .maintenance-filters.filter-bar {
+    display: flex !important;
+    overflow-x: auto !important;
+    align-items: flex-end !important;
+    gap: 8px !important;
+    margin-bottom: 10px !important;
+    padding: 8px !important;
+    scrollbar-width: none !important;
+  }
+  #maintenance.tab-panel.view > .maintenance-filters.filter-bar::-webkit-scrollbar { display: none !important; }
+  #maintenance.tab-panel.view > .maintenance-filters.filter-bar label { flex: 0 0 142px !important; }
+  #maintenance.tab-panel.view > .maintenance-filters.filter-bar label:last-of-type { flex-basis: 154px !important; }
+  #maintenance.tab-panel.view > .maintenance-filters.filter-bar input,
+  #maintenance.tab-panel.view > .maintenance-filters.filter-bar select { height: 38px !important; font-size: 13px !important; }
+  #maintenance.tab-panel.view > .maintenance-filters.filter-bar > button { flex: 0 0 92px !important; height: 38px !important; padding: 0 10px !important; }
+  #maintenance.tab-panel.view > .maintenance-batch-actions.maintenance-batch {
+    overflow-x: auto !important;
+    min-height: 50px !important;
+    gap: 7px !important;
+    margin-bottom: 10px !important;
+    padding: 8px !important;
+    scrollbar-width: none !important;
+  }
+  #maintenance.tab-panel.view > .maintenance-batch-actions.maintenance-batch::-webkit-scrollbar { display: none !important; }
+  #maintenance.tab-panel.view > .maintenance-batch-actions.maintenance-batch #maintenance-batch-count { flex: 0 0 auto !important; font-size: 12px !important; }
+  #maintenance.tab-panel.view > .maintenance-batch-actions.maintenance-batch #maintenance-batch-count strong { font-size: 19px !important; }
+  #maintenance.tab-panel.view > .maintenance-batch-actions.maintenance-batch .small { flex: 0 0 auto !important; height: 32px !important; padding: 0 10px !important; font-size: 12px !important; }
+  #maintenance.tab-panel.view > .table-panel { overflow: visible !important; border: 0 !important; background: transparent !important; box-shadow: none !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table,
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody { display: block !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table thead { display: none !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody { display: grid !important; gap: 10px !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody tr {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: 26px minmax(0, 1fr) auto !important;
+    column-gap: 8px !important;
+    margin: 0 !important;
+    padding: 12px !important;
+    border: 1px solid #dbe8ed !important;
+    border-radius: 10px !important;
+    background: #fff !important;
+    box-shadow: 0 4px 14px rgba(34, 78, 94, .05) !important;
+  }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody tr::before { display: none !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody td {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    text-align: left !important;
+  }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody td:nth-child(1) { grid-column: 1 !important; grid-row: 1 !important; padding-top: 3px !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody td:nth-child(2) { grid-column: 2 !important; grid-row: 1 !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody td:nth-child(3) { grid-column: 2 / 4 !important; grid-row: 2 !important; margin-top: 6px !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody td:nth-child(4) { grid-column: 2 !important; grid-row: 4 !important; margin-top: 10px !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody td:nth-child(5) { grid-column: 3 !important; grid-row: 1 !important; text-align: right !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody td:nth-child(6) { grid-column: 2 / 4 !important; grid-row: 3 !important; margin-top: 10px !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-record-table tbody td:nth-child(7) { grid-column: 3 !important; grid-row: 4 !important; margin-top: 8px !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-meta-card > strong { font-size: 16px !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-item-cell strong { white-space: normal !important; font-size: 15px !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-item-cell span { overflow: visible !important; white-space: normal !important; font-size: 12px !important; line-height: 1.45 !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-item-cell .maintenance-batch-tag { display: none !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-evidence-grid { grid-template-columns: repeat(3, 108px) !important; justify-content: start !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-image-link,
+  #maintenance.tab-panel.view #maintenance-list .maintenance-image-link img { width: 70px !important; height: 58px !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-image-link { flex-basis: 70px !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-evidence-grid > div { align-items: flex-start !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-evidence-grid > div > span { width: 70px !important; text-align: center !important; }
+  #maintenance.tab-panel.view #maintenance-list .maintenance-evidence-grid .meta { width: 70px !important; min-height: 58px !important; padding-top: 18px !important; text-align: center !important; }
+  #maintenance.tab-panel.view #maintenance-list .row-actions { gap: 7px !important; }
+}
