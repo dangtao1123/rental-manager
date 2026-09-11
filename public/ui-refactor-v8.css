@@ -24,6 +24,7 @@ body {
 #settings.tab-panel.view > .page-head,
 #audit.tab-panel.view > .page-head,
 #archive.tab-panel.view > .page-head {
+  display: flex !important;
   min-height: 0 !important;
   margin: 16px 0 14px !important;
   padding: 0 !important;
@@ -93,6 +94,7 @@ body {
   #settings.tab-panel.view > .page-head,
   #audit.tab-panel.view > .page-head,
   #archive.tab-panel.view > .page-head {
+    display: flex !important;
     min-height: 0 !important;
     margin: 9px 0 10px !important;
     padding: 0 !important;
@@ -126,6 +128,9 @@ body {
   #audit.tab-panel.view > .page-head button.primary,
   #archive.tab-panel.view > .page-head .ui-page-action,
   #archive.tab-panel.view > .page-head button.primary { min-width: 104px !important; height: 38px !important; padding: 0 10px !important; font-size: 12px !important; }
+  #overview.tab-panel.view > .overview-columns { display: grid !important; grid-template-columns: 1fr !important; gap: 10px !important; }
+  #overview.tab-panel.view > .overview-columns > .overview-todo-panel,
+  #overview.tab-panel.view > .overview-columns > .quick-panel { order: initial !important; margin-top: 0 !important; }
 }
 
 /* Page frame reset for the maintenance surface. */
