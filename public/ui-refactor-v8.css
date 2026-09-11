@@ -16,6 +16,102 @@ body {
   font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif !important;
 }
 
+/* Workbench concept: four status cards, one finance summary surface, then action-oriented panels. */
+#overview.tab-panel.view {
+  width: min(1240px, 100%) !important;
+  margin: 0 auto !important;
+  padding: 0 0 32px !important;
+}
+#overview.tab-panel.view > .page-head { margin-bottom: 16px !important; }
+#overview.tab-panel.view > .stats.stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  margin: 0 0 16px !important;
+}
+#overview.tab-panel.view > .stats.stats-grid .stat-card {
+  min-height: 116px !important;
+  padding: 16px 18px !important;
+  border: 1px solid #d8e8ed !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  box-shadow: 0 5px 16px rgba(24,66,82,.045) !important;
+}
+#overview.tab-panel.view > .stats.stats-grid .stat-icon {
+  width: 42px !important;
+  height: 42px !important;
+  margin-bottom: 11px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #167db7 !important;
+  background: #e5f3ff !important;
+}
+#overview.tab-panel.view > .stats.stats-grid .stat-card:nth-child(2) .stat-icon { color: #0b9c73 !important; background: #e5f8f2 !important; }
+#overview.tab-panel.view > .stats.stats-grid .stat-card:nth-child(3) .stat-icon { color: #d88913 !important; background: #fff2dc !important; }
+#overview.tab-panel.view > .stats.stats-grid .stat-card:nth-child(4) .stat-icon { color: #e05252 !important; background: #ffe7e7 !important; }
+#overview.tab-panel.view > .stats.stats-grid .stat-card span { color: #6c8793 !important; font-size: 12px !important; }
+#overview.tab-panel.view > .stats.stats-grid .stat-card strong { margin-top: 5px !important; color: #102b3d !important; font-size: 29px !important; line-height: 1 !important; }
+#overview.tab-panel.view > .stats.stats-grid .stat-card small { margin-top: 8px !important; color: #78909b !important; font-size: 11px !important; }
+#overview.tab-panel.view .finance-panel {
+  margin: 0 0 16px !important;
+  overflow: hidden !important;
+}
+#overview.tab-panel.view .finance-panel > .section-head { min-height: 58px !important; }
+#overview.tab-panel.view .finance-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 0 !important;
+  padding: 0 !important;
+}
+#overview.tab-panel.view .finance-grid > .finance-item {
+  min-height: 104px !important;
+  padding: 19px 20px !important;
+  border: 0 !important;
+  border-right: 1px solid #e1edf0 !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+}
+#overview.tab-panel.view .finance-grid > .finance-item:last-child { border-right: 0 !important; }
+#overview.tab-panel.view .finance-grid > .finance-item span { color: #6c8793 !important; font-size: 12px !important; }
+#overview.tab-panel.view .finance-grid > .finance-item strong { margin-top: 8px !important; color: #102b3d !important; font-size: 23px !important; }
+#overview.tab-panel.view .finance-grid > .finance-item.income strong { color: #0b9c73 !important; }
+#overview.tab-panel.view .finance-grid > .finance-item.expense strong { color: #e05252 !important; }
+#overview.tab-panel.view .finance-grid > .finance-item.pending strong { color: #d88913 !important; }
+#overview.tab-panel.view .finance-grid > .finance-item small { display: block !important; margin-top: 6px !important; color: #8aa0a9 !important; font-size: 11px !important; }
+#overview.tab-panel.view > .dashboard-columns {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr) !important;
+  gap: 14px !important;
+  margin: 0 !important;
+}
+#overview.tab-panel.view .todo-panel,
+#overview.tab-panel.view .quick-panel { margin: 0 !important; overflow: hidden !important; }
+#overview.tab-panel.view .todo-panel .todo-list { padding: 0 18px 10px !important; }
+#overview.tab-panel.view .todo-panel .todo-card { min-height: 58px !important; padding: 12px 0 !important; }
+#overview.tab-panel.view .todo-panel .todo-card strong { font-size: 13px !important; }
+#overview.tab-panel.view .todo-panel .todo-card b { color: #e05252 !important; font-size: 14px !important; }
+#overview.tab-panel.view .quick-panel .quick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; padding: 14px 16px 16px !important; gap: 8px !important; }
+#overview.tab-panel.view .quick-panel .quick-action { min-height: 64px !important; padding: 0 12px !important; border-color: #d5e7ed !important; background: #f8fcfd !important; color: #173548 !important; }
+#overview.tab-panel.view .quick-panel .quick-action iconify-icon { color: #167db7 !important; font-size: 20px !important; }
+
+@media (max-width: 760px) {
+  #overview.tab-panel.view { padding: 0 10px 22px !important; }
+  #overview.tab-panel.view > .stats.stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; margin-bottom: 10px !important; }
+  #overview.tab-panel.view > .stats.stats-grid .stat-card { min-height: 94px !important; padding: 12px !important; }
+  #overview.tab-panel.view > .stats.stats-grid .stat-icon { width: 32px !important; height: 32px !important; margin-bottom: 8px !important; }
+  #overview.tab-panel.view > .stats.stats-grid .stat-card strong { font-size: 21px !important; }
+  #overview.tab-panel.view .finance-panel { margin-bottom: 10px !important; }
+  #overview.tab-panel.view .finance-panel > .section-head { padding: 12px 14px !important; }
+  #overview.tab-panel.view .finance-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  #overview.tab-panel.view .finance-grid > .finance-item { min-height: 78px !important; padding: 12px 14px !important; border-right: 1px solid #e1edf0 !important; border-bottom: 1px solid #e1edf0 !important; }
+  #overview.tab-panel.view .finance-grid > .finance-item:nth-child(2n) { border-right: 0 !important; }
+  #overview.tab-panel.view .finance-grid > .finance-item:nth-last-child(-n+2) { border-bottom: 0 !important; }
+  #overview.tab-panel.view .finance-grid > .finance-item strong { font-size: 18px !important; }
+  #overview.tab-panel.view > .dashboard-columns { grid-template-columns: 1fr !important; gap: 10px !important; }
+  #overview.tab-panel.view .quick-panel .quick-grid { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+}
+
 /* Final shared page-head alignment. Secondary pages must use the exact same title rhythm as maintenance. */
 #overview.tab-panel.view > .page-head,
 #ledger.tab-panel.view > .page-head,
