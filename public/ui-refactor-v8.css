@@ -17,8 +17,9 @@ body {
 }
 
 /* Page frame reset for the maintenance surface. */
-body:has(#maintenance.tab-panel) { grid-template-columns: 184px minmax(0, 1fr) !important; }
-body:has(#maintenance.tab-panel) > .main { width: min(1320px, calc(100vw - 184px)) !important; max-width: 1320px !important; margin: 0 auto !important; padding: 0 24px 42px !important; }
+body:has(#maintenance.tab-panel) { grid-template-columns: 216px minmax(0, 1fr) !important; }
+body:has(#maintenance.tab-panel) > .sidebar { width: 216px !important; box-sizing: border-box !important; }
+body:has(#maintenance.tab-panel) > .main { width: auto !important; max-width: 1320px !important; margin: 0 auto !important; padding: 0 24px 42px !important; }
 
 .sidebar {
   width: 216px !important;
@@ -40,7 +41,7 @@ body:has(#maintenance.tab-panel) > .main { width: min(1320px, calc(100vw - 184px
 .main > .topbar { height: 58px !important; max-width: 1240px !important; margin: 0 auto !important; border-bottom: 1px solid var(--ui-line) !important; color: var(--ui-muted) !important; }
 .main > .rental-header { max-width: 1240px !important; margin: 0 auto !important; padding: 34px 0 18px !important; }
 .main > .rental-header { padding-top: 20px !important; padding-bottom: 14px !important; }
-.main > .rental-header { min-height: 104px !important; box-sizing: border-box !important; }
+.main > .rental-header { min-height: 0 !important; box-sizing: border-box !important; align-items: flex-start !important; }
 .rental-header h1 { margin: 3px 0 6px !important; color: var(--ui-ink) !important; font-size: 32px !important; letter-spacing: -.5px !important; }
 .rental-header p { color: var(--ui-muted) !important; }
 .rental-header .eyebrow { color: #6c8490 !important; font-size: 13px !important; letter-spacing: .08em !important; font-weight: 700 !important; }
@@ -55,6 +56,8 @@ body:has(#maintenance.tab-panel) #maintenance > .panel { max-width: 1240px !impo
 .main #maintenance > .panel { max-width: 1240px !important; margin-left: auto !important; margin-right: auto !important; }
 body:has(#maintenance.tab-panel) #maintenance { margin-top: 0 !important; }
 body:has(#maintenance.tab-panel) #maintenance > .panel { width: 100% !important; box-sizing: border-box !important; }
+body:has(#maintenance.tab-panel) .main > .rental-header { width: min(1240px, 100%) !important; max-width: 1240px !important; margin-left: auto !important; margin-right: auto !important; }
+body:has(#maintenance.tab-panel) .main #maintenance > .panel { width: min(1240px, 100%) !important; max-width: 1240px !important; margin-left: auto !important; margin-right: auto !important; }
 body:has(#maintenance.tab-panel) #maintenance > .panel > .panel-title { min-height: 0 !important; }
 body:has(#maintenance.tab-panel) #maintenance > .panel > .panel-title { margin-bottom: 12px !important; }
 body:has(#maintenance.tab-panel) #maintenance > .panel > .panel-title .panel-actions { gap: 8px !important; }
@@ -68,6 +71,7 @@ body:has(#maintenance.tab-panel) #maintenance .maintenance-filters select { heig
 body:has(#maintenance.tab-panel) #maintenance .maintenance-batch-actions { display: flex !important; gap: 8px !important; margin: 0 0 12px !important; padding: 10px 12px !important; border: 1px solid var(--ui-line) !important; border-radius: 10px !important; background: #fff !important; }
 body:has(#maintenance.tab-panel) #maintenance .maintenance-batch-actions span { margin-right: auto !important; color: var(--ui-muted) !important; font-size: 13px !important; }
 body:has(#maintenance.tab-panel) #maintenance-list { border: 1px solid var(--ui-line) !important; border-radius: 10px !important; background: #fff !important; }
+body:has(#maintenance.tab-panel) #maintenance-list { padding: 0 !important; }
 body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table { border: 0 !important; }
 body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table thead th { height: 46px !important; padding: 0 14px !important; background: #f0f7f9 !important; color: #476978 !important; font-size: 12px !important; font-weight: 800 !important; }
 body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table tbody td { padding: 13px 14px !important; border-bottom: 1px solid #e4eef1 !important; background: #fff !important; }
@@ -93,7 +97,7 @@ body:has(#maintenance.tab-panel) #maintenance-list .maintenance-record-table .ro
   body:has(#maintenance.tab-panel) > .main { width: 100% !important; max-width: none !important; padding: 0 12px 30px !important; }
   .main { padding: 0 12px 30px !important; }
   .main > .topbar { height: 42px !important; }
-  .main > .rental-header { min-height: 0 !important; padding: 12px 0 10px !important; }
+  .main > .rental-header { min-height: 0 !important; padding: 12px 0 10px !important; align-items: flex-start !important; }
   .rental-header .eyebrow { font-size: 11px !important; }
   .rental-header h1 { font-size: 25px !important; margin: 2px 0 3px !important; }
   .rental-header p { margin: 0 !important; font-size: 12px !important; line-height: 1.45 !important; }
