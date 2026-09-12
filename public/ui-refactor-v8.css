@@ -3234,3 +3234,43 @@ dialog#room-tenants-dialog table th:last-child, dialog#room-tenants-dialog table
   dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row { grid-template-columns: 28px minmax(0,1fr) !important; }
   dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row label { grid-column: 2 !important; }
 }
+
+/* v15-final: precise corrections from the latest visual review. */
+dialog#record-dialog.maintenance-batch-dialog .dialog-head h2::before {
+  content: "" !important;
+  display: inline-block !important;
+  width: 4px !important;
+  height: 22px !important;
+  margin-right: 10px !important;
+  border-radius: 3px !important;
+  vertical-align: -3px !important;
+  background: var(--ux-teal) !important;
+}
+dialog#record-dialog.maintenance-batch-dialog .dialog-fields.maintenance-batch-form::before,
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-intro::before,
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row::before { display: none !important; content: none !important; }
+
+#rental.view #room-list .room-card .room-actions,
+#rental.tab-panel.view #room-list .room-card .room-actions { border-top: 0 !important; }
+
+dialog#move-in-dialog .move-in-grid label:has(input[name="startDate"]) { grid-column: 1 !important; }
+dialog#move-in-dialog .move-in-grid label:has(input[name="endDate"]) { grid-column: 2 !important; }
+dialog#move-in-dialog .move-in-grid .move-in-rent-group { grid-column: 1 !important; }
+dialog#move-in-dialog .move-in-grid .move-in-fee-group { grid-column: 2 !important; }
+dialog#move-in-dialog .move-in-grid .move-in-deposit-field { grid-column: 3 !important; }
+dialog#move-in-dialog .move-in-grid .move-in-rent-group label:has(input[name="monthlyRent"]) input,
+dialog#move-in-dialog .move-in-grid .move-in-fee-group label:has(input[name="monthlyPropertyFee"]) input {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+@media (max-width: 760px) {
+  dialog#move-in-dialog .move-in-grid label:has(input[name="startDate"]),
+  dialog#move-in-dialog .move-in-grid label:has(input[name="endDate"]),
+  dialog#move-in-dialog .move-in-grid .move-in-rent-group,
+  dialog#move-in-dialog .move-in-grid .move-in-fee-group,
+  dialog#move-in-dialog .move-in-grid .move-in-deposit-field { grid-column: auto !important; }
+}
+@media (max-width: 980px) and (min-width: 761px) {
+  dialog#move-in-dialog .move-in-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}
