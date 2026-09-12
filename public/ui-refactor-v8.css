@@ -2554,3 +2554,276 @@ dialog#room-photos-dialog #room-photos-status { margin: 0 22px 10px !important; 
   dialog#room-photos-dialog .room-photos-list { grid-template-columns: repeat(2, minmax(0,1fr)) !important; padding: 14px 16px !important; }
   dialog#room-photos-dialog #room-photos-status { margin-left: 16px !important; margin-right: 16px !important; }
 }
+
+/* v12 workflow polish: keep the final contract after the legacy layers. */
+body > .main.rental-shell > #rental.tab-panel.view > .filter-bar .search-field {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 40px !important;
+  padding: 0 11px !important;
+  border: 1px solid #c6dce4 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+}
+body > .main.rental-shell > #rental.tab-panel.view > .filter-bar .search-field input,
+body > .main.rental-shell > #rooms.tab-panel.view > .filter-bar .search-field input,
+body > .main.rental-shell > #audit.tab-panel.view > .filter-bar .search-field input {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+body > .main.rental-shell > #rental.tab-panel.view > .filter-bar .search-field:focus-within {
+  border-color: #167db7 !important;
+  box-shadow: 0 0 0 3px rgba(22,125,183,.11) !important;
+}
+
+body > .main.rental-shell > #rental.tab-panel.view #room-list .room-card-head-meta {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 9px !important;
+  white-space: nowrap !important;
+}
+body > .main.rental-shell > #rental.tab-panel.view #room-list .room-card-days {
+  order: -1 !important;
+  margin: 0 !important;
+  color: #d65058 !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  font-weight: 850 !important;
+  white-space: nowrap !important;
+}
+
+dialog#record-dialog.maintenance-batch-dialog {
+  width: min(1120px, calc(100vw - 28px)) !important;
+  max-height: min(820px, calc(100vh - 28px)) !important;
+}
+dialog#record-dialog.maintenance-batch-dialog .dialog-fields.maintenance-batch-form {
+  display: block !important;
+  min-width: 0 !important;
+  padding: 20px 24px !important;
+  overflow: auto !important;
+  background: #f8fcfd !important;
+}
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-intro {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 12px !important;
+  margin: 0 0 14px !important;
+  padding: 12px 14px !important;
+  border: 1px solid #d8e9ef !important;
+  border-radius: 9px !important;
+  background: #f1f9fb !important;
+}
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-intro strong {
+  flex: 0 0 auto !important;
+  color: #123246 !important;
+  font-size: 14px !important;
+  font-weight: 850 !important;
+}
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-intro span {
+  color: #617e8d !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}
+dialog#record-dialog.maintenance-batch-dialog #maintenance-batch-rows {
+  display: grid !important;
+  gap: 10px !important;
+}
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row {
+  display: grid !important;
+  grid-template-columns: 32px repeat(5, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  align-items: end !important;
+  min-width: 0 !important;
+  padding: 12px !important;
+  border: 1px solid #d9e7ec !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+}
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row label {
+  display: grid !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  color: #5c7887 !important;
+  font-size: 11px !important;
+  font-weight: 750 !important;
+  line-height: 1.25 !important;
+}
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row input,
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row select {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 38px !important;
+  padding: 0 9px !important;
+  border: 1px solid #c6dce4 !important;
+  border-radius: 7px !important;
+  color: #17364a !important;
+  background: #fff !important;
+  font-size: 12px !important;
+}
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row input[type=file] {
+  height: 38px !important;
+  padding: 8px 6px !important;
+  color: #668391 !important;
+  font-size: 10px !important;
+}
+dialog#record-dialog.maintenance-batch-dialog .maintenance-row-index {
+  display: grid !important;
+  place-items: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  margin-bottom: 5px !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  background: #129aa0 !important;
+  font-size: 12px !important;
+  font-weight: 850 !important;
+}
+dialog#record-dialog.maintenance-batch-dialog .maintenance-row-remove {
+  width: 34px !important;
+  height: 38px !important;
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+}
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-add {
+  margin-top: 12px !important;
+  color: #167db7 !important;
+  border-color: #9bcddd !important;
+  background: #fff !important;
+}
+
+dialog#record-dialog.renewal-dialog #dialog-fields .field-durationPreset {
+  grid-column: 1 / -1 !important;
+  display: grid !important;
+  gap: 7px !important;
+  padding: 12px 13px !important;
+  border: 2px solid #167db7 !important;
+  border-radius: 10px !important;
+  background: #eef8fc !important;
+}
+dialog#record-dialog.renewal-dialog #dialog-fields .field-durationPreset .field-label {
+  color: #16729e !important;
+  font-size: 12px !important;
+  font-weight: 850 !important;
+}
+dialog#record-dialog.renewal-dialog #dialog-fields .field-durationPreset select {
+  height: 44px !important;
+  border: 1px solid #9ecfe0 !important;
+  color: #126f9f !important;
+  background: #fff !important;
+  font-size: 16px !important;
+  font-weight: 850 !important;
+}
+dialog#record-dialog.renewal-dialog #dialog-fields .field-monthlyRent,
+dialog#record-dialog.renewal-dialog #dialog-fields .field-monthlyPropertyFee {
+  display: grid !important;
+  gap: 7px !important;
+  padding: 11px 12px !important;
+  border: 1px solid #c7dfe8 !important;
+  border-radius: 10px !important;
+  background: #f7fbfc !important;
+}
+dialog#record-dialog.renewal-dialog #dialog-fields .field-monthlyRent .field-label,
+dialog#record-dialog.renewal-dialog #dialog-fields .field-monthlyPropertyFee .field-label {
+  color: #4d7281 !important;
+  font-size: 12px !important;
+  font-weight: 850 !important;
+}
+dialog#record-dialog.renewal-dialog #dialog-fields .field-monthlyRent input,
+dialog#record-dialog.renewal-dialog #dialog-fields .field-monthlyPropertyFee input {
+  height: 44px !important;
+  font-size: 16px !important;
+  font-weight: 850 !important;
+}
+dialog#record-dialog.renewal-dialog #dialog-fields .field-monthlyRent input {
+  border-color: #8bc9e5 !important;
+  color: #116e9f !important;
+  background: #f1faff !important;
+}
+dialog#record-dialog.renewal-dialog #dialog-fields .field-monthlyPropertyFee input {
+  border-color: #9edbc5 !important;
+  color: #0a8b68 !important;
+  background: #f0fbf5 !important;
+}
+
+dialog#move-in-dialog .dialog-kicker { display: none !important; }
+dialog#move-in-dialog .move-in-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px 14px !important;
+}
+dialog#move-in-dialog .move-in-grid label.full,
+dialog#move-in-dialog .move-in-grid .move-in-amount.full {
+  grid-column: 1 / -1 !important;
+}
+dialog#move-in-dialog .move-in-grid label:has(input[name="monthlyRent"]),
+dialog#move-in-dialog .move-in-grid label:has(input[name="monthlyPropertyFee"]),
+dialog#move-in-dialog .move-in-grid label:has(input[name="deposit"]) {
+  padding: 9px 10px !important;
+  border: 1px solid #efc7c9 !important;
+  border-radius: 9px !important;
+  color: #9f5559 !important;
+  background: #fff7f7 !important;
+}
+dialog#move-in-dialog .move-in-grid label:has(input[name="monthlyRent"]) input,
+dialog#move-in-dialog .move-in-grid label:has(input[name="deposit"]) input {
+  border-color: #f0b4b8 !important;
+  color: #c94b52 !important;
+  background: #fff !important;
+  font-weight: 850 !important;
+}
+dialog#move-in-dialog .move-in-grid label:has(input[name="monthlyPropertyFee"]) {
+  border-color: #b9dfcf !important;
+  color: #347b68 !important;
+  background: #f3fbf7 !important;
+}
+dialog#move-in-dialog .move-in-grid label:has(input[name="monthlyPropertyFee"]) input {
+  border-color: #a7d9c3 !important;
+  color: #0a8b68 !important;
+  background: #fff !important;
+  font-weight: 850 !important;
+}
+dialog#move-in-dialog .move-in-grid label:has(input[type="date"]) input { background: #f4fbfd !important; }
+dialog#move-in-dialog .move-in-grid label:has(select[name="purpose"]),
+dialog#move-in-dialog .move-in-grid label:has(select[name="paymentMethod"]),
+dialog#move-in-dialog .move-in-grid label:has(select[name="propertyFeeMode"]) { color: #267989 !important; }
+dialog#move-in-dialog .button-sign-external {
+  color: #0e7899 !important;
+  border-color: #8bcbd6 !important;
+  background: #eefbfd !important;
+}
+
+@media (max-width: 1200px) and (min-width: 761px) {
+  dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row { grid-template-columns: 32px repeat(3, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 980px) and (min-width: 761px) {
+  dialog#move-in-dialog .move-in-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 760px) {
+  body > .main.rental-shell > #rental.tab-panel.view > .filter-bar .search-field { min-height: 38px !important; }
+  body > .main.rental-shell > #rental.tab-panel.view #room-list .room-card-head-meta { gap: 6px !important; }
+  body > .main.rental-shell > #rental.tab-panel.view #room-list .room-card-days { font-size: 13px !important; }
+  dialog#record-dialog.maintenance-batch-dialog .dialog-fields.maintenance-batch-form { padding: 14px 16px !important; }
+  dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-intro { display: block !important; }
+  dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-intro span { display: block !important; margin-top: 5px !important; }
+  dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row { grid-template-columns: 28px minmax(0, 1fr) !important; gap: 8px !important; padding: 10px !important; }
+  dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row label { grid-column: 2 !important; }
+  dialog#record-dialog.maintenance-batch-dialog .maintenance-row-index { grid-row: 1 !important; margin-top: 4px !important; }
+  dialog#record-dialog.maintenance-batch-dialog .maintenance-row-remove { grid-column: 2 !important; justify-self: start !important; }
+  dialog#move-in-dialog .move-in-grid { grid-template-columns: 1fr !important; gap: 11px !important; }
+  dialog#move-in-dialog .move-in-grid label.full,
+  dialog#move-in-dialog .move-in-grid .move-in-amount.full { grid-column: auto !important; }
+}
