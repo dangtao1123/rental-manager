@@ -34,5 +34,6 @@ state: 办理入住 → 资料填写（方案 2：左侧基础信息、右侧费
 ## Follow-up polish
 
 - Verify the generated source and browser capture side by side for text wrapping in the section helper copy and the fixed footer.
+- Post-fix iteration: the finance controls now use explicit full-width styled inputs/selects, the mobile sidebar uses a multi-row grid so all visible menu items remain clickable, and contract generation maps `self` to `自住`.
 
 final result: blocked
