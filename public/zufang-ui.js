@@ -6,6 +6,7 @@
 
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+  let auditPage = 1;
 
   const pageConfig = {
     overview: ['OVERVIEW', '工作台', '今日租务概览，快速处理到期、维护与账单'],
@@ -418,6 +419,29 @@
   function filterAudit() {
     const value = ($('#audit-filter-search')?.value || '').trim().toLowerCase();
     $$('#audit-list tbody tr').forEach((row) => { row.hidden = Boolean(value && !row.textContent.toLowerCase().includes(value)); });
+    renderAuditPagination();
+  }
+
+  function renderAuditPagination() {
+    const list = $('#audit-list');
+    if (!list) return;
+    const table = $('table', list);
+    if (!table) return;
+    const rows = $$('tbody tr', table);
+    const query = ($('#audit-filter-search')?.value || '').trim().toLowerCase();
+    const matched = rows.filter((row) => !query || row.textContent.toLowerCase().includes(query));
+    const pageSize = 50;
+    const pageCount = Math.max(1, Math.ceil(matched.length / pageSize));
+    auditPage = Math.min(Math.max(1, auditPage), pageCount);
+    const start = (auditPage - 1) * pageSize;
+    const visibleRows = new Set(matched.slice(start, start + pageSize));
+    rows.forEach((row) => { row.hidden = !visibleRows.has(row); });
+    list.querySelector('.audit-pagination')?.remove();
+    if (matched.length <= pageSize) return;
+    const pagination = document.createElement('div');
+    pagination.className = 'audit-pagination';
+    pagination.innerHTML = `<span>共 ${matched.length} 条，每页 50 条</span><div class="audit-pagination-actions"><button type="button" class="button button-outline" data-audit-page="prev" ${auditPage === 1 ? 'disabled' : ''}>上一页</button><strong>${auditPage} / ${pageCount}</strong><button type="button" class="button button-outline" data-audit-page="next" ${auditPage === pageCount ? 'disabled' : ''}>下一页</button></div>`;
+    list.append(pagination);
   }
 
   function prettyRemaining(days) {
@@ -461,10 +485,13 @@
       const active = lease.status === 'active';
       const status = active ? '<span class="status-chip success">正在入住</span>' : lease.depositStatus === 'refunded' ? '<span class="status-chip neutral">已退租</span>' : '<span class="status-chip warning">待退押金</span>';
       const endLabel = active ? `续租截至：${esc(dueDate(lease) || '未设置')}` : `退房时间：${esc(checkout?.checkoutDate || lease.endDate || '未设置')}`;
-      return [`<strong>${esc(lease.tenantName || '未填写租户')}</strong><small>${esc(lease.tenantPhone || '未填写电话')}</small>`, status, esc(purposeLabels[lease.purpose] || lease.purpose || '未设置'), esc(lease.startDate || '未设置'), endLabel, money(lease.deposit || 0)];
+      const endDate = active ? today() : (checkout?.checkoutDate || lease.endDate || today());
+      return [`<strong>${esc(lease.tenantName || '未填写租户')}</strong><small>${esc(lease.tenantPhone || '未填写电话')}</small>`, status, esc(purposeLabels[lease.purpose] || lease.purpose || '未设置'), esc(lease.startDate || '未设置'), endLabel, historyDurationText(lease.startDate, endDate)];
     });
     $('#room-tenants-dialog-title').textContent = `${room ? `${room.propertyName || '房间'} · ${room.roomNo}` : roomLabel(roomNo)} · 历史租客`;
-    $('#room-tenants-list').innerHTML = leases.length ? refTable(['租户', '状态', '租房用途', '入住时间', '续租/退房', '押金'], rows) : '<p class="room-tenants-empty">该房间暂无租客记录</p>';
+    $('#room-tenants-list').innerHTML = leases.length ? refTable(['租户', '状态', '租房用途', '入住时间', '续租/退房', '入住时长'], rows) : '<p class="room-tenants-empty">该房间暂无租客记录</p>';
+    const historyTable = $('#room-tenants-list table');
+    if (historyTable) historyTable.dataset.historyDurationReady = '1';
     $('#room-tenants-dialog').showModal();
   }
 
@@ -486,7 +513,7 @@
 
   function decorateRoomTenantHistory(roomNo) {
     const table = document.querySelector('#room-tenants-list table');
-    if (!table) return;
+    if (!table || table.dataset.historyDurationReady === '1') return;
     table.querySelector('[data-history-duration]')?.remove();
     table.querySelectorAll('[data-history-duration-cell]').forEach((cell) => cell.remove());
     const headerRow = table.querySelector('thead tr');
@@ -644,14 +671,14 @@
     wrapAfter('renderLedger', () => { document.querySelectorAll('#ledger-summary > div').forEach((item, index) => item.classList.add('summary-card', index === 0 ? 'income' : index === 1 ? 'expense' : index === 2 ? 'balance' : 'pending')); document.querySelectorAll('#ledger-list table').forEach((table) => table.classList.add('data-table')); });
     wrapAfter('renderMaintenance', () => document.querySelectorAll('#maintenance-list table').forEach((table) => table.classList.add('data-table')));
     wrapAfter('renderCheckouts', () => document.querySelectorAll('#checkout-list table').forEach((table) => table.classList.add('data-table')));
-    wrapAfter('renderAudit', () => document.querySelectorAll('#audit-list table').forEach((table) => table.classList.add('data-table')));
+    wrapAfter('renderAudit', () => { document.querySelectorAll('#audit-list table').forEach((table) => table.classList.add('data-table')); renderAuditPagination(); });
   }
 
   function bindInteractions() {
     document.addEventListener('input', (event) => {
       if (event.target.id === 'rental-filter-search') filterCards();
       if (event.target.id === 'room-filter-search') filterRoomTable();
-      if (event.target.id === 'audit-filter-search') filterAudit();
+      if (event.target.id === 'audit-filter-search') { auditPage = 1; filterAudit(); }
     });
     document.addEventListener('change', (event) => {
       if (event.target.id === 'rental-filter-status' || event.target.id === 'rental-filter-occupancy') filterCards();
@@ -668,11 +695,13 @@
       if (event.target.closest('#rental-filter-reset')) { $('#rental-filter-search').value = ''; $('#rental-filter-status').value = ''; $('#rental-filter-occupancy').value = ''; filterCards(); }
       if (event.target.closest('#room-filter-reset')) { $('#room-filter-search').value = ''; $('#room-filter-status').value = ''; filterRoomTable(); }
       if (event.target.closest('#audit-filter-reset')) { $('#audit-filter-search').value = ''; filterAudit(); }
+      const auditPageButton = event.target.closest('[data-audit-page]');
+      if (auditPageButton && !auditPageButton.disabled) { const table = $('#audit-list table'); const rows = $$('tbody tr', table); const query = ($('#audit-filter-search')?.value || '').trim().toLowerCase(); const count = rows.filter((row) => !query || row.textContent.toLowerCase().includes(query)).length; const pageCount = Math.max(1, Math.ceil(count / 50)); auditPage = auditPageButton.dataset.auditPage === 'next' ? Math.min(pageCount, auditPage + 1) : Math.max(1, auditPage - 1); renderAuditPagination(); }
     });
   }
 
   function observeDynamicLists() {
-    ['room-list', 'room-admin-list', 'tenant-list', 'audit-list', 'ledger-list', 'maintenance-list', 'cost-list', 'checkout-list', 'room-items-list', 'room-maintenance-list'].forEach((id) => {
+    ['room-list', 'room-admin-list', 'tenant-list', 'ledger-list', 'maintenance-list', 'cost-list', 'checkout-list', 'room-items-list', 'room-maintenance-list'].forEach((id) => {
       const target = document.getElementById(id);
       if (!target) return;
       new MutationObserver(() => {

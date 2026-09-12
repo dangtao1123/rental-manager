@@ -267,6 +267,143 @@ dialog#maintenance-batch-dialog .dialog-actions { min-height: 68px !important; m
   dialog#maintenance-batch-dialog .dialog-actions button { min-width: 0 !important; flex: 1 1 0 !important; height: 38px !important; padding: 0 8px !important; font-size: 12px !important; }
 }
 
+/* v14: page-wide density, state contrast and form/list corrections. */
+#rental.view #room-list .room-card {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 18px !important;
+  background: #fff !important;
+}
+#rental.view #room-list .room-card.room-occupied { border-color: #8bd8bf !important; border-top-color: #10a678 !important; background: #effbf6 !important; }
+#rental.view #room-list .room-card.room-vacant { border-color: #f3b9bb !important; border-top-color: #eb626a !important; background: #fff5f5 !important; }
+#rental.view #room-list .room-card.room-expiring { border-color: #f0cc7b !important; border-top-color: #df9416 !important; background: #fff9ec !important; }
+#rental.view #room-list .room-card.room-maintenance { border-color: #a7cbe8 !important; border-top-color: #3d8cc4 !important; background: #f2f8fd !important; }
+#rental.view #room-list .room-card-head-meta { gap: 7px !important; }
+#rental.view #room-list .room-card .room-tenant { margin-top: 16px !important; color: #365d6f !important; font-size: 14px !important; line-height: 1.65 !important; }
+#rental.view #room-list .room-card .room-payment-row { margin-top: 15px !important; }
+#rental.view #room-list .room-card .room-payment-row strong { font-size: 13px !important; }
+#rental.view #room-list .room-card .room-actions { margin-top: 18px !important; padding-top: 14px !important; border-top: 1px solid rgba(130,174,189,.35) !important; }
+
+/* All dynamic search fields use one visual control, avoiding nested borders. */
+.ui-audit-filter .search-field,
+#rental.view > .filter-bar .search-field,
+#rooms.view > .filter-bar .search-field {
+  display: flex !important;
+  align-items: center !important;
+  min-height: 40px !important;
+  padding: 0 10px !important;
+  border: 1px solid #c8dce5 !important;
+  border-radius: 7px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+}
+.ui-audit-filter .search-field input,
+#rental.view > .filter-bar .search-field input,
+#rooms.view > .filter-bar .search-field input {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: 38px !important;
+  margin: 0 !important;
+  padding: 0 6px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* Maintenance batch form: no decorative duplicate green title rail, and a wider amount field. */
+dialog#record-dialog.maintenance-batch-dialog .dialog-head h2::before,
+dialog#record-dialog.maintenance-batch-dialog .dialog-head h2::after,
+dialog#record-dialog.maintenance-batch-dialog .dialog-kicker { display: none !important; }
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row {
+  grid-template-columns: 32px 1.1fr .95fr 1.05fr 1.25fr 1.25fr minmax(120px, .9fr) 1.15fr 1.15fr 1.15fr 34px !important;
+  gap: 8px !important;
+}
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row label:nth-of-type(6) { min-width: 120px !important; }
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row label:nth-of-type(6) input { color: #cf4d55 !important; border-color: #f0aeb3 !important; background: #fff5f5 !important; font-size: 14px !important; font-weight: 850 !important; }
+
+/* Move-in: five finance fields are grouped without changing their existing names. */
+dialog#move-in-dialog .move-in-grid { align-items: start !important; }
+dialog#move-in-dialog .move-in-finance-group {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  padding: 10px !important;
+  border: 2px solid !important;
+  border-radius: 10px !important;
+}
+dialog#move-in-dialog .move-in-rent-group { border-color: #f0a7ad !important; background: #fff6f6 !important; }
+dialog#move-in-dialog .move-in-fee-group { border-color: #8fd1b5 !important; background: #f2fbf6 !important; }
+dialog#move-in-dialog .move-in-group-title { grid-column: 1 / -1 !important; color: #7d5559 !important; font-size: 11px !important; font-weight: 850 !important; }
+dialog#move-in-dialog .move-in-fee-group .move-in-group-title { color: #27755f !important; }
+dialog#move-in-dialog .move-in-finance-group label { min-width: 0 !important; padding: 0 !important; border: 0 !important; background: transparent !important; }
+dialog#move-in-dialog .move-in-deposit-field { padding: 10px !important; border: 2px solid #f0a7ad !important; border-radius: 10px !important; color: #a5444d !important; background: #fff6f6 !important; }
+dialog#move-in-dialog .move-in-deposit-field input { color: #c94b52 !important; font-weight: 850 !important; }
+
+/* Ledger cards and list: five summary figures on one row and readable remarks/actions. */
+#ledger.view > .ledger-summary,
+#ledger.view #ledger-summary { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: 10px !important; margin: 0 0 14px !important; }
+#ledger.view #ledger-summary .summary-card { min-width: 0 !important; min-height: 92px !important; padding: 14px !important; }
+#ledger.view #ledger-summary .summary-card strong { font-size: 21px !important; white-space: nowrap !important; }
+#ledger.view #ledger-list table { width: 100% !important; table-layout: fixed !important; }
+#ledger.view #ledger-list th:nth-child(1), #ledger.view #ledger-list td:nth-child(1) { width: 11% !important; }
+#ledger.view #ledger-list th:nth-child(2), #ledger.view #ledger-list td:nth-child(2) { width: 15% !important; }
+#ledger.view #ledger-list th:nth-child(3), #ledger.view #ledger-list td:nth-child(3) { width: 10% !important; }
+#ledger.view #ledger-list th:nth-child(4), #ledger.view #ledger-list td:nth-child(4) { width: 12% !important; }
+#ledger.view #ledger-list th:nth-child(5), #ledger.view #ledger-list td:nth-child(5) { width: 12% !important; }
+#ledger.view #ledger-list th:nth-child(6), #ledger.view #ledger-list td:nth-child(6) { width: 28% !important; }
+#ledger.view #ledger-list th:nth-child(7), #ledger.view #ledger-list td:nth-child(7) { width: 12% !important; }
+#ledger.view #ledger-list td { overflow-wrap: anywhere !important; white-space: normal !important; }
+#ledger.view #ledger-list .ledger-note { display: block !important; line-height: 1.55 !important; white-space: normal !important; overflow-wrap: anywhere !important; }
+#ledger.view #ledger-list .ledger-actions { display: flex !important; align-items: center !important; justify-content: flex-start !important; gap: 7px !important; margin: 0 !important; white-space: nowrap !important; }
+#ledger.view #ledger-list .ledger-actions .icon-button { width: 32px !important; min-width: 32px !important; height: 32px !important; padding: 0 !important; }
+
+/* Settings use two balanced cards instead of a left-packed form. */
+#settings.view > .ui-content-panel { padding: 0 !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
+#settings.view > .ui-content-panel > #rental-settings-form,
+#settings.view > .ui-content-panel > #rental-user-form { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 16px !important; padding: 22px !important; border: 1px solid #d7e6eb !important; border-radius: 12px !important; background: #fff !important; box-shadow: 0 6px 18px rgba(24,66,82,.05) !important; }
+#settings.view > .ui-content-panel > #rental-settings-form label,
+#settings.view > .ui-content-panel > #rental-user-form label { min-width: 0 !important; }
+#settings.view > .ui-content-panel > #rental-settings-form label:last-of-type { grid-column: 1 / -1 !important; }
+#settings.view #save-rental-settings { margin-top: 12px !important; }
+#settings.view > .ui-content-panel > .section-rule { margin: 28px 0 !important; }
+#settings.view > .ui-content-panel > #user-list { margin-top: 16px !important; padding: 0 !important; border: 1px solid #d7e6eb !important; border-radius: 12px !important; overflow: hidden !important; background: #fff !important; }
+
+/* Audit table: detail gets the width, while the first four columns stay compact. */
+#audit.view > .ui-audit-filter { grid-template-columns: minmax(280px, 1fr) auto !important; }
+#audit.view #audit-list table { width: 100% !important; table-layout: fixed !important; }
+#audit.view #audit-list th:nth-child(1), #audit.view #audit-list td:nth-child(1) { width: 14% !important; }
+#audit.view #audit-list th:nth-child(2), #audit.view #audit-list td:nth-child(2) { width: 10% !important; }
+#audit.view #audit-list th:nth-child(3), #audit.view #audit-list td:nth-child(3) { width: 10% !important; }
+#audit.view #audit-list th:nth-child(4), #audit.view #audit-list td:nth-child(4) { width: 9% !important; }
+#audit.view #audit-list th:nth-child(5), #audit.view #audit-list td:nth-child(5) { width: 57% !important; }
+#audit.view #audit-list td:nth-child(5), #audit.view #audit-list .audit-detail { white-space: normal !important; overflow-wrap: anywhere !important; line-height: 1.55 !important; }
+.audit-pagination { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important; padding: 12px 14px !important; border-top: 1px solid #e5eff2 !important; color: #617e8d !important; font-size: 12px !important; }
+.audit-pagination-actions { display: flex !important; align-items: center !important; gap: 8px !important; }
+.audit-pagination-actions strong { min-width: 56px !important; color: #173548 !important; text-align: center !important; }
+
+/* Historical tenants no longer show deposit; duration is the final column. */
+dialog#room-tenants-dialog table th:last-child,
+dialog#room-tenants-dialog table td:last-child { width: 16% !important; color: #365d6f !important; font-weight: 750 !important; }
+
+@media (max-width: 1100px) and (min-width: 761px) {
+  dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row { grid-template-columns: 28px repeat(4, minmax(0, 1fr)) !important; }
+  dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row label:nth-of-type(n+5) { grid-column: span 2 !important; }
+}
+@media (max-width: 760px) {
+  #ledger.view > .ledger-summary, #ledger.view #ledger-summary { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  #settings.view > .ui-content-panel > #rental-settings-form, #settings.view > .ui-content-panel > #rental-user-form { grid-template-columns: 1fr !important; padding: 16px !important; }
+  #settings.view > .ui-content-panel > #rental-settings-form label:last-of-type { grid-column: auto !important; }
+  #audit.view > .ui-audit-filter { grid-template-columns: 1fr !important; }
+  .audit-pagination { align-items: flex-start !important; flex-direction: column !important; }
+  dialog#move-in-dialog .move-in-finance-group { grid-template-columns: 1fr !important; }
+  dialog#move-in-dialog .move-in-group-title { grid-column: auto !important; }
+  dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row { grid-template-columns: 28px minmax(0, 1fr) !important; }
+  dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row label:nth-of-type(n+1) { grid-column: 2 !important; }
+}
+
 /* Rental cards and lease workflows use the same state and action language as maintenance. */
 #rental.tab-panel.view #room-list .room-card {
   display: flex !important;
@@ -3023,4 +3160,77 @@ dialog#room-tenants-dialog td[data-history-duration-cell] { color: #365d6f !impo
   dialog#room-tenants-dialog { width: calc(100vw - 16px) !important; max-width: calc(100vw - 16px) !important; }
   dialog#room-tenants-dialog table { min-width: 720px !important; }
   body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .table-actions { min-width: 0 !important; justify-content: flex-start !important; }
+}
+
+/* v14-final: last-in-file overrides for density, contrast and workflow forms. */
+#rental.view #room-list .room-card { min-height: 0 !important; height: auto !important; padding: 18px !important; background: #fff !important; }
+#rental.view #room-list .room-card.room-occupied { border-color: #8bd8bf !important; border-top-color: #10a678 !important; background: #effbf6 !important; }
+#rental.view #room-list .room-card.room-vacant { border-color: #f3b9bb !important; border-top-color: #eb626a !important; background: #fff5f5 !important; }
+#rental.view #room-list .room-card.room-expiring { border-color: #f0cc7b !important; border-top-color: #df9416 !important; background: #fff9ec !important; }
+#rental.view #room-list .room-card.room-maintenance { border-color: #a7cbe8 !important; border-top-color: #3d8cc4 !important; background: #f2f8fd !important; }
+#rental.view #room-list .room-card .room-tenant { margin-top: 16px !important; color: #365d6f !important; font-size: 14px !important; line-height: 1.65 !important; }
+#rental.view #room-list .room-card .room-payment-row strong { font-size: 13px !important; }
+#rental.view #room-list .room-card .room-actions { margin-top: 18px !important; padding-top: 14px !important; border-top: 1px solid rgba(130,174,189,.35) !important; }
+
+.ui-audit-filter .search-field, #rental.view > .filter-bar .search-field, #rooms.view > .filter-bar .search-field { display: flex !important; align-items: center !important; min-height: 40px !important; padding: 0 10px !important; border: 1px solid #c8dce5 !important; border-radius: 7px !important; background: #fff !important; box-shadow: none !important; }
+.ui-audit-filter .search-field input, #rental.view > .filter-bar .search-field input, #rooms.view > .filter-bar .search-field input { flex: 1 1 auto !important; width: auto !important; min-width: 0 !important; height: 38px !important; margin: 0 !important; padding: 0 6px !important; border: 0 !important; outline: 0 !important; box-shadow: none !important; background: transparent !important; }
+
+dialog#record-dialog.maintenance-batch-dialog .dialog-head h2::before, dialog#record-dialog.maintenance-batch-dialog .dialog-head h2::after, dialog#record-dialog.maintenance-batch-dialog .dialog-kicker { display: none !important; }
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row { grid-template-columns: 32px 1.1fr .95fr 1.05fr 1.25fr 1.25fr minmax(120px, .9fr) 1.15fr 1.15fr 1.15fr 34px !important; gap: 8px !important; }
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row label:nth-of-type(6) { min-width: 120px !important; }
+dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row label:nth-of-type(6) input { color: #cf4d55 !important; border-color: #f0aeb3 !important; background: #fff5f5 !important; font-size: 14px !important; font-weight: 850 !important; }
+
+dialog#move-in-dialog .move-in-grid { align-items: start !important; }
+dialog#move-in-dialog .move-in-finance-group { display: grid !important; grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 8px !important; min-width: 0 !important; padding: 10px !important; border: 2px solid !important; border-radius: 10px !important; }
+dialog#move-in-dialog .move-in-rent-group { border-color: #f0a7ad !important; background: #fff6f6 !important; }
+dialog#move-in-dialog .move-in-fee-group { border-color: #8fd1b5 !important; background: #f2fbf6 !important; }
+dialog#move-in-dialog .move-in-group-title { grid-column: 1 / -1 !important; color: #7d5559 !important; font-size: 11px !important; font-weight: 850 !important; }
+dialog#move-in-dialog .move-in-fee-group .move-in-group-title { color: #27755f !important; }
+dialog#move-in-dialog .move-in-finance-group label { min-width: 0 !important; padding: 0 !important; border: 0 !important; background: transparent !important; }
+dialog#move-in-dialog .move-in-deposit-field { padding: 10px !important; border: 2px solid #f0a7ad !important; border-radius: 10px !important; color: #a5444d !important; background: #fff6f6 !important; }
+dialog#move-in-dialog .move-in-deposit-field input { color: #c94b52 !important; font-weight: 850 !important; }
+
+#ledger.view #ledger-summary { grid-template-columns: repeat(5, minmax(0,1fr)) !important; gap: 10px !important; margin: 0 0 14px !important; }
+#ledger.view #ledger-summary .summary-card { min-width: 0 !important; min-height: 92px !important; padding: 14px !important; }
+#ledger.view #ledger-list table { width: 100% !important; table-layout: fixed !important; }
+#ledger.view #ledger-list th:nth-child(1), #ledger.view #ledger-list td:nth-child(1) { width: 11% !important; }
+#ledger.view #ledger-list th:nth-child(2), #ledger.view #ledger-list td:nth-child(2) { width: 15% !important; }
+#ledger.view #ledger-list th:nth-child(3), #ledger.view #ledger-list td:nth-child(3) { width: 10% !important; }
+#ledger.view #ledger-list th:nth-child(4), #ledger.view #ledger-list td:nth-child(4) { width: 12% !important; }
+#ledger.view #ledger-list th:nth-child(5), #ledger.view #ledger-list td:nth-child(5) { width: 12% !important; }
+#ledger.view #ledger-list th:nth-child(6), #ledger.view #ledger-list td:nth-child(6) { width: 28% !important; }
+#ledger.view #ledger-list th:nth-child(7), #ledger.view #ledger-list td:nth-child(7) { width: 12% !important; }
+#ledger.view #ledger-list td, #ledger.view #ledger-list .ledger-note { white-space: normal !important; overflow-wrap: anywhere !important; line-height: 1.55 !important; }
+#ledger.view #ledger-list .ledger-actions { display: flex !important; align-items: center !important; gap: 7px !important; margin: 0 !important; white-space: nowrap !important; }
+#ledger.view #ledger-list .ledger-actions .icon-button { width: 32px !important; min-width: 32px !important; height: 32px !important; padding: 0 !important; }
+
+#settings.view > .ui-content-panel { padding: 0 !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
+#settings.view > .ui-content-panel > #rental-settings-form, #settings.view > .ui-content-panel > #rental-user-form { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 16px !important; padding: 22px !important; border: 1px solid #d7e6eb !important; border-radius: 12px !important; background: #fff !important; box-shadow: 0 6px 18px rgba(24,66,82,.05) !important; }
+#settings.view > .ui-content-panel > #rental-settings-form label:last-of-type { grid-column: 1 / -1 !important; }
+#settings.view > .ui-content-panel > #section-rule { margin: 28px 0 !important; }
+#settings.view > .ui-content-panel > #user-list { margin-top: 16px !important; border: 1px solid #d7e6eb !important; border-radius: 12px !important; overflow: hidden !important; background: #fff !important; }
+
+#audit.view > .ui-audit-filter { grid-template-columns: minmax(280px,1fr) auto !important; }
+#audit.view #audit-list table { width: 100% !important; table-layout: fixed !important; }
+#audit.view #audit-list th:nth-child(1), #audit.view #audit-list td:nth-child(1) { width: 14% !important; }
+#audit.view #audit-list th:nth-child(2), #audit.view #audit-list td:nth-child(2) { width: 10% !important; }
+#audit.view #audit-list th:nth-child(3), #audit.view #audit-list td:nth-child(3) { width: 10% !important; }
+#audit.view #audit-list th:nth-child(4), #audit.view #audit-list td:nth-child(4) { width: 9% !important; }
+#audit.view #audit-list th:nth-child(5), #audit.view #audit-list td:nth-child(5) { width: 57% !important; white-space: normal !important; overflow-wrap: anywhere !important; }
+.audit-pagination { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important; padding: 12px 14px !important; border-top: 1px solid #e5eff2 !important; color: #617e8d !important; font-size: 12px !important; }
+.audit-pagination-actions { display: flex !important; align-items: center !important; gap: 8px !important; }
+.audit-pagination-actions strong { min-width: 56px !important; color: #173548 !important; text-align: center !important; }
+dialog#room-tenants-dialog table th:last-child, dialog#room-tenants-dialog table td:last-child { width: 16% !important; color: #365d6f !important; font-weight: 750 !important; }
+
+@media (max-width: 1100px) and (min-width: 761px) { dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row { grid-template-columns: 28px repeat(4,minmax(0,1fr)) !important; } }
+@media (max-width: 760px) {
+  #ledger.view #ledger-summary { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+  #settings.view > .ui-content-panel > #rental-settings-form, #settings.view > .ui-content-panel > #rental-user-form { grid-template-columns: 1fr !important; padding: 16px !important; }
+  #settings.view > .ui-content-panel > #rental-settings-form label:last-of-type { grid-column: auto !important; }
+  #audit.view > .ui-audit-filter { grid-template-columns: 1fr !important; }
+  .audit-pagination { align-items: flex-start !important; flex-direction: column !important; }
+  dialog#move-in-dialog .move-in-finance-group { grid-template-columns: 1fr !important; }
+  dialog#move-in-dialog .move-in-group-title { grid-column: auto !important; }
+  dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row { grid-template-columns: 28px minmax(0,1fr) !important; }
+  dialog#record-dialog.maintenance-batch-dialog .maintenance-batch-row label { grid-column: 2 !important; }
 }
