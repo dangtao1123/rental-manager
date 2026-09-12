@@ -1598,6 +1598,7 @@ async function handleRentalMoveInAction(request, response, id, action) {
       const rooms = await readRentalFile(RENTAL_ROOMS_FILE);
       const room = rooms.find((item) => item.id === record.roomId || item.roomNo === record.roomNo);
       const paymentMethodLabel = ({ monthly: '月付', quarterly: '季付', yearly: '年付' })[record.paymentMethod] || record.paymentMethod || '月付';
+      const purposeLabel = ({ self: '自住', studio: '工作室', homestay: '民宿', other: '其他' })[record.purpose] || record.purpose || '自住';
       const monthlyTotal = Math.round((Number(record.monthlyRent || 0) + Number(record.monthlyPropertyFee || 0)) * 100) / 100;
       const propertyName = record.propertyName || room?.propertyName || '';
       const propertyAddressName = propertyName.includes('西城') ? propertyName : `西城${propertyName}`;
@@ -1605,7 +1606,7 @@ async function handleRentalMoveInAction(request, response, id, action) {
       record.contractNo = contractNo;
       const contractName = rentalDownloadFilename([propertyName, record.roomNo, record.tenantName, '租赁合同'].filter(Boolean).join('-'), '.docx');
       record.generatedContractName = contractName;
-      const filled = fillDocxTemplate(template, { propertyName, propertyAddress: `东营市${propertyAddressName}D1-${record.roomNo}`, roomNo: record.roomNo, roomLabel: `${propertyName} · ${record.roomNo}`, contractNo, tenantName: record.tenantName, tenantIdCard: record.tenantIdCard, tenantPhone: record.tenantPhone, purpose: record.purpose, startDate: record.startDate, endDate: record.endDate || '/', area: room?.area || '', paymentMethod: paymentMethodLabel, monthlyRent: record.monthlyRent, monthlyPropertyFee: record.monthlyPropertyFee, monthlyTotal, deposit: record.deposit, moveInWater: record.moveInWater, moveInElectricity: record.moveInElectricity, waterUnitPrice: settings.waterUnitPrice, electricityUnitPrice: settings.electricityUnitPrice, inventory: (record.inventorySnapshot || []).map((item) => item.name ? `${item.name} × ${Math.max(1, Math.trunc(Number(item.quantity || 1) || 1))}` : '').filter(Boolean).join('、') });
+      const filled = fillDocxTemplate(template, { propertyName, propertyAddress: `东营市${propertyAddressName}D1-${record.roomNo}`, roomNo: record.roomNo, roomLabel: `${propertyName} · ${record.roomNo}`, contractNo, tenantName: record.tenantName, tenantIdCard: record.tenantIdCard, tenantPhone: record.tenantPhone, purpose: purposeLabel, startDate: record.startDate, endDate: record.endDate || '/', area: room?.area || '', paymentMethod: paymentMethodLabel, monthlyRent: record.monthlyRent, monthlyPropertyFee: record.monthlyPropertyFee, monthlyTotal, deposit: record.deposit, moveInWater: record.moveInWater, moveInElectricity: record.moveInElectricity, waterUnitPrice: settings.waterUnitPrice, electricityUnitPrice: settings.electricityUnitPrice, inventory: (record.inventorySnapshot || []).map((item) => item.name ? `${item.name} × ${Math.max(1, Math.trunc(Number(item.quantity || 1) || 1))}` : '').filter(Boolean).join('、') });
       await fs.mkdir(RENTAL_FILES_DIR, { recursive: true, mode: 0o750 });
       const filename = `move-in-contract-${crypto.randomUUID()}.docx`;
       await fs.writeFile(path.join(RENTAL_FILES_DIR, filename), filled, { mode: 0o640 });
