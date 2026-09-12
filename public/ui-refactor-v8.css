@@ -2827,3 +2827,200 @@ dialog#move-in-dialog .button-sign-external {
   dialog#move-in-dialog .move-in-grid label.full,
   dialog#move-in-dialog .move-in-grid .move-in-amount.full { grid-column: auto !important; }
 }
+
+/* v13 list and history cleanup. */
+body > .main.rental-shell > #rooms.tab-panel.view > .filter-bar .search-field {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 40px !important;
+  padding: 0 11px !important;
+  border: 1px solid #c6dce4 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+}
+body > .main.rental-shell > #rooms.tab-panel.view > .filter-bar .search-field input {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+body > .main.rental-shell > #rooms.tab-panel.view > .filter-bar .search-field:focus-within {
+  border-color: #167db7 !important;
+  box-shadow: 0 0 0 3px rgba(22,125,183,.11) !important;
+}
+
+@media (min-width: 761px) {
+  body > .main.rental-shell > #rooms.tab-panel.view #room-admin-list .room-admin-table td:last-child .table-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+  }
+  body > .main.rental-shell > #rooms.tab-panel.view #room-admin-list .room-admin-table td:last-child .table-actions .button {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 32px !important;
+    padding: 0 8px !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+  }
+}
+
+dialog#room-maintenance-dialog {
+  width: min(1100px, calc(100vw - 32px)) !important;
+}
+dialog#room-maintenance-dialog .table-wrap {
+  max-height: calc(100vh - 170px) !important;
+  margin: 0 !important;
+  padding: 16px 20px !important;
+  overflow: auto !important;
+}
+dialog#room-maintenance-dialog table {
+  width: 100% !important;
+  min-width: 0 !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+dialog#room-maintenance-dialog th,
+dialog#room-maintenance-dialog td {
+  box-sizing: border-box !important;
+  padding: 10px 10px !important;
+  border-bottom: 1px solid #e4eef2 !important;
+  color: #365d6f !important;
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+  vertical-align: middle !important;
+  overflow-wrap: anywhere !important;
+}
+dialog#room-maintenance-dialog th { height: 42px !important; color: #496d7d !important; background: #eff7f9 !important; font-weight: 800 !important; white-space: nowrap !important; }
+dialog#room-maintenance-dialog th:nth-child(1),
+dialog#room-maintenance-dialog td:nth-child(1) { width: 92px !important; }
+dialog#room-maintenance-dialog th:nth-child(2),
+dialog#room-maintenance-dialog td:nth-child(2) { width: 112px !important; }
+dialog#room-maintenance-dialog th:nth-child(3),
+dialog#room-maintenance-dialog td:nth-child(3) { width: 26% !important; }
+dialog#room-maintenance-dialog th:nth-child(4),
+dialog#room-maintenance-dialog td:nth-child(4) { width: 82px !important; text-align: center !important; }
+dialog#room-maintenance-dialog th:nth-child(5),
+dialog#room-maintenance-dialog td:nth-child(5) { width: 92px !important; text-align: center !important; }
+dialog#room-maintenance-dialog th:nth-child(6),
+dialog#room-maintenance-dialog td:nth-child(6) { width: 226px !important; }
+dialog#room-maintenance-dialog th:nth-child(7),
+dialog#room-maintenance-dialog td:nth-child(7) { width: 100px !important; }
+dialog#room-maintenance-dialog .maintenance-item-cell { display: grid !important; gap: 3px !important; min-width: 0 !important; }
+dialog#room-maintenance-dialog .maintenance-item-cell strong { color: #173548 !important; font-size: 13px !important; }
+dialog#room-maintenance-dialog .maintenance-item-cell span { color: #6a8490 !important; font-size: 11px !important; }
+dialog#room-maintenance-dialog .maintenance-evidence-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 64px) !important;
+  gap: 8px !important;
+  justify-content: start !important;
+}
+dialog#room-maintenance-dialog .maintenance-evidence-grid > div { display: flex !important; min-width: 0 !important; flex-direction: column !important; align-items: center !important; gap: 4px !important; }
+dialog#room-maintenance-dialog .maintenance-evidence-grid > div > span { color: #67808d !important; font-size: 10px !important; white-space: nowrap !important; }
+dialog#room-maintenance-dialog .maintenance-image-link,
+dialog#room-maintenance-dialog .maintenance-image-link img { width: 60px !important; height: 54px !important; border-radius: 7px !important; }
+dialog#room-maintenance-dialog .maintenance-image-link { display: inline-flex !important; flex: 0 0 60px !important; align-items: center !important; justify-content: center !important; padding: 0 !important; overflow: hidden !important; border: 1px solid #d8e6eb !important; background: #f7fafb !important; }
+dialog#room-maintenance-dialog .maintenance-image-link img { display: block !important; object-fit: cover !important; }
+dialog#room-maintenance-dialog .maintenance-evidence-grid .meta { width: 60px !important; min-height: 54px !important; padding-top: 18px !important; color: #66808e !important; font-size: 10px !important; text-align: center !important; white-space: nowrap !important; }
+dialog#room-maintenance-dialog .row-actions { display: flex !important; flex-wrap: nowrap !important; gap: 6px !important; margin: 0 !important; white-space: nowrap !important; }
+dialog#room-maintenance-dialog .row-actions .small { width: 34px !important; height: 32px !important; min-width: 34px !important; padding: 0 !important; }
+
+dialog#renewal-dialog {
+  width: min(980px, calc(100vw - 32px)) !important;
+}
+dialog#renewal-dialog .table-wrap { max-height: calc(100vh - 160px) !important; padding: 16px 20px !important; overflow: auto !important; }
+dialog#renewal-dialog table { width: 100% !important; min-width: 0 !important; table-layout: fixed !important; border-collapse: collapse !important; }
+dialog#renewal-dialog th,
+dialog#renewal-dialog td { box-sizing: border-box !important; padding: 10px 11px !important; border-bottom: 1px solid #e4eef2 !important; color: #365d6f !important; font-size: 12px !important; line-height: 1.45 !important; vertical-align: middle !important; overflow-wrap: anywhere !important; }
+dialog#renewal-dialog th { height: 42px !important; color: #496d7d !important; background: #eff7f9 !important; font-weight: 800 !important; white-space: nowrap !important; }
+dialog#renewal-dialog th:nth-child(1), dialog#renewal-dialog td:nth-child(1) { width: 100px !important; }
+dialog#renewal-dialog th:nth-child(2), dialog#renewal-dialog td:nth-child(2) { width: 90px !important; }
+dialog#renewal-dialog th:nth-child(3), dialog#renewal-dialog td:nth-child(3) { width: 220px !important; }
+dialog#renewal-dialog th:nth-child(4), dialog#renewal-dialog td:nth-child(4),
+dialog#renewal-dialog th:nth-child(5), dialog#renewal-dialog td:nth-child(5) { width: 90px !important; }
+dialog#renewal-dialog th:nth-child(6), dialog#renewal-dialog td:nth-child(6) { width: 205px !important; color: #d34f57 !important; font-weight: 800 !important; }
+
+body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row {
+  grid-template-columns: minmax(160px, 1.15fr) minmax(82px, .65fr) minmax(170px, 1.2fr) minmax(112px, .82fr) minmax(125px, .9fr) minmax(84px, .65fr) minmax(82px, .6fr) minmax(210px, 1.55fr) !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  padding: 12px !important;
+}
+body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row > div { min-width: 0 !important; }
+body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .tenant-main h3 { line-height: 1.3 !important; white-space: normal !important; }
+body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .tenant-phone-inline { display: block !important; margin-top: 3px !important; color: #6a8490 !important; font-size: 11px !important; font-weight: 600 !important; }
+body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row > div > span { line-height: 1.25 !important; white-space: normal !important; }
+body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row > div > strong { margin-top: 4px !important; line-height: 1.35 !important; white-space: normal !important; overflow-wrap: anywhere !important; }
+body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .table-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 5px !important;
+  min-width: 210px !important;
+  margin: 0 !important;
+}
+body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .table-actions .button {
+  flex: 0 0 auto !important;
+  min-width: 0 !important;
+  height: 31px !important;
+  padding: 0 7px !important;
+  font-size: 10px !important;
+  white-space: nowrap !important;
+}
+body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .contract-link.is-missing {
+  color: #9aaab1 !important;
+  border-color: #d5e0e4 !important;
+  background: #f4f7f8 !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}
+
+dialog#room-tenants-dialog { width: min(900px, calc(100vw - 32px)) !important; }
+dialog#room-tenants-dialog .table-wrap { padding: 16px 20px !important; overflow: auto !important; }
+dialog#room-tenants-dialog table { width: 100% !important; min-width: 0 !important; table-layout: fixed !important; }
+dialog#room-tenants-dialog th,
+dialog#room-tenants-dialog td { padding: 10px 11px !important; overflow-wrap: anywhere !important; }
+dialog#room-tenants-dialog th:nth-child(1), dialog#room-tenants-dialog td:nth-child(1) { width: 22% !important; }
+dialog#room-tenants-dialog th:nth-child(2), dialog#room-tenants-dialog td:nth-child(2) { width: 13% !important; }
+dialog#room-tenants-dialog th:nth-child(3), dialog#room-tenants-dialog td:nth-child(3) { width: 12% !important; }
+dialog#room-tenants-dialog th:nth-child(4), dialog#room-tenants-dialog td:nth-child(4) { width: 14% !important; }
+dialog#room-tenants-dialog th:nth-child(5), dialog#room-tenants-dialog td:nth-child(5) { width: 18% !important; }
+dialog#room-tenants-dialog th:nth-child(6), dialog#room-tenants-dialog td:nth-child(6) { width: 12% !important; }
+dialog#room-tenants-dialog th:nth-child(7), dialog#room-tenants-dialog td:nth-child(7) { width: 12% !important; }
+dialog#room-tenants-dialog td[data-history-duration-cell] { color: #365d6f !important; font-weight: 700 !important; }
+
+@media (max-width: 1200px) and (min-width: 761px) {
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row { grid-template-columns: minmax(170px, 1.2fr) minmax(82px, .7fr) minmax(175px, 1.2fr) minmax(110px, .85fr) minmax(120px, .9fr) minmax(90px, .7fr) minmax(88px, .7fr) !important; }
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .table-actions { grid-column: 1 / -1 !important; justify-content: flex-end !important; padding-top: 8px !important; border-top: 1px solid #edf3f5 !important; }
+}
+@media (max-width: 760px) {
+  body > .main.rental-shell > #rooms.tab-panel.view > .filter-bar .search-field { min-height: 38px !important; }
+  dialog#room-maintenance-dialog { width: calc(100vw - 16px) !important; max-width: calc(100vw - 16px) !important; }
+  dialog#room-maintenance-dialog .table-wrap { padding: 12px !important; }
+  dialog#room-maintenance-dialog table { min-width: 760px !important; table-layout: fixed !important; }
+  dialog#room-maintenance-dialog .maintenance-image-link,
+  dialog#room-maintenance-dialog .maintenance-image-link img { width: 54px !important; height: 50px !important; }
+  dialog#renewal-dialog { width: calc(100vw - 16px) !important; max-width: calc(100vw - 16px) !important; }
+  dialog#renewal-dialog table { min-width: 780px !important; }
+  dialog#room-tenants-dialog { width: calc(100vw - 16px) !important; max-width: calc(100vw - 16px) !important; }
+  dialog#room-tenants-dialog table { min-width: 720px !important; }
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .table-actions { min-width: 0 !important; justify-content: flex-start !important; }
+}

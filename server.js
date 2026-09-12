@@ -726,7 +726,7 @@ function withSignedRentalFiles(type, record, now = Date.now()) {
   const singleFields = type === 'rooms'
     ? ['landlordContractFile']
     : type === 'leases'
-    ? ['idCardFront', 'idCardBack']
+    ? ['idCardFront', 'idCardBack', 'contractFileUrl']
     : type === 'items'
       ? ['image']
       : type === 'maintenance'

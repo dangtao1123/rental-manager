@@ -445,7 +445,7 @@
 
   function contractLink(lease) {
     const url = lease.contractFileUrl || lease.signedContractFile || lease.generatedContractFile;
-    return url ? `<a class="button button-outline contract-link" href="${esc(url)}" target="_blank" rel="noopener">查看合同</a>` : '';
+    return url ? `<a class="button button-outline contract-link" href="${esc(url)}" target="_blank" rel="noopener">查看合同</a>` : '<button class="button button-outline contract-link is-missing" type="button" disabled>查看合同</button>';
   }
 
   function openRoomTenantHistory(roomNo) {
@@ -466,6 +466,50 @@
     $('#room-tenants-dialog-title').textContent = `${room ? `${room.propertyName || '房间'} · ${room.roomNo}` : roomLabel(roomNo)} · 历史租客`;
     $('#room-tenants-list').innerHTML = leases.length ? refTable(['租户', '状态', '租房用途', '入住时间', '续租/退房', '押金'], rows) : '<p class="room-tenants-empty">该房间暂无租客记录</p>';
     $('#room-tenants-dialog').showModal();
+  }
+
+  function historyDurationText(startDate, endDate) {
+    if (!startDate || !endDate) return '未设置';
+    const start = new Date(`${startDate}T00:00:00Z`);
+    const end = new Date(`${endDate}T00:00:00Z`);
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end < start) return '0个月0天';
+    let months = (end.getUTCFullYear() - start.getUTCFullYear()) * 12 + end.getUTCMonth() - start.getUTCMonth();
+    const anchor = new Date(start);
+    anchor.setUTCMonth(anchor.getUTCMonth() + months);
+    const inclusiveMonthEnd = new Date(anchor);
+    inclusiveMonthEnd.setUTCDate(inclusiveMonthEnd.getUTCDate() - 1);
+    if (months > 0 && end.getTime() === inclusiveMonthEnd.getTime()) return `${months}个月0天`;
+    if (anchor > end) { months -= 1; anchor.setUTCMonth(anchor.getUTCMonth() - 1); }
+    const days = Math.max(0, Math.round((end - anchor) / 86400000));
+    return `${months}个月${days}天`;
+  }
+
+  function decorateRoomTenantHistory(roomNo) {
+    const table = document.querySelector('#room-tenants-list table');
+    if (!table) return;
+    table.querySelector('[data-history-duration]')?.remove();
+    table.querySelectorAll('[data-history-duration-cell]').forEach((cell) => cell.remove());
+    const headerRow = table.querySelector('thead tr');
+    const bodyRows = [...table.querySelectorAll('tbody tr')];
+    if (!headerRow || !bodyRows.length) return;
+    const leases = state.leases.filter((lease) => lease.roomNo === roomNo).sort((a, b) => {
+      if ((a.status === 'active') !== (b.status === 'active')) return a.status === 'active' ? -1 : 1;
+      return String(b.startDate || '').localeCompare(String(a.startDate || ''));
+    });
+    const heading = document.createElement('th');
+    heading.dataset.historyDuration = '1';
+    heading.textContent = '入住时长';
+    const depositHeader = [...headerRow.children].at(-1);
+    headerRow.insertBefore(heading, depositHeader || null);
+    bodyRows.forEach((row, index) => {
+      const lease = leases[index];
+      const checkout = lease ? state.checkouts.find((item) => item.leaseId === lease.id) : null;
+      const endDate = lease?.status === 'active' ? today() : (checkout?.checkoutDate || lease?.endDate || today());
+      const cell = document.createElement('td');
+      cell.dataset.historyDurationCell = '1';
+      cell.textContent = historyDurationText(lease?.startDate, endDate);
+      row.insertBefore(cell, row.lastElementChild || null);
+    });
   }
 
   function installReferenceRenderers() {
@@ -664,6 +708,10 @@
   if (auditFilterAfterBuild) document.querySelector('#audit > .page-head')?.append(auditFilterAfterBuild);
   renderReferenceViews();
   bindInteractions();
+  document.addEventListener('click', (event) => {
+    const historyTrigger = event.target.closest('[data-show-room-tenants]');
+    if (historyTrigger) setTimeout(() => decorateRoomTenantHistory(historyTrigger.dataset.showRoomTenants || ''), 0);
+  });
   observeDynamicLists();
   normalizeArchiveButtons(document);
   setTimeout(() => refreshLocalIcons(document), 120);
