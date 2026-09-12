@@ -3304,3 +3304,83 @@ dialog#move-in-dialog .move-in-fee-group label:has(input[name="monthlyPropertyFe
   background: #fff !important;
   box-shadow: none !important;
 }
+
+/* v17-final: selected move-in redesign — primary details left, finance focus right. */
+dialog#move-in-dialog { width: min(980px, calc(100vw - 28px)) !important; }
+dialog#move-in-dialog .move-in-content { padding: 18px 20px !important; }
+dialog#move-in-dialog .move-in-step-one > .meta { max-width: 680px !important; margin-bottom: 13px !important; }
+dialog#move-in-dialog .move-in-two-column-layout {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr) !important;
+  gap: 13px !important;
+  align-items: start !important;
+}
+dialog#move-in-dialog .move-in-main-column,
+dialog#move-in-dialog .move-in-finance-column { display: grid !important; gap: 12px !important; min-width: 0 !important; }
+dialog#move-in-dialog .move-in-form-block {
+  min-width: 0 !important;
+  padding: 12px 13px !important;
+  border: 1px solid #d7e7ec !important;
+  border-radius: 10px !important;
+  background: #fbfdfe !important;
+}
+dialog#move-in-dialog .move-in-form-block-head {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin-bottom: 10px !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid #e5eff2 !important;
+}
+dialog#move-in-dialog .move-in-form-block-head strong {
+  color: var(--ux-ink) !important;
+  font-size: 14px !important;
+  font-weight: 850 !important;
+}
+dialog#move-in-dialog .move-in-form-block-head span {
+  min-width: 0 !important;
+  color: var(--ux-muted) !important;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+  text-align: right !important;
+}
+dialog#move-in-dialog .move-in-form-block .move-in-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px 12px !important;
+}
+dialog#move-in-dialog .move-in-form-block .move-in-grid-property { grid-template-columns: minmax(0, 1fr) !important; }
+dialog#move-in-dialog .move-in-form-block .move-in-grid-property label.full { grid-column: auto !important; }
+dialog#move-in-dialog .move-in-form-block .move-in-grid-identity { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+dialog#move-in-dialog .move-in-form-block .move-in-grid-identity label.full { grid-column: 1 / -1 !important; }
+dialog#move-in-dialog .move-in-finance-block { background: #fafdfe !important; }
+dialog#move-in-dialog .move-in-finance-stack { display: grid !important; gap: 10px !important; }
+dialog#move-in-dialog .move-in-finance-stack .move-in-finance-group { width: auto !important; }
+dialog#move-in-dialog .move-in-finance-stack .move-in-deposit-field { width: auto !important; }
+dialog#move-in-dialog .move-in-finance-group label { font-size: 11px !important; }
+dialog#move-in-dialog .move-in-finance-group input,
+dialog#move-in-dialog .move-in-finance-group select,
+dialog#move-in-dialog .move-in-deposit-field input { min-width: 0 !important; }
+dialog#move-in-dialog .move-in-deposit-field { display: grid !important; gap: 6px !important; }
+dialog#move-in-dialog .move-in-identity-block { grid-column: 1 / -1 !important; }
+
+@media (max-width: 980px) and (min-width: 761px) {
+  dialog#move-in-dialog .move-in-two-column-layout { grid-template-columns: minmax(0, 1fr) minmax(260px, .78fr) !important; }
+  dialog#move-in-dialog .move-in-form-block .move-in-grid-identity { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  dialog#move-in-dialog .move-in-form-block .move-in-grid-identity label.full { grid-column: 1 / -1 !important; }
+}
+
+@media (max-width: 760px) {
+  dialog#move-in-dialog .move-in-content { padding: 14px 13px !important; }
+  dialog#move-in-dialog .move-in-two-column-layout { grid-template-columns: 1fr !important; gap: 10px !important; }
+  dialog#move-in-dialog .move-in-main-column,
+  dialog#move-in-dialog .move-in-finance-column { gap: 10px !important; }
+  dialog#move-in-dialog .move-in-form-block { padding: 11px !important; }
+  dialog#move-in-dialog .move-in-form-block-head { align-items: flex-start !important; flex-direction: column !important; gap: 3px !important; }
+  dialog#move-in-dialog .move-in-form-block-head span { text-align: left !important; }
+  dialog#move-in-dialog .move-in-form-block .move-in-grid,
+  dialog#move-in-dialog .move-in-form-block .move-in-grid-property,
+  dialog#move-in-dialog .move-in-form-block .move-in-grid-identity { grid-template-columns: 1fr !important; gap: 10px !important; }
+  dialog#move-in-dialog .move-in-form-block .move-in-grid-identity label.full { grid-column: auto !important; }
+  dialog#move-in-dialog .move-in-identity-block { grid-column: auto !important; }
+}
