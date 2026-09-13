@@ -3814,3 +3814,180 @@ dialog#move-in-dialog .move-in-deposit-field { font-size: 14px !important; font-
   #rental.tab-panel.view > #room-list .room-card .room-payment-row > div { padding: 0 6px !important; }
   #rental.tab-panel.view > #room-list .room-card .room-payment-row strong { font-size: 13px !important; }
 }
+
+/* v21: mobile operation flows follow the approved bright card composition. */
+@media (max-width: 760px) {
+  dialog#record-dialog:not([open]),
+  dialog#move-in-dialog:not([open]) { display: none !important; }
+  dialog#record-dialog,
+  dialog#move-in-dialog {
+    display: flex !important;
+    flex-direction: column !important;
+    width: calc(100vw - 12px) !important;
+    max-width: calc(100vw - 12px) !important;
+    max-height: calc(100vh - 10px) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 16px !important;
+    background: #f4fafc !important;
+  }
+  dialog#record-dialog > form { display: flex !important; min-height: 0 !important; flex: 1 1 auto !important; flex-direction: column !important; }
+  dialog#record-dialog .dialog-head,
+  dialog#move-in-dialog .dialog-head { flex: 0 0 auto !important; padding: 15px 17px 12px !important; background: #fff !important; }
+  dialog#record-dialog .dialog-head h2,
+  dialog#move-in-dialog .dialog-head h2 { font-size: 21px !important; letter-spacing: -.02em !important; }
+  dialog#record-dialog .dialog-fields,
+  dialog#move-in-dialog .move-in-content { min-height: 0 !important; flex: 1 1 auto !important; overflow: auto !important; overscroll-behavior: contain !important; }
+  dialog#record-dialog .dialog-fields { display: block !important; padding: 0 !important; background: #f4fafc !important; }
+  dialog#record-dialog .dialog-actions,
+  dialog#move-in-dialog .move-in-actions { position: relative !important; z-index: 4 !important; flex: 0 0 auto !important; align-items: center !important; min-height: 62px !important; flex-wrap: wrap !important; gap: 7px !important; padding: 10px 14px calc(12px + env(safe-area-inset-bottom)) !important; background: rgba(255,255,255,.98) !important; box-shadow: 0 -6px 18px rgba(26,75,91,.08) !important; }
+  dialog#record-dialog .dialog-actions > button,
+  dialog#move-in-dialog .move-in-actions > button { min-height: 42px !important; flex: 1 1 0 !important; min-width: 0 !important; padding: 0 10px !important; border-radius: 10px !important; font-size: 13px !important; }
+  dialog#record-dialog .dialog-actions .status,
+  dialog#move-in-dialog .move-in-actions .status { width: 100% !important; min-height: 17px !important; order: -1 !important; font-size: 11px !important; }
+  dialog#record-dialog #checkout-refund-summary { display: none !important; }
+
+  .mobile-flow-sheet { display: grid !important; gap: 11px !important; padding: 14px 13px 16px !important; }
+  .flow-card { min-width: 0 !important; padding: 13px !important; border: 1px solid #d7e8ee !important; border-radius: 14px !important; background: #fff !important; box-shadow: 0 6px 18px rgba(28,77,94,.055) !important; }
+  .flow-card-head { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 9px !important; margin-bottom: 11px !important; }
+  .flow-card-head h3 { margin: 2px 0 0 !important; color: #153649 !important; font-size: 16px !important; line-height: 1.25 !important; }
+  .flow-card-kicker { display: block !important; color: #0d9692 !important; font-size: 10px !important; font-weight: 800 !important; letter-spacing: .02em !important; }
+  .flow-card-help { color: #7b929d !important; font-size: 10px !important; line-height: 1.4 !important; text-align: right !important; }
+  .flow-state { display: inline-flex !important; align-items: center !important; min-height: 27px !important; padding: 0 9px !important; border-radius: 999px !important; color: #0e8b68 !important; background: #dff6ed !important; font-size: 11px !important; font-weight: 800 !important; white-space: nowrap !important; }
+  .flow-summary-grid,
+  .flow-grid-two { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 9px !important; min-width: 0 !important; }
+  #record-dialog .mobile-flow-sheet .flow-summary-grid > .flow-field,
+  #record-dialog .mobile-flow-sheet .flow-grid-two > .flow-field,
+  #record-dialog .mobile-flow-sheet .flow-meter-group .flow-grid-two > .flow-field { grid-column: auto !important; }
+  .flow-summary-grid .field-roomNo,
+  .flow-summary-grid .field-roomDisplay,
+  .flow-summary-grid .field-leaseStart,
+  .flow-summary-grid .field-leaseEnd,
+  .flow-summary-grid .field-paidThrough,
+  .flow-grid-two .field-durationPreset,
+  .flow-grid-two .field-note,
+  .flow-settlement-card .field-propertyAmount,
+  .flow-settlement-card .field-otherItems { grid-column: 1 / -1 !important; }
+  #record-dialog .mobile-flow-sheet .flow-summary-grid > .field-roomNo,
+  #record-dialog .mobile-flow-sheet .flow-summary-grid > .field-roomDisplay,
+  #record-dialog .mobile-flow-sheet .flow-summary-grid > .field-leaseStart,
+  #record-dialog .mobile-flow-sheet .flow-summary-grid > .field-leaseEnd,
+  #record-dialog .mobile-flow-sheet .flow-summary-grid > .field-paidThrough,
+  #record-dialog .mobile-flow-sheet .flow-grid-two > .field-durationPreset,
+  #record-dialog .mobile-flow-sheet .flow-grid-two > .field-note,
+  #record-dialog .mobile-flow-sheet .flow-grid-two > .field-propertyAmount,
+  #record-dialog .mobile-flow-sheet .flow-grid-two > .field-otherItems { grid-column: 1 / -1 !important; }
+  .flow-field { display: flex !important; min-width: 0 !important; flex-direction: column !important; gap: 5px !important; padding: 9px 10px !important; border: 1px solid #e1eef2 !important; border-radius: 10px !important; background: #f8fcfd !important; }
+  .flow-field .field-label { display: block !important; min-width: 0 !important; color: #718995 !important; font-size: 10px !important; line-height: 1.3 !important; font-weight: 700 !important; }
+  .flow-field input,
+  .flow-field select,
+  .flow-field textarea { box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; margin: 0 !important; border: 1px solid #cbdfe7 !important; border-radius: 8px !important; background: #fff !important; color: #183548 !important; font-size: 14px !important; }
+  .flow-field input,
+  .flow-field select { height: 40px !important; padding: 0 10px !important; }
+  .flow-field textarea { min-height: 78px !important; padding: 9px 10px !important; line-height: 1.5 !important; resize: vertical !important; }
+  .flow-field input:focus,
+  .flow-field select:focus,
+  .flow-field textarea:focus { border-color: #1686b4 !important; outline: 0 !important; box-shadow: 0 0 0 3px rgba(22,134,180,.1) !important; }
+  .flow-field.readonly-field { min-height: 62px !important; justify-content: center !important; }
+  .flow-field.readonly-field strong { display: block !important; min-width: 0 !important; color: #183548 !important; font-size: 14px !important; line-height: 1.25 !important; overflow-wrap: anywhere !important; }
+  .flow-summary-grid .field-roomNo,
+  .flow-summary-grid .field-roomDisplay { background: #eef8fc !important; border-color: #cbe5ee !important; }
+  .flow-summary-grid .field-roomNo strong,
+  .flow-summary-grid .field-roomDisplay strong { font-size: 17px !important; }
+  .flow-choice-card { background: #fbfdfe !important; }
+  .flow-choice-card .field-durationPreset { padding: 10px !important; border-color: #8fcddd !important; background: #eefaff !important; }
+  .flow-choice-card .field-durationPreset select { color: #117ea8 !important; font-weight: 800 !important; }
+  .flow-fee-card { border-color: #dbe9ee !important; }
+  .flow-fee-card .field-monthlyRent input { border-color: #f0b3b7 !important; color: #c84b53 !important; background: #fff6f6 !important; font-weight: 850 !important; }
+  .flow-fee-card .field-monthlyPropertyFee input { border-color: #9bd5bb !important; color: #0b8d69 !important; background: #f2fbf6 !important; font-weight: 850 !important; }
+  .flow-fee-card .field-deposit input { border-color: #efc0a1 !important; color: #b86122 !important; background: #fff8f0 !important; font-weight: 800 !important; }
+  .flow-total-row { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 10px !important; margin-top: 10px !important; padding: 11px 12px !important; border: 1px solid #f2c6c9 !important; border-radius: 10px !important; background: #fff1f2 !important; color: #a24a50 !important; font-size: 13px !important; font-weight: 800 !important; }
+  .flow-total-row strong { color: #dc4a51 !important; font-size: 23px !important; line-height: 1 !important; }
+  .flow-note-card .flow-field { padding: 0 !important; border: 0 !important; background: transparent !important; }
+  .flow-note-card .flow-field .field-label { display: none !important; }
+  .flow-note-card .flow-field textarea { min-height: 72px !important; }
+  .flow-meter-grid { display: grid !important; grid-template-columns: 1fr !important; gap: 10px !important; }
+  .flow-meter-group { min-width: 0 !important; padding: 10px !important; border: 1px solid #dcecef !important; border-radius: 11px !important; background: #f7fcfd !important; }
+  .flow-meter-group > strong { display: block !important; margin-bottom: 8px !important; color: #1582a1 !important; font-size: 13px !important; }
+  .flow-meter-group .flow-grid-two { gap: 7px !important; }
+  .flow-meter-group .flow-field { padding: 7px 8px !important; background: #fff !important; }
+  .flow-meter-group .flow-field .field-label { font-size: 10px !important; }
+  .flow-meter-group .flow-field input { height: 36px !important; font-size: 13px !important; }
+  .flow-meter-group .field-waterAmount input,
+  .flow-meter-group .field-electricityAmount input { color: #d34d55 !important; border-color: #f0c0c4 !important; background: #fff5f5 !important; font-weight: 800 !important; }
+  .flow-settlement-card .field-otherItems { padding: 9px !important; }
+  .flow-settlement-card .field-otherItems > .small { width: 100% !important; min-height: 36px !important; margin-top: 8px !important; border-radius: 8px !important; }
+  .flow-settlement-card .other-item-row { display: grid !important; grid-template-columns: minmax(0,1fr) 66px 78px 34px !important; gap: 5px !important; margin: 0 0 7px !important; }
+  .flow-settlement-card .other-item-row input,
+  .flow-settlement-card .other-item-row select { width: 100% !important; min-width: 0 !important; height: 36px !important; margin: 0 !important; padding: 0 7px !important; font-size: 11px !important; }
+  .flow-settlement-card .other-item-row .small { width: 34px !important; min-width: 34px !important; height: 36px !important; padding: 0 !important; font-size: 0 !important; }
+  .flow-settlement-card .other-item-row .small::after { content: '×' !important; font-size: 18px !important; line-height: 1 !important; }
+  .mobile-checkout-flow .flow-summary-grid .field-tenantName,
+  .mobile-checkout-flow .flow-summary-grid .field-tenantPhone { min-height: 54px !important; }
+
+  dialog#move-in-dialog .move-in-steps { flex: 0 0 auto !important; min-height: 56px !important; padding: 9px 14px !important; }
+  dialog#move-in-dialog .move-in-steps span { min-width: 0 !important; gap: 5px !important; font-size: 11px !important; }
+  dialog#move-in-dialog .move-in-steps b { width: 25px !important; height: 25px !important; font-size: 11px !important; }
+  dialog#move-in-dialog .move-in-section { padding: 14px 13px 18px !important; }
+  dialog#move-in-dialog .move-in-step-one > .meta { display: none !important; }
+  .move-in-flow-intro { display: flex !important; align-items: flex-end !important; justify-content: space-between !important; gap: 10px !important; margin-bottom: 11px !important; }
+  .move-in-flow-intro h3 { margin: 0 !important; color: #153649 !important; font-size: 20px !important; }
+  .move-in-flow-intro .meta { margin: 4px 0 0 !important; color: #718995 !important; font-size: 11px !important; line-height: 1.4 !important; }
+  .move-in-flow-hint { color: #7b929d !important; font-size: 10px !important; white-space: nowrap !important; }
+  .move-in-mobile-cards { display: grid !important; gap: 10px !important; }
+  .move-in-flow-card { min-width: 0 !important; padding: 13px !important; border: 1px solid #d7e8ee !important; border-radius: 14px !important; background: #fff !important; box-shadow: 0 6px 18px rgba(28,77,94,.055) !important; }
+  .move-in-card-head { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; margin-bottom: 10px !important; padding-bottom: 9px !important; border-bottom: 1px solid #e5eff2 !important; }
+  .move-in-card-head span { display: block !important; color: #0d9692 !important; font-size: 10px !important; font-weight: 800 !important; }
+  .move-in-card-head strong { display: block !important; margin-top: 2px !important; color: #153649 !important; font-size: 16px !important; line-height: 1.2 !important; }
+  .move-in-flow-card .move-in-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 9px !important; }
+  .move-in-flow-card .move-in-grid label { display: flex !important; min-width: 0 !important; flex-direction: column !important; gap: 5px !important; color: #718995 !important; font-size: 10px !important; line-height: 1.3 !important; font-weight: 700 !important; }
+  .move-in-flow-card .move-in-grid label.full { grid-column: 1 / -1 !important; }
+  .move-in-flow-card input,
+  .move-in-flow-card select,
+  .move-in-flow-card textarea { box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; margin: 0 !important; border: 1px solid #cbdfe7 !important; border-radius: 8px !important; background: #fff !important; color: #183548 !important; font-size: 14px !important; }
+  .move-in-flow-card input,
+  .move-in-flow-card select { height: 42px !important; padding: 0 10px !important; }
+  .move-in-flow-card textarea { min-height: 74px !important; padding: 9px 10px !important; line-height: 1.5 !important; }
+  .move-in-property-card { background: #fafdfe !important; }
+  .move-in-property-card .move-in-grid-property { grid-template-columns: 1fr !important; }
+  .move-in-finance-block { background: #fbfdfe !important; }
+  .move-in-finance-stack { display: grid !important; grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 9px !important; }
+  .move-in-finance-group { display: grid !important; grid-template-columns: 1fr !important; gap: 7px !important; min-width: 0 !important; padding: 10px !important; border: 1px solid !important; border-radius: 11px !important; }
+  .move-in-rent-group { border-color: #f0b3b7 !important; background: #fff6f6 !important; }
+  .move-in-fee-group { border-color: #9bd5bb !important; background: #f2fbf6 !important; }
+  .move-in-group-title { color: #a24d53 !important; font-size: 12px !important; font-weight: 850 !important; }
+  .move-in-fee-group .move-in-group-title { color: #2b7b61 !important; }
+  .move-in-finance-group label,
+  .move-in-deposit-field { display: flex !important; min-width: 0 !important; flex-direction: column !important; gap: 5px !important; color: #6f8792 !important; font-size: 10px !important; font-weight: 700 !important; }
+  .move-in-finance-group label:has(input[name="monthlyRent"]) input { border-color: #f0b3b7 !important; color: #c84b53 !important; font-weight: 850 !important; }
+  .move-in-finance-group label:has(input[name="monthlyPropertyFee"]) input { border-color: #9bd5bb !important; color: #0b8d69 !important; font-weight: 850 !important; }
+  .move-in-deposit-field { grid-column: 1 / -1 !important; padding: 10px !important; border: 1px solid #efc0a1 !important; border-radius: 11px !important; color: #a95d28 !important; background: #fff8f0 !important; }
+  .move-in-deposit-field input { border-color: #efc0a1 !important; color: #b86122 !important; font-weight: 850 !important; }
+  .move-in-identity-block .move-in-grid-identity { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+  .move-in-identity-block .move-in-grid-identity label.full { grid-column: 1 / -1 !important; }
+  .move-in-identity-block input[type=file] { min-height: 42px !important; padding: 9px 7px !important; font-size: 11px !important; }
+  dialog#move-in-dialog .move-in-section:not(.move-in-step-one) { padding: 14px 13px 18px !important; }
+  dialog#move-in-dialog .move-in-section:not(.move-in-step-one) h3 { margin: 0 0 7px !important; color: #153649 !important; font-size: 20px !important; }
+  dialog#move-in-dialog .move-in-section:not(.move-in-step-one) > .meta { margin: 0 0 12px !important; color: #718995 !important; font-size: 11px !important; line-height: 1.5 !important; }
+  dialog#move-in-dialog .contract-status-card,
+  dialog#move-in-dialog .move-in-contract-actions,
+  dialog#move-in-dialog .move-in-inventory { border: 1px solid #d7e8ee !important; border-radius: 13px !important; background: #fff !important; box-shadow: 0 6px 18px rgba(28,77,94,.055) !important; }
+  dialog#move-in-dialog .contract-status-card { display: grid !important; gap: 7px !important; padding: 13px !important; }
+  dialog#move-in-dialog .move-in-contract-actions { display: grid !important; gap: 8px !important; margin-top: 10px !important; padding: 12px !important; }
+  dialog#move-in-dialog .move-in-contract-actions .button { width: 100% !important; min-height: 42px !important; margin: 0 !important; }
+}
+
+@media (max-width: 380px) {
+  .mobile-flow-sheet { padding-right: 10px !important; padding-left: 10px !important; }
+  .flow-card,
+  .move-in-flow-card { padding: 11px !important; }
+  .flow-grid-two,
+  .flow-summary-grid { gap: 7px !important; }
+  .flow-field { padding: 8px !important; }
+  .flow-field input,
+  .flow-field select { font-size: 13px !important; }
+  .flow-settlement-card .other-item-row { grid-template-columns: minmax(0,1fr) 58px 70px 32px !important; }
+  .move-in-flow-card .move-in-grid,
+  .move-in-identity-block .move-in-grid-identity { gap: 7px !important; }
+  .move-in-finance-stack { gap: 7px !important; }
+}

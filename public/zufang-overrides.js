@@ -69,6 +69,65 @@
     return fields;
   }
 
+  function flowFieldMarkup(type, record, field) {
+    const [key, label, value, inputType, options] = field;
+    const full = inputType === 'textarea' || inputType === 'file' || inputType === 'json';
+    const calculated = inputType === 'readonly' || key.endsWith('Amount') || key === 'amount';
+    const className = `${full ? 'full ' : ''}field-${key}${calculated ? ' calculated-field' : ''} flow-field`;
+    const fieldLabel = `<span class="field-label">${esc(label)}</span>`;
+    if (inputType === 'heading') return '';
+    if (options === 'hidden' || (type === 'renewal' && key === 'amount')) return `<input type="hidden" name="${key}" value="${esc(value)}" />`;
+    if (inputType === 'json') return `<label class="${className}">${fieldLabel}<div id="checkout-other-items"></div><button type="button" class="small" data-add-other-item>+ 新增扣除或返还项目</button><input type="hidden" name="${key}" value="${esc(JSON.stringify(value || []))}" /></label>`;
+    if (inputType === 'select') return `<label class="${className}">${fieldLabel}<select name="${key}">${(options || '').split('|').map((option) => { const [optionValue, text] = option.split(':'); return `<option value="${esc(optionValue)}" ${String(optionValue) === String(value) ? 'selected' : ''}>${esc(text || optionValue)}</option>`; }).join('')}</select></label>`;
+    if (inputType === 'textarea') return `<label class="${className}">${fieldLabel}<textarea name="${key}">${esc(value)}</textarea></label>`;
+    if (inputType === 'file') { const existingImages = Array.isArray(record[key]) ? record[key] : (record[key] ? [record[key]] : []); const preview = existingImages.length ? existingImages.map((image) => `<img class="upload-preview item-preview-trigger" src="${esc(image)}" data-preview-image="${esc(image)}" alt="已上传图片，点击可预览" />`).join('') : '<span class="meta">未上传</span>'; return `<label class="${className}">${fieldLabel}<input name="${key}" type="file" accept="image/jpeg,image/png,image/webp" data-existing="${esc(JSON.stringify(record[key] || ''))}" />${preview}</label>`; }
+    if (inputType === 'readonly') { const display = value === 0 ? '0' : (value || '未设置'); return `<div class="${className} readonly-field"><span class="field-label">${esc(label)}</span><strong data-readonly-value="${esc(key)}">${esc(display)}</strong><input type="hidden" name="${key}" value="${esc(value)}" /></div>`; }
+    return `<label class="${className}">${fieldLabel}<input name="${key}" type="${inputType === 'date' ? 'date' : 'text'}" value="${esc(value)}" /></label>`;
+  }
+
+  function flowFieldSet(type, record, names) {
+    const fields = fieldsFor(type, record);
+    const byName = new Map(fields.map((field) => [field[0], field]));
+    return names.map((name) => byName.has(name) ? flowFieldMarkup(type, record, byName.get(name)) : '').join('');
+  }
+
+  function mobileFlowMarkup(type, record) {
+    if (type === 'renewal') {
+      return `<div class="mobile-flow-sheet mobile-renewal-flow">
+        ${flowFieldSet(type, record, ['amount'])}
+        <section class="flow-card flow-summary-card"><div class="flow-card-head"><div><span class="flow-card-kicker">当前租约</span><h3>房源与租户</h3></div><span class="flow-state">在租</span></div><div class="flow-summary-grid">${flowFieldSet(type, record, ['roomNo', 'tenantName', 'tenantPhone', 'leaseStart'])}</div></section>
+        <section class="flow-card flow-choice-card"><div class="flow-card-head"><div><span class="flow-card-kicker">续租方案</span><h3>选择续租时长</h3></div><span class="flow-card-help">可按月或按天</span></div><div class="flow-grid-two">${flowFieldSet(type, record, ['renewalDate', 'durationPreset', 'durationValue', 'startDate', 'endDate'])}</div></section>
+        <section class="flow-card flow-fee-card"><div class="flow-card-head"><div><span class="flow-card-kicker">费用明细</span><h3>本次续费金额</h3></div><span class="flow-card-help">可调整月租与物业费</span></div><div class="flow-grid-two">${flowFieldSet(type, record, ['monthlyRent', 'monthlyPropertyFee', 'deposit'])}</div><div class="flow-total-row"><span>本次应收</span><strong class="flow-amount-value" data-flow-amount>0元</strong></div></section>
+        <section class="flow-card flow-note-card"><div class="flow-card-head"><div><span class="flow-card-kicker">补充信息</span><h3>备注</h3></div><span class="flow-card-help">选填</span></div>${flowFieldSet(type, record, ['note'])}</section>
+      </div>`;
+    }
+    return `<div class="mobile-flow-sheet mobile-checkout-flow">
+      ${flowFieldSet(type, record, ['roomId', 'roomNo', 'deposit', 'refundAmount'])}
+      <section class="flow-card flow-summary-card"><div class="flow-card-head"><div><span class="flow-card-kicker">当前租约</span><h3>房源与租户</h3></div><span class="flow-state">待退房</span></div><div class="flow-summary-grid">${flowFieldSet(type, record, ['roomDisplay', 'tenantName', 'tenantPhone', 'leaseStart', 'leaseEnd', 'paidThrough'])}</div></section>
+      <section class="flow-card flow-choice-card"><div class="flow-card-head"><div><span class="flow-card-kicker">退房信息</span><h3>确认退房日期</h3></div><span class="flow-card-help">以现场交接为准</span></div>${flowFieldSet(type, record, ['checkoutDate'])}</section>
+      <section class="flow-card flow-meter-card"><div class="flow-card-head"><div><span class="flow-card-kicker">表数抄录</span><h3>水电表读数</h3></div><span class="flow-card-help">填写退房时读数</span></div><div class="flow-meter-grid"><div class="flow-meter-group"><strong>水表</strong>${flowFieldSet(type, record, ['waterStart', 'waterEnd', 'waterUnitPrice', 'waterAmount'])}</div><div class="flow-meter-group"><strong>电表</strong>${flowFieldSet(type, record, ['electricityStart', 'electricityEnd', 'electricityUnitPrice', 'electricityAmount'])}</div></div></section>
+      <section class="flow-card flow-fee-card flow-settlement-card"><div class="flow-card-head"><div><span class="flow-card-kicker">费用结算</span><h3>扣费与押金</h3></div><span class="flow-card-help">核对后再确认</span></div><div class="flow-grid-two">${flowFieldSet(type, record, ['propertyAmount', 'otherItems', 'bankName', 'accountName', 'accountNo'])}</div><div class="flow-total-row"><span>预计应退</span><strong class="flow-refund-value" data-flow-refund>0元</strong></div></section>
+      <section class="flow-card flow-note-card"><div class="flow-card-head"><div><span class="flow-card-kicker">补充信息</span><h3>备注</h3></div><span class="flow-card-help">选填</span></div>${flowFieldSet(type, record, ['note'])}</section>
+    </div>`;
+  }
+
+  const legacyMoveInStepMarkup = moveInStepMarkup;
+  moveInStepMarkup = function () {
+    if (moveInStep !== 1 || window.innerWidth > 760) return legacyMoveInStepMarkup();
+    const d = moveInDraft || {};
+    return `<section class="move-in-section move-in-step-one move-in-mobile-flow">
+      <div class="move-in-flow-intro"><div><h3>资料填写</h3><p class="meta">先确认房源和租户信息，完成后进入合同签署。</p></div><span class="move-in-flow-hint">带 * 为必填</span></div>
+      <div class="move-in-mobile-cards">
+        <section class="move-in-flow-card move-in-property-card"><div class="move-in-card-head"><div><span>房源信息</span><strong>确认入住的房间与用途</strong></div></div><div class="move-in-grid move-in-grid-property"><label class="full">小区 / 房间<select name="roomId">${moveInRoomOptions(d.roomId)}</select></label><label>住房目的<select name="purpose"><option value="self" ${d.purpose === 'self' ? 'selected' : ''}>自住</option><option value="studio" ${d.purpose === 'studio' ? 'selected' : ''}>工作室</option><option value="homestay" ${d.purpose === 'homestay' ? 'selected' : ''}>民宿</option><option value="other" ${d.purpose === 'other' ? 'selected' : ''}>其他</option></select></label></div></section>
+        <section class="move-in-flow-card move-in-tenant-block"><div class="move-in-card-head"><div><span>租户信息</span><strong>用于合同与日常联系</strong></div></div><div class="move-in-grid move-in-grid-two"><label>租户姓名<input name="tenantName" value="${esc(d.tenantName)}" /></label><label>租户电话<input name="tenantPhone" value="${esc(d.tenantPhone)}" inputmode="tel" /></label></div></section>
+        <section class="move-in-flow-card move-in-term-block"><div class="move-in-card-head"><div><span>租期信息</span><strong>入住日期和合同期限</strong></div></div><div class="move-in-grid move-in-grid-two"><label>入住时间<input name="startDate" type="date" value="${esc(d.startDate || today())}" /></label><label>合同结束时间<input name="endDate" type="date" value="${esc(d.endDate)}" /></label></div></section>
+        <section class="move-in-flow-card move-in-finance-block"><div class="move-in-card-head"><div><span>费用信息</span><strong>设置租金、物业费和押金</strong></div></div><div class="move-in-finance-stack"><div class="move-in-finance-group move-in-rent-group"><span class="move-in-group-title">租金设置</span><label>支付方式<select name="paymentMethod"><option value="monthly" ${d.paymentMethod === 'monthly' ? 'selected' : ''}>月付</option><option value="quarterly" ${d.paymentMethod === 'quarterly' ? 'selected' : ''}>季付</option><option value="yearly" ${d.paymentMethod === 'yearly' ? 'selected' : ''}>年付</option></select></label><label>月租金<input name="monthlyRent" inputmode="decimal" value="${esc(d.monthlyRent)}" placeholder="请输入金额" /></label></div><div class="move-in-finance-group move-in-fee-group"><span class="move-in-group-title">物业费设置</span><label>收取方式<select name="propertyFeeMode"><option value="included" ${d.propertyFeeMode !== 'tenant_self' ? 'selected' : ''}>与房租一起交</option><option value="tenant_self" ${d.propertyFeeMode === 'tenant_self' ? 'selected' : ''}>租户自理</option></select></label><label>每月物业费<input name="monthlyPropertyFee" inputmode="decimal" value="${esc(d.monthlyPropertyFee)}" /></label></div><label class="move-in-deposit-field">押金<input name="deposit" inputmode="decimal" value="${esc(d.deposit)}" placeholder="请输入押金" /></label></div></section>
+        <section class="move-in-flow-card move-in-meter-block"><div class="move-in-card-head"><div><span>入住读数</span><strong>交接时记录水电表</strong></div></div><div class="move-in-grid move-in-grid-two"><label>入住电表读数<input name="moveInElectricity" inputmode="decimal" value="${esc(d.moveInElectricity)}" /></label><label>入住水表读数<input name="moveInWater" inputmode="decimal" value="${esc(d.moveInWater)}" /></label></div></section>
+        <section class="move-in-flow-card move-in-identity-block"><div class="move-in-card-head"><div><span>身份信息</span><strong>用于租赁档案，可稍后补充</strong></div></div><div class="move-in-grid move-in-grid-identity"><label>身份证正面<input id="move-in-id-front" type="file" accept="image/jpeg,image/png,image/webp" /></label><label>身份证反面<input id="move-in-id-back" type="file" accept="image/jpeg,image/png,image/webp" /></label><label class="full">租户身份证号<input name="tenantIdCard" value="${esc(d.tenantIdCard)}" maxlength="18" inputmode="text" autocomplete="off" placeholder="15位或18位，末位可为X" pattern="^(?:\\d{15}|\\d{17}[\\dXx])$" /></label><label class="full">备注<textarea name="note" placeholder="补充交接说明（选填）">${esc(d.note)}</textarea></label></div></section>
+      </div>
+    </section>`;
+  };
+
   function batchItemRow(index) {
     return `<div class="batch-item-row" data-batch-item-row><label>物品名称<input data-batch-item-name placeholder="例如：衣柜" /></label><label>数量<input data-batch-item-quantity type="number" min="1" step="1" value="1" /></label><label>物品备注<input data-batch-item-note placeholder="品牌、状态等" /></label><label>物品照片<input data-batch-item-image type="file" accept="image/jpeg,image/png,image/webp" /></label><button class="small danger" type="button" data-remove-batch-item aria-label="删除第${index + 1}行">删除</button></div>`;
   }
@@ -98,6 +157,12 @@
   renderFields = function (type, record) {
     const fields = $('#dialog-fields');
     fields.className = `dialog-fields dialog-${type}`;
+    if (window.matchMedia('(max-width: 760px)').matches && (type === 'renewal' || type === 'checkouts')) {
+      fields.innerHTML = mobileFlowMarkup(type, record);
+      if (type === 'checkouts') renderCheckoutOtherItems(record.otherItems || []);
+      renderDialogInventory(type, record);
+      return;
+    }
     fields.innerHTML = sectionedFields(type, record, fieldsFor(type, record)).map(([key, label, value, inputType, options]) => {
       const full = inputType === 'textarea' || inputType === 'file' || inputType === 'pdf' || inputType === 'url' || inputType === 'heading' || inputType === 'json';
       const summary = (type === 'renewal' && ['roomNo', 'tenantName', 'tenantPhone', 'leaseStart', 'startDate', 'endDate', 'amount'].includes(key)) || (type === 'checkouts' && ['roomNo', 'tenantName', 'tenantPhone', 'leaseStart', 'leaseEnd', 'paidThrough'].includes(key));
@@ -212,6 +277,8 @@
     const end = preset === 'days' ? addDays(start, days - 1) : addDays(addMonthsClamped(start, months[preset] || 1), -1);
     setDialogValue('amount', amount.toFixed(2).replace(/\.00$/, ''));
     setDialogValue('endDate', end);
+    const flowAmount = `${amount.toFixed(1).replace(/\.0$/, '')}元`;
+    document.querySelectorAll('[data-flow-amount]').forEach((node) => { node.textContent = flowAmount; });
     const dayField = $('#dialog-fields [name="durationValue"]')?.closest('label');
     const presetField = $('#dialog-fields [name="durationPreset"]')?.closest('label');
     if (dayField) { dayField.style.display = preset === 'days' ? '' : 'none'; dayField.style.gridColumn = '3'; }
@@ -242,6 +309,7 @@
     const water = Math.max(0, Math.round((endWater - startWater) * waterPrice * 10) / 10); const electricity = Math.round((startElectricity - endElectricity) * electricityPrice * 10) / 10; const otherRows = syncOtherItems(); const other = otherRows.reduce((sum, row) => sum + (row.mode === 'refund' ? -Number(row.amount || 0) : Number(row.amount || 0)), 0); const deposit = Number($('#dialog-fields [name="deposit"]')?.value || 0); const refund = Math.round((deposit - water - electricity - other) * 10) / 10;
     const checkoutDate = $('#dialog-fields [name="checkoutDate"]')?.value || ''; if (checkoutDate) setDialogValue('leaseEnd', checkoutDate);
     setDialogValue('waterAmount', water.toFixed(1)); setDialogValue('electricityAmount', electricity.toFixed(1)); setDialogValue('refundAmount', refund.toFixed(1));
+    document.querySelectorAll('[data-flow-refund]').forEach((node) => { node.textContent = `${refund.toFixed(1).replace(/\.0$/, '')}元`; });
     const electricityDetail = electricity < 0 ? `<span class="income-text">电费返还：${Math.abs(electricity).toFixed(1)}元</span>` : `<span class="expense-text">电费扣除：${electricity.toFixed(1)}元</span>`;
     const otherDetail = otherRows.filter((row) => row.item || Number(row.amount)).map((row) => `<span class="${row.mode === 'refund' ? 'income-text' : 'expense-text'}">${row.mode === 'refund' ? '返还' : '扣除'}：${esc(row.item || '其他项目')} ${Number(row.amount || 0).toFixed(1)}元</span>`).join('');
     const summary = $('#checkout-refund-summary'); if (summary) { summary.hidden = false; summary.innerHTML = `<div class="refund-summary-title">应退费用 <strong>${refund.toFixed(1)}元</strong></div><div class="refund-summary-grid"><span>押金：${deposit.toFixed(1)}元</span><span class="expense-text">水费扣除：${water.toFixed(1)}元</span><span>${electricityDetail}</span>${otherDetail}</div>`; }

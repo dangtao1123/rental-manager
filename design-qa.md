@@ -51,3 +51,17 @@ No actionable P0/P1/P2 visual findings remain.
 - The compact brand wordmark can be optically enlarged later if the product supplies an approved mobile logo asset.
 
 final result: passed
+
+## Mobile operation-flow QA — approved option 2
+
+source visual truth path: `C:\Users\dangd\.codex\generated_images\019f5f7a-dffb-7cd1-ba2c-dfe856a95e55\exec-cc0598d4-9e15-4354-a8f2-728d8927fea3.png`
+tested viewports: 390 × 844 CSS px (mobile), 1280 × 900 CSS px (desktop regression)
+tested flows: 办理入住、租户续费、退房清单
+
+The mobile flows now use the approved bright card composition: a compact dialog header, progress steps, grouped summary cards, two-column fields where readable, full-width calculated/notes sections, and fixed bottom actions. The existing field names and save handlers remain unchanged, so the redesign does not add unimplemented business behavior. Property imagery and decorative icons from the concept were intentionally omitted per the request to keep the current product lightweight.
+
+Findings: no actionable P0/P1/P2 visual or responsive issues. Hidden dialogs are explicitly removed from layout when closed; mobile flow fields stay within the viewport without horizontal overflow. Desktop move-in rendering remains on the existing layout at 1280px.
+
+Validation: Playwright smoke captures completed for the rental list and all three mobile flows; JavaScript syntax checks and `git diff --check` passed.
+
+final result: passed
