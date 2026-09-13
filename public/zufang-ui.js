@@ -152,7 +152,7 @@
     if (rental && !rental.querySelector(':scope > .page-head')) {
       const panel = oldPanel(rental); const title = panel?.querySelector('.panel-title'); const action = title?.querySelector('button[data-action]');
       const list = document.getElementById('room-list');
-      makeHead(rental, ...meta.rental, action); panel?.remove();
+      makeHead(rental, ...meta.rental, null); panel?.remove();
       if (list) { list.classList.add('room-grid'); rental.append(list); }
     }
 
@@ -280,6 +280,15 @@
       button.type = 'button'; button.className = 'nav-item'; button.dataset.tab = 'archive';
       button.innerHTML = '<iconify-icon icon="hugeicons:archive-02"></iconify-icon><span>已归档</span>'; sidebar.append(button);
     }
+    if (sidebar) {
+      const order = ['overview', 'rental', 'rooms', 'maintenance', 'tenants', 'ledger', 'checkout', 'templates', 'settings', 'audit', 'archive'];
+      const items = new Map(Array.from(sidebar.querySelectorAll(':scope > [data-tab]'), (button) => [button.dataset.tab, button]));
+      order.forEach((tabId) => { const button = items.get(tabId); if (button) sidebar.append(button); });
+      const checkout = items.get('checkout');
+      const templates = items.get('templates');
+      if (checkout) checkout.hidden = true;
+      if (templates) templates.hidden = true;
+    }
     const main = document.querySelector('main');
     if (main && !document.getElementById('archive')) {
       const section = document.createElement('section');
@@ -287,6 +296,199 @@
       section.innerHTML = '<div class="page-head"><div><p class="eyebrow">ARCHIVE</p><h1>已归档</h1><p class="subtitle">查看已归档的房源和租户；彻底删除会同步记录到操作日志</p></div></div><section class="panel table-panel"><div id="archive-list"></div></section>';
       main.append(section);
     }
+  }
+
+  const mobilePrimaryTabs = new Set(['overview', 'rental', 'rooms', 'maintenance']);
+
+  function syncMobileNavigation(tabId) {
+    const primary = String(tabId || 'overview');
+    $$('.mobile-bottom-nav [data-tab], .mobile-bottom-nav [data-mobile-more]').forEach((button) => {
+      const isMore = button.hasAttribute('data-mobile-more');
+      const active = isMore ? !mobilePrimaryTabs.has(primary) : button.dataset.tab === primary;
+      button.classList.toggle('active', active);
+      if (active) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current');
+    });
+  }
+
+  function ensureMobileNavigation() {
+    const topbar = document.querySelector('main > .topbar');
+    if (topbar && !topbar.querySelector('.mobile-topbar-brand')) {
+      const context = topbar.querySelector(':scope > div:not(.top-actions)');
+      context?.classList.add('mobile-topbar-context');
+      const brand = document.createElement('div');
+      brand.className = 'mobile-topbar-brand';
+      brand.innerHTML = '<span class="brand-mark"><iconify-icon icon="hugeicons:home-09"></iconify-icon></span><span>东瑞安心租</span>';
+      topbar.insertBefore(brand, topbar.firstChild);
+    }
+
+    let dialog = document.getElementById('mobile-more-dialog');
+    if (!dialog) {
+      dialog = document.createElement('dialog');
+      dialog.id = 'mobile-more-dialog';
+      dialog.className = 'mobile-more-dialog';
+      dialog.setAttribute('aria-labelledby', 'mobile-more-title');
+      const items = [
+        ['tenants', '租户管理', '租户与入住记录', 'hugeicons:user-group'],
+        ['ledger', '收支账单', '收入与支出明细', 'hugeicons:invoice-03'],
+        ['settings', '租房设置', '单价与账号管理', 'hugeicons:settings-02'],
+        ['audit', '操作日志', '查看操作记录', 'hugeicons:activity-01'],
+        ['archive', '已归档', '历史记录留存', 'hugeicons:archive-02']
+      ];
+      dialog.innerHTML = `<div class="mobile-more-head"><div><p class="mobile-more-kicker">RENTAL WORKSPACE</p><h2 id="mobile-more-title">更多功能</h2></div><button class="mobile-more-close" type="button" data-mobile-more-close aria-label="关闭">×</button></div><div class="mobile-more-list">${items.map(([id, label, description, iconName]) => `<button class="mobile-more-item" type="button" data-tab="${id}"><span class="mobile-more-icon"><iconify-icon icon="${iconName}"></iconify-icon></span><span class="mobile-more-copy"><strong>${label}</strong><small>${description}</small></span><iconify-icon class="mobile-more-arrow" icon="hugeicons:arrow-right-01"></iconify-icon></button>`).join('')}</div>`;
+      document.body.append(dialog);
+    }
+
+    if (!document.querySelector('.mobile-bottom-nav')) {
+      const nav = document.createElement('nav');
+      nav.className = 'mobile-bottom-nav';
+      nav.setAttribute('aria-label', '移动端主导航');
+      const items = [
+        ['overview', '工作台', 'hugeicons:dashboard-square-01'],
+        ['rental', '租房管理', 'hugeicons:building-03'],
+        ['rooms', '房间管理', 'hugeicons:door-01'],
+        ['maintenance', '日常维护', 'hugeicons:note-edit']
+      ];
+      nav.innerHTML = `${items.map(([id, label, iconName]) => `<button type="button" data-tab="${id}"><iconify-icon icon="${iconName}"></iconify-icon><span>${label}</span></button>`).join('')}<button type="button" data-mobile-more aria-expanded="false"><iconify-icon icon="hugeicons:grid-view"></iconify-icon><span>更多</span></button>`;
+      document.body.append(nav);
+    }
+
+    if (document.documentElement.dataset.mobileNavBound !== '1') {
+      document.documentElement.dataset.mobileNavBound = '1';
+      document.addEventListener('click', (event) => {
+        const more = event.target.closest('[data-mobile-more]');
+        if (more) {
+          const mobileDialog = document.getElementById('mobile-more-dialog');
+          if (mobileDialog && !mobileDialog.open) mobileDialog.showModal();
+          more.setAttribute('aria-expanded', 'true');
+          return;
+        }
+        if (event.target.closest('[data-mobile-more-close]')) {
+          document.getElementById('mobile-more-dialog')?.close();
+          document.querySelector('[data-mobile-more]')?.setAttribute('aria-expanded', 'false');
+          return;
+        }
+        const tab = event.target.closest('[data-tab]');
+        if (!tab) return;
+        syncMobileNavigation(tab.dataset.tab);
+        if (tab.closest('.mobile-more-dialog')) {
+          document.getElementById('mobile-more-dialog')?.close();
+          document.querySelector('[data-mobile-more]')?.setAttribute('aria-expanded', 'false');
+        }
+      });
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog && dialog.open) dialog.close();
+      });
+      dialog.addEventListener('close', () => document.querySelector('[data-mobile-more]')?.setAttribute('aria-expanded', 'false'));
+    }
+    syncMobileNavigation(document.querySelector('.tab-panel.active')?.id || 'overview');
+    decorateButtons(document);
+    refreshLocalIcons(document);
+  }
+
+  function workbenchDateLabel() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `今天是 ${year}年${month}月${day}日，祝你工作顺利！`;
+  }
+
+  function ensureMobileWorkbench() {
+    const overview = document.getElementById('overview');
+    if (!overview) return;
+    const head = overview.querySelector(':scope > .page-head');
+    if (head) {
+      head.classList.add('mobile-workbench-head');
+      if (!head.querySelector('.mobile-workbench-date')) {
+        const date = document.createElement('p');
+        date.className = 'mobile-workbench-date';
+        date.textContent = workbenchDateLabel();
+        head.querySelector('h1')?.after(date);
+      }
+    }
+    if (!overview.querySelector(':scope > .mobile-workbench-summary')) {
+      const summary = document.createElement('div');
+      summary.className = 'mobile-workbench-summary';
+      summary.innerHTML = '<button type="button" class="mobile-workbench-stat pending" data-tab="maintenance"><span class="mobile-workbench-stat-icon"><iconify-icon icon="hugeicons:invoice-03"></iconify-icon></span><span class="mobile-workbench-stat-copy"><strong data-mobile-stat="pending">0</strong><small>待处理事项</small></span><iconify-icon class="mobile-workbench-stat-arrow" icon="hugeicons:arrow-right-01"></iconify-icon></button><button type="button" class="mobile-workbench-stat occupied" data-tab="rental"><span class="mobile-workbench-stat-icon"><iconify-icon icon="hugeicons:home-09"></iconify-icon></span><span class="mobile-workbench-stat-copy"><strong data-mobile-stat="occupied">0</strong><small>在租房间</small></span><iconify-icon class="mobile-workbench-stat-arrow" icon="hugeicons:arrow-right-01"></iconify-icon></button>';
+      const stats = overview.querySelector(':scope > .stats');
+      if (stats) overview.insertBefore(summary, stats); else overview.append(summary);
+    }
+    syncMobileWorkbenchSummary();
+    refreshLocalIcons(overview.querySelector(':scope > .mobile-workbench-summary') || overview);
+  }
+
+  function syncMobileWorkbenchSummary() {
+    const summary = document.querySelector('#overview > .mobile-workbench-summary');
+    if (!summary) return;
+    const pending = document.querySelectorAll('#todo-list > :not(.meta)').length;
+    const occupied = document.getElementById('stat-occupied')?.textContent || '0';
+    const pendingValue = summary.querySelector('[data-mobile-stat="pending"]');
+    const occupiedValue = summary.querySelector('[data-mobile-stat="occupied"]');
+    if (pendingValue) pendingValue.textContent = pending;
+    if (occupiedValue) occupiedValue.textContent = occupied;
+  }
+
+  const mobileRentalStatuses = [
+    ['', '全部'],
+    ['已租出', '已出租'],
+    ['空置', '空置'],
+    ['装修维护中', '维护中']
+  ];
+
+  function ensureMobileRental() {
+    const rental = document.getElementById('rental');
+    if (!rental) return;
+    const head = rental.querySelector(':scope > .page-head');
+    if (head) {
+      head.classList.add('mobile-rental-head');
+      if (!head.querySelector('.mobile-rental-total')) {
+        const total = document.createElement('span');
+        total.className = 'mobile-rental-total';
+        total.innerHTML = '共 <strong data-mobile-rental-total>0</strong> 间房';
+        head.append(total);
+      }
+    }
+    const filter = rental.querySelector(':scope > .ui-rental-filter');
+    if (filter && !rental.querySelector(':scope > .mobile-rental-statuses')) {
+      const statusBar = document.createElement('div');
+      statusBar.className = 'mobile-rental-statuses';
+      statusBar.setAttribute('role', 'group');
+      statusBar.setAttribute('aria-label', '房源状态筛选');
+      statusBar.innerHTML = mobileRentalStatuses.map(([value, label]) => `<button type="button" data-mobile-rental-status="${value}" class="${value === '' ? 'active' : ''}"><span>${label}</span><strong data-mobile-rental-count="${value || 'all'}">0</strong></button>`).join('');
+      filter.insertAdjacentElement('afterend', statusBar);
+    }
+    syncMobileRentalSummary();
+  }
+
+  function syncMobileRentalSummary() {
+    const rental = document.getElementById('rental');
+    if (!rental) return;
+    const rooms = typeof state !== 'undefined' && Array.isArray(state.rooms) ? state.rooms : [];
+    const cards = $$('#room-list .room-card');
+    const total = rooms.length || cards.length;
+    let rented = 0; let vacant = 0; let maintenance = 0;
+    rooms.forEach((room) => {
+      const lease = typeof leaseForRoom === 'function' ? leaseForRoom(room) : null;
+      if (room.status === 'maintenance' && !lease) maintenance += 1;
+      else if (lease) rented += 1;
+      else vacant += 1;
+    });
+    if (!rooms.length) {
+      cards.forEach((card) => {
+        if (card.classList.contains('room-maintenance')) maintenance += 1;
+        else if (card.classList.contains('room-occupied')) rented += 1;
+        else vacant += 1;
+      });
+    }
+    const totalValue = rental.querySelector('[data-mobile-rental-total]');
+    if (totalValue) totalValue.textContent = total;
+    const values = { all: total, '已租出': rented, '空置': vacant, '装修维护中': maintenance };
+    Object.entries(values).forEach(([key, value]) => {
+      const count = rental.querySelector(`[data-mobile-rental-count="${key}"]`);
+      if (count) count.textContent = value;
+    });
+    const selected = $('#rental-filter-status')?.value || '';
+    $$('#rental .mobile-rental-statuses [data-mobile-rental-status]').forEach((button) => button.classList.toggle('active', button.dataset.mobileRentalStatus === selected));
   }
 
   function buildPageStructure() {
@@ -386,11 +588,13 @@
     const search = ($('#rental-filter-search')?.value || '').trim().toLowerCase();
     const status = $('#rental-filter-status')?.value || '';
     const hideRented = $('#rental-filter-occupancy')?.value === 'hide-rented';
+    const statusText = status === '已租出' ? '已出租' : status;
     $$('#room-list .room-card').forEach((card) => {
       const text = card.textContent.toLowerCase();
       const rented = card.dataset.rentalStatus === 'rented' || card.classList.contains('rented') || card.classList.contains('room-occupied');
-      card.hidden = Boolean((search && !text.includes(search)) || (status && !text.includes(status)) || (hideRented && rented));
+      card.hidden = Boolean((search && !text.includes(search)) || (statusText && !text.includes(statusText.toLowerCase())) || (hideRented && rented));
     });
+    syncMobileRentalSummary();
   }
 
   function filterRoomTable() {
@@ -685,6 +889,13 @@
       if (event.target.id === 'room-filter-status') filterRoomTable();
     });
     document.addEventListener('click', (event) => {
+      const mobileRentalStatus = event.target.closest('[data-mobile-rental-status]');
+      if (mobileRentalStatus) {
+        const select = document.getElementById('rental-filter-status');
+        if (select) select.value = mobileRentalStatus.dataset.mobileRentalStatus || '';
+        filterCards();
+        return;
+      }
       const tenantFilter = event.target.closest('[data-tenant-filter]');
       if (tenantFilter) filterTenants(tenantFilter.dataset.tenantFilter);
       const archiveTab = event.target.closest('[data-tab="archive"]');
@@ -717,9 +928,13 @@
   }
 
   function renderReferenceViews() {
+    ensureMobileWorkbench();
+    ensureMobileRental();
     ['renderStats', 'renderRooms', 'renderRoomAdmin', 'renderTenants', 'renderArchive', 'renderLedger', 'renderMaintenance', 'renderCheckouts', 'renderAudit', 'renderTodo', 'renderSettings', 'renderUsers'].forEach((name) => {
       if (typeof window[name] === 'function') window[name]();
     });
+    syncMobileWorkbenchSummary();
+    syncMobileRentalSummary();
     normalizeArchiveButtons(document);
   }
 
@@ -730,9 +945,12 @@
   installReferenceRenderers();
   rebuildReferenceStructure();
   buildPageStructure();
+  ensureMobileNavigation();
+  ensureMobileWorkbench();
   const rentalFilterAfterBuild = document.querySelector('#rental > .ui-rental-filter');
   const rentalListAfterBuild = document.querySelector('#rental > #room-list');
   if (rentalFilterAfterBuild && rentalListAfterBuild) document.getElementById('rental').insertBefore(rentalFilterAfterBuild, rentalListAfterBuild);
+  ensureMobileRental();
   const auditFilterAfterBuild = document.querySelector('#audit > .ui-audit-filter');
   if (auditFilterAfterBuild) document.querySelector('#audit > .page-head')?.append(auditFilterAfterBuild);
   renderReferenceViews();

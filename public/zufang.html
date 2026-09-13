@@ -154,7 +154,7 @@
   <link rel="stylesheet" href="vendor/rental-ui-state.css?v=2" />
   <link rel="stylesheet" href="zufang-ui-migration.css?v=31" />
   <link rel="stylesheet" href="maintenance-final.css?v=7" />
-<link rel="stylesheet" href="ui-refactor-v8.css?v=18" />
+<link rel="stylesheet" href="ui-refactor-v8.css?v=23" />
 </head>
 <body>
   <aside class="sidebar" aria-label="租房模块导航">
@@ -164,10 +164,10 @@
       <button class="nav-item active" data-tab="overview"><iconify-icon icon="hugeicons:dashboard-square-01"></iconify-icon><span>工作台</span></button>
       <button class="nav-item" data-tab="rental"><iconify-icon icon="hugeicons:building-03"></iconify-icon><span>租房管理</span></button>
       <button class="nav-item" data-tab="rooms"><iconify-icon icon="hugeicons:door-01"></iconify-icon><span>房间管理</span></button>
+      <button class="nav-item" data-tab="maintenance"><iconify-icon icon="hugeicons:tool-box"></iconify-icon><span>日常维护</span></button>
       <button class="nav-item" data-tab="tenants"><iconify-icon icon="hugeicons:user-group"></iconify-icon><span>租户管理</span></button>
       <button class="nav-item" data-tab="ledger"><iconify-icon icon="hugeicons:invoice-03"></iconify-icon><span>收支账单</span></button>
-      <button class="nav-item" data-tab="maintenance"><iconify-icon icon="hugeicons:tool-box"></iconify-icon><span>日常维护</span></button>
-      <button class="nav-item" data-tab="checkout"><iconify-icon icon="hugeicons:logout-03"></iconify-icon><span>入住 / 退房</span></button>
+      <button class="nav-item" data-tab="checkout" hidden><iconify-icon icon="hugeicons:logout-03"></iconify-icon><span>入住 / 退房</span></button>
       <button class="nav-item" data-tab="templates" hidden><iconify-icon icon="hugeicons:note-edit"></iconify-icon><span>业务文字</span></button>
       <button class="nav-item" data-tab="settings"><iconify-icon icon="hugeicons:settings-02"></iconify-icon><span>租房设置</span></button>
       <button class="nav-item" data-tab="audit"><iconify-icon icon="hugeicons:activity-01"></iconify-icon><span>操作日志</span></button>
@@ -177,7 +177,7 @@
   <main class="main rental-shell">
 <div class="topbar"><div><span class="crumb">房产目录</span><iconify-icon icon="hugeicons:arrow-right-01"></iconify-icon><strong id="view-title">工作台</strong></div><div class="top-actions"><button class="avatar-small" type="button">管</button></div></div>
 <header class="rental-header"><div><p class="eyebrow">RENTAL WORKSPACE</p><h1>租房管理</h1><p>房间、租户、账单、维护与退房清单统一管理</p></div></header>
-    <nav class="tabs" aria-label="租房模块"><button class="active" data-tab="overview">工作台</button><button data-tab="rental">租房管理</button><button data-tab="rooms">房间管理</button><button data-tab="tenants">租户管理</button><button data-tab="ledger">收支账单</button><button data-tab="maintenance">维修维护</button><button data-tab="checkout">入住/退房</button><button data-tab="templates">业务文字</button><button data-tab="settings">租房设置</button><button data-tab="audit">操作日志</button></nav>
+    <nav class="tabs" aria-label="租房模块"><button class="active" data-tab="overview">工作台</button><button data-tab="rental">租房管理</button><button data-tab="rooms">房间管理</button><button data-tab="maintenance">日常维护</button><button data-tab="tenants">租户管理</button><button data-tab="ledger">收支账单</button><button data-tab="checkout" hidden>入住/退房</button><button data-tab="templates" hidden>业务文字</button><button data-tab="settings">租房设置</button><button data-tab="audit">操作日志</button></nav>
     <section id="overview" class="tab-panel active"><div id="expiry-alert" class="expiry-alert" hidden><strong>租金即将到期</strong><span id="expiry-alert-text"></span></div><div class="stats"><div><span>房间总数</span><strong id="stat-rooms">0</strong><small>点击查看租房管理</small></div><div><span>在租房间</span><strong id="stat-occupied">0</strong><small>当前已出租</small></div><div><span>空置房间</span><strong id="stat-vacant">0</strong><small>可安排入住</small></div><div><span>即将到期房间</span><strong id="stat-expiring">0</strong><small>按提醒阈值统计</small></div></div><section class="panel overview-finance-panel"><div class="panel-title"><div><h2>收支明细</h2><p>按所选时间范围汇总实际收支</p></div><div class="overview-finance-actions"><div class="overview-finance-range" role="group" aria-label="收支统计范围"><button type="button" class="active" data-overview-finance-range="month">本月</button><button type="button" data-overview-finance-range="year">本年</button><button type="button" data-overview-finance-range="custom">自定义</button></div><div id="overview-finance-custom" class="overview-finance-custom" hidden><input id="overview-finance-start" type="date" aria-label="收支开始日期" /><span>至</span><input id="overview-finance-end" type="date" aria-label="收支结束日期" /></div><button class="text-button" data-tab="ledger" type="button">查看账单 <iconify-icon icon="hugeicons:arrow-up-right-01"></iconify-icon></button></div></div><div id="overview-finance" class="overview-finance"></div></section><div class="overview-columns"><section class="panel overview-todo-panel"><div class="panel-title"><div><h2>待处理事项</h2><p>待处理维护及已退租待退押金</p></div><button class="text-button" data-tab="maintenance" type="button">全部查看</button></div><div id="todo-list" class="todo-list"></div></section><section class="panel quick-panel"><div class="panel-title"><div><h2>快捷入口</h2><p>高频操作集中处理</p></div></div><div class="quick-grid"><button class="quick-action" data-action="add-lease" type="button"><iconify-icon icon="hugeicons:login-03"></iconify-icon><span>新增入住</span></button><button class="quick-action" data-action="add-lease" type="button"><iconify-icon icon="hugeicons:calendar-03"></iconify-icon><span>租户续费</span></button><button class="quick-action" data-action="add-maintenance" type="button"><iconify-icon icon="hugeicons:tool-box"></iconify-icon><span>新增维护</span></button><button class="quick-action" data-action="add-ledger" type="button"><iconify-icon icon="hugeicons:invoice-03"></iconify-icon><span>新增流水</span></button></div></section></div></section>
     <section id="rental" class="tab-panel"><section class="panel"><div class="panel-title"><div><h2>租房管理</h2><p>绿色为已租出，红色为空置，黄色为装修维护中；在房源卡片上完成入住、续费和退房</p></div><button class="primary" data-action="add-lease">+ 新增入住</button></div><div id="room-list" class="room-grid"></div></section></section>
     <section id="rooms" class="tab-panel"><section class="panel"><div class="panel-title"><div><h2>房间管理</h2><p>维护房间档案、房东托管、物业费、物品和维护入口</p></div><button class="primary" data-action="add-room">添加房间</button></div><div id="room-admin-list" class="table-wrap"></div><h3 class="subheading">房间物品清单</h3><div id="items-list" class="table-wrap"></div></section></section>
@@ -202,7 +202,7 @@
   <script src="vendor/iconify-icon.min.js?v=1" defer></script>
 <script src="zufang.js?v=57" defer></script>
 <script src="zufang-overrides.js?v=44" defer></script>
-    <script src="zufang-ui.js?v=27" defer></script>
+    <script src="zufang-ui.js?v=32" defer></script>
   <script>
     document.addEventListener('click', function (event) {
       const item = event.target.closest('[data-tab]');
