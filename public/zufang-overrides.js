@@ -281,7 +281,7 @@
     document.querySelectorAll('[data-flow-amount]').forEach((node) => { node.textContent = flowAmount; });
     const dayField = $('#dialog-fields [name="durationValue"]')?.closest('label');
     const presetField = $('#dialog-fields [name="durationPreset"]')?.closest('label');
-    if (dayField) { dayField.style.display = preset === 'days' ? '' : 'none'; dayField.style.gridColumn = '3'; }
+    if (dayField) { dayField.style.setProperty('display', preset === 'days' ? 'flex' : 'none', 'important'); dayField.style.gridColumn = '3'; }
     if (presetField) presetField.style.gridColumn = preset === 'days' ? '2' : '2 / -1';
     const summary = $('#checkout-refund-summary');
     if (summary) {
