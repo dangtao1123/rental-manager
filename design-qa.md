@@ -52,6 +52,20 @@ No actionable P0/P1/P2 visual findings remain.
 
 final result: passed
 
+## Mobile checkout and renewal modal QA — selected option 3 refinement
+
+source visual truth path: `C:\Users\dangd\.codex\generated_images\019f5f7a-dffb-7cd1-ba2c-dfe856a95e55\exec-9000408a-e56a-4a14-a545-aa6ab7e2eaa9.png`
+tested viewports: 390 × 844 CSS px (mobile), 360 × 844 CSS px (narrow mobile), 1280 × 800 CSS px (desktop regression)
+tested flows: 退房清单、租户续费、日常维护弹窗
+
+The selected option 3 direction is now implemented for checkout and renewal. Current lease data is a compact read-only summary; meter readings use a two-row comparison table; checkout settlement includes property/maintenance deduction, an editable “其他扣除项” list with add/remove controls, and an itemized refund total. Renewal uses the same template with a normal-height scrollable mobile form and separate rent, property-fee, receipt, payment, and note sections.
+
+Validation: Playwright smoke checks passed with no horizontal overflow at 390px and 360px. Checkout amount recalculation updated water/electricity/property/other deductions and refund total; collected payload preserved `propertyAmount` and `otherItems`. Renewal displayed localized payment method text (`月付`) and recalculated the six-month total. Desktop checkout stayed on the existing layout at 1280px. JavaScript syntax checks and `git diff --check` passed.
+
+Shared template note: the existing record dialog header/footer, color tokens, spacing, field primitives, and card surfaces remain shared so maintenance, room, ledger, and item dialogs can adopt the same mobile treatment incrementally without changing their business handlers.
+
+final result: passed
+
 ## Mobile operation-flow QA — approved option 2
 
 source visual truth path: `C:\Users\dangd\.codex\generated_images\019f5f7a-dffb-7cd1-ba2c-dfe856a95e55\exec-cc0598d4-9e15-4354-a8f2-728d8927fea3.png`
