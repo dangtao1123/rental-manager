@@ -62,7 +62,7 @@ final result: passed
 
 ## Online deployment verification — 2026-09-14
 
-Deployed commit `f83b32a` to the existing production service. The production route and cache-busted checkout/renewal assets returned HTTP 200; the deployed JavaScript and CSS contain the selected option 3 flow template. Service health check remained active. Authenticated data interaction was not repeated in this pass because the production page requires the configured admin password.
+Deployed commit `69a0a83` to the existing production service. The production route and cache-busted checkout/renewal assets returned HTTP 200; the deployed JavaScript and CSS contain the selected option 3 flow template and the latest mobile row adjustments. Service health check remained active. Authenticated data interaction was not repeated in this pass because the production page requires the configured admin password.
 
 final result: passed
 
