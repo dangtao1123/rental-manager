@@ -52,6 +52,18 @@ No actionable P0/P1/P2 visual findings remain.
 
 final result: passed
 
+## Mobile module suite QA — selected option 1
+
+source visual truth path: `C:\Users\dangd\.codex\generated_images\019f5f7a-dffb-7cd1-ba2c-dfe856a95e55\exec-9b92631b-8bcf-40cc-a642-4351ba7db9c9.png`
+tested viewports: 390 × 844 CSS px (mobile), 1280 × 900 CSS px (desktop regression)
+tested modules: 房间管理、日常维护、租户管理、收支账单、租房设置
+
+The selected bright status-group direction is implemented across the remaining modules. Room and maintenance tables gain mobile card views, tenants gain a compact search/status bar and active/ended groups, ledger gains four compact summaries plus itemized mobile rows, and settings keeps paired editable fields with the account panel. The top “新增入住” action is removed from both rental and tenant page heads; card actions and existing business handlers remain intact.
+
+Validation: Playwright fixture checks passed with zero horizontal overflow at 390px and 1280px. Mobile maintenance and ledger card lists render from the same live state used by desktop tables; tenant search/status filtering and the mobile “更多” navigation remain functional. Room maintenance and tenant information dialogs open with the shared header/body/footer template and fit inside the viewport. JavaScript syntax checks and `git diff --check` passed.
+
+final result: passed
+
 ## First payment layout QA — 2026-09-14
 
 Step 3 of move-in now hides `缴费天数` for month/quarter/year presets and reveals it only when `首次缴费周期` is `按天`. Desktop keeps payment date/period, move-in/paid-through date, and monthly rent/property fee in aligned rows; mobile uses the same paired layout without horizontal overflow.

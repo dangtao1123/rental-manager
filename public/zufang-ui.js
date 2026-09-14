@@ -166,6 +166,13 @@
     }
 
     const tenants = document.getElementById('tenants');
+    if (tenants && !tenants.querySelector(':scope > .ui-tenant-filter')) {
+      const bar = document.createElement('div');
+      bar.className = 'filter-bar ui-tenant-filter';
+      bar.innerHTML = '<div class="search-field"><iconify-icon icon="hugeicons:search-01"></iconify-icon><input id="tenant-filter-search" placeholder="搜索租客姓名或手机号" /></div><select id="tenant-filter-status" aria-label="租户状态"><option value="">全部状态</option><option value="active">租房中</option><option value="refund">待退押金</option><option value="ended">已退租</option></select>';
+      const anchor = tenants.querySelector(':scope > .segmented, :scope > .ui-tenant-segment, :scope > .tenant-list');
+      if (anchor) tenants.insertBefore(bar, anchor); else tenants.append(bar);
+    }
     if (tenants && !tenants.querySelector(':scope > .page-head')) {
       const panel = oldPanel(tenants); const title = panel?.querySelector('.panel-title'); const action = title?.querySelector('button[data-action]');
       const list = document.getElementById('tenant-list');
@@ -607,15 +614,19 @@
   }
 
   function filterTenants(mode) {
-    $$('#tenants [data-tenant-filter]').forEach((button) => button.classList.toggle('active', button.dataset.tenantFilter === mode));
+    const selectedMode = mode || $('#tenant-filter-status')?.value || 'all';
+    const query = ($('#tenant-filter-search')?.value || '').trim().toLowerCase();
+    if ($('#tenant-filter-status')) $('#tenant-filter-status').value = selectedMode === 'all' ? '' : selectedMode;
+    $$('#tenants [data-tenant-filter]').forEach((button) => button.classList.toggle('active', button.dataset.tenantFilter === selectedMode));
     if ($$('#tenant-list .tenant-row').length) {
-      $$('#tenant-list .tenant-row').forEach((row) => { row.hidden = mode !== 'all' && row.dataset.tenantState !== mode; });
+      $$('#tenant-list .tenant-row').forEach((row) => { row.hidden = (selectedMode !== 'all' && row.dataset.tenantState !== selectedMode) || Boolean(query && !row.textContent.toLowerCase().includes(query)); });
+      $$('#tenant-list .tenant-group-mobile').forEach((group) => { group.hidden = !$$('.tenant-row', group).some((row) => !row.hidden); });
       return;
     }
     $$('#tenant-list .tenant-group').forEach((group) => {
       const ended = /已退租/.test(group.textContent);
-      if (mode === 'active') group.hidden = ended;
-      else if (mode === 'ended') group.hidden = !ended;
+      if (selectedMode === 'active') group.hidden = ended;
+      else if (selectedMode === 'ended') group.hidden = !ended;
       else group.hidden = !ended || !/待退押金/.test(group.textContent);
     });
   }
@@ -853,7 +864,9 @@
         const total = Number(lease.monthlyRent || 0) + Number(lease.monthlyPropertyFee || 0);
         return `<article class="tenant-row" data-tenant-state="${stateKey}"><div class="tenant-main"><div><h3>${esc(lease.tenantName || '未填写租户')} <span class="tenant-phone-inline">${esc(lease.tenantPhone || '未填写电话')}</span></h3><p>${esc(roomLabel(lease.roomNo))}</p></div></div><div><span>租房用途</span><strong>${esc(purpose)}</strong></div><div class="tenant-payment"><span>支付方式 / 月付金额</span><strong>${esc(paymentLabel(lease.paymentMethod || lease.billingCycle))} · ${money(total)}${lease.deposit !== '' && lease.deposit !== undefined ? ` · 押金 ${money(lease.deposit)}` : ''}</strong></div><div><span>入住时间</span><strong>${esc(lease.startDate || '未设置')}</strong></div><div><span>${ended ? '退房时间' : '续租截至'}</span><strong>${esc(ended ? date : (due || '未设置'))}</strong>${!ended ? `<em>${prettyRemaining(daysUntil(due))}</em>` : ''}</div><div><span>入住时长</span><strong>${durationText}</strong></div><div><span>租户状态</span><strong class="tenant-status-${tone}">${stateLabel}</strong></div><div class="table-actions">${refund}<button class="button button-outline" data-show-renewals="${esc(lease.id)}">续费记录</button><button class="button button-outline" data-edit="leases" data-id="${esc(lease.id)}">租户信息</button>${contractLink(lease)}<button class="button button-danger-outline tenant-archive-button" data-delete="leases" data-id="${esc(lease.id)}" title="租户归档" aria-label="租户归档"><iconify-icon icon="hugeicons:archive-02"></iconify-icon></button></div></article>`;
       });
-      target.innerHTML = rows.length ? rows.join('') : '<p class="meta">暂无记录</p>';
+      const activeRows = rows.filter((row) => row.includes('data-tenant-state="active"'));
+      const endedRows = rows.filter((row) => !row.includes('data-tenant-state="active"'));
+      target.innerHTML = rows.length ? `<section class="tenant-group-mobile" data-tenant-group="active"><div class="tenant-group-heading"><h2>在租租户 <span>${activeRows.length}</span></h2></div>${activeRows.join('')}</section><section class="tenant-group-mobile" data-tenant-group="ended"><div class="tenant-group-heading"><h2>已退租租户 <span>${endedRows.length}</span></h2></div>${endedRows.join('')}</section>` : '<p class="meta">暂无记录</p>';
       const counts = { all: list.length, active: list.filter((item) => item.status === 'active').length, ended: list.filter((item) => item.status !== 'active' && item.depositStatus === 'refunded').length, refund: list.filter((item) => item.status !== 'active' && item.depositStatus !== 'refunded').length };
       document.querySelectorAll('[data-tenant-filter]').forEach((button) => { const b = button.querySelector('b'); if (b) b.textContent = counts[button.dataset.tenantFilter] ?? 0; });
     };
@@ -870,6 +883,50 @@
       const badge = document.querySelector('#overview .todo-panel .count-badge'); if (badge) badge.textContent = rows.length;
     };
 
+    const oldMaintenance = window.renderMaintenance;
+    window.renderMaintenance = function referenceRenderMaintenance() {
+      if (typeof oldMaintenance === 'function') oldMaintenance.apply(this, arguments);
+      const target = document.getElementById('maintenance-list');
+      if (!target) return;
+      target.querySelector('.maintenance-mobile-list')?.remove();
+      const filter = state.maintenanceFilters || {};
+      const typeLabels = { new: '新增物品', remove: '删除物品', repair: '房间日常维护' };
+      const list = state.maintenance.filter((item) => !item.archivedAt && (!filter.month || String(item.maintenanceDate || '').startsWith(filter.month)) && (!filter.date || item.maintenanceDate === filter.date) && (!filter.room || item.roomNo === filter.room));
+      const cards = list.map((item) => {
+        const statusKey = item.status === 'reimbursed' ? 'reimbursed' : item.status === 'done' ? 'done' : 'pending';
+        const statusLabel = maintenanceStatusLabel(item.status);
+        const tone = statusKey === 'pending' ? 'warning' : statusKey === 'done' ? 'success' : 'neutral';
+        const actions = `${item.status === 'pending' ? `<button class="button button-outline" data-maint-complete="${esc(item.id)}">完成维护</button>` : ''}${item.status === 'done' ? `<button class="button button-outline" data-maint-reimburse="${esc(item.id)}">已报销</button>` : ''}<button class="button button-outline icon-button" data-edit="maintenance" data-id="${esc(item.id)}" title="详情/编辑" aria-label="详情/编辑"><iconify-icon icon="hugeicons:edit-02" aria-hidden="true"></iconify-icon></button><button class="button button-danger-outline icon-button" data-delete="maintenance" data-id="${esc(item.id)}" title="归档" aria-label="归档"><iconify-icon icon="hugeicons:archive-02" aria-hidden="true"></iconify-icon></button>`;
+        return `<article class="maintenance-mobile-card maintenance-${statusKey}"><div class="maintenance-mobile-head"><div><strong>${esc(roomLabel(item.roomNo))}</strong><span>${esc(item.maintenanceDate || '未设置')} · ${esc(typeLabels[item.maintenanceType] || '房间日常维护')}</span></div>${statusChip(statusLabel, tone)}</div><h3>${esc(item.item || '未填写事项')}</h3>${item.note ? `<p class="maintenance-mobile-note">${esc(item.note)}</p>` : ''}<div class="maintenance-mobile-meta"><span>金额</span><strong>${money(item.amount)}</strong>${(item.beforeImage || item.afterImage || item.paymentProof) ? '<em>含图片凭证</em>' : ''}</div><div class="card-actions">${actions}</div></article>`;
+      }).join('');
+      const mobile = document.createElement('div');
+      mobile.className = 'maintenance-mobile-list';
+      mobile.innerHTML = cards || '<p class="meta">暂无维护记录</p>';
+      target.append(mobile);
+    };
+
+    const oldLedger = window.renderLedger;
+    window.renderLedger = function referenceRenderLedger() {
+      if (typeof oldLedger === 'function') oldLedger.apply(this, arguments);
+      const target = document.getElementById('ledger-list');
+      if (!target) return;
+      target.querySelector('.ledger-mobile-list')?.remove();
+      const start = document.getElementById('ledger-start')?.value || '';
+      const end = document.getElementById('ledger-end')?.value || '';
+      const room = document.getElementById('ledger-room')?.value || '';
+      const labels = { rent: '租金', otherIncome: '其他收入', landlordRent: '托管房租', maintenance: '维护维修', depositRefund: '押金退还', otherExpense: '其他支出' };
+      const list = state.ledger.filter((item) => !item.archivedAt && (!start || item.recordDate >= start) && (!end || item.recordDate <= end) && (!room || item.roomNo === room));
+      const cards = list.map((item) => {
+        const income = item.direction === 'income';
+        const typeLabel = income ? '收入' : '支出';
+        return `<article class="ledger-mobile-card ${income ? 'income' : 'expense'}"><div class="ledger-mobile-date"><strong>${esc(String(item.recordDate || '').slice(5) || '未设置')}</strong><small>${esc(String(item.recordDate || '').slice(0, 4))}</small></div><div class="ledger-mobile-main"><div class="ledger-mobile-line"><strong>${esc(roomLabel(item.roomNo))}</strong><span class="ledger-type ${income ? 'income-text' : 'expense-text'}">${typeLabel}</span></div><div class="ledger-mobile-line ledger-mobile-sub"><span>分类：${esc(labels[item.category] || item.category || '未分类')}</span><strong class="${income ? 'income-text' : 'expense-text'}">${income ? '+' : '-'}${money(item.amount)}</strong></div>${item.note ? `<p>备注：${esc(item.note)}</p>` : ''}</div><div class="ledger-mobile-actions"><button class="icon-button" data-edit="ledger" data-id="${esc(item.id)}" aria-label="编辑" title="编辑"><iconify-icon icon="hugeicons:edit-02" aria-hidden="true"></iconify-icon></button><button class="icon-button danger" data-delete="ledger" data-id="${esc(item.id)}" aria-label="归档" title="归档"><iconify-icon icon="hugeicons:delete-02" aria-hidden="true"></iconify-icon></button></div></article>`;
+      }).join('');
+      const mobile = document.createElement('div');
+      mobile.className = 'ledger-mobile-list';
+      mobile.innerHTML = cards || '<p class="meta">暂无流水记录</p>';
+      target.append(mobile);
+    };
+
     const wrapAfter = (name, after) => { const original = window[name]; if (typeof original !== 'function') return; window[name] = function wrappedRenderer(...args) { const result = original.apply(this, args); after(); return result; }; };
     wrapAfter('renderStats', () => { document.querySelectorAll('#overview-finance > div').forEach((item, index) => { item.classList.add('finance-item'); item.classList.remove('income', 'expense', 'balance', 'pending'); item.classList.add(['income', 'expense', 'balance', 'pending', 'pending'][index] || 'balance'); }); });
     wrapAfter('renderLedger', () => { document.querySelectorAll('#ledger-summary > div').forEach((item, index) => item.classList.add('summary-card', index === 0 ? 'income' : index === 1 ? 'expense' : index === 2 ? 'balance' : 'pending')); document.querySelectorAll('#ledger-list table').forEach((table) => table.classList.add('data-table')); });
@@ -882,11 +939,13 @@
     document.addEventListener('input', (event) => {
       if (event.target.id === 'rental-filter-search') filterCards();
       if (event.target.id === 'room-filter-search') filterRoomTable();
+      if (event.target.id === 'tenant-filter-search') filterTenants();
       if (event.target.id === 'audit-filter-search') { auditPage = 1; filterAudit(); }
     });
     document.addEventListener('change', (event) => {
       if (event.target.id === 'rental-filter-status' || event.target.id === 'rental-filter-occupancy') filterCards();
       if (event.target.id === 'room-filter-status') filterRoomTable();
+      if (event.target.id === 'tenant-filter-status') filterTenants(event.target.value || 'all');
     });
     document.addEventListener('click', (event) => {
       const mobileRentalStatus = event.target.closest('[data-mobile-rental-status]');
