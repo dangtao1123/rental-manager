@@ -52,6 +52,14 @@ No actionable P0/P1/P2 visual findings remain.
 
 final result: passed
 
+## Mobile form row adjustment — 2026-09-14
+
+The checkout flow no longer exposes a standalone `物业/维修扣款` field; property or maintenance costs are entered through the existing “其他扣除项” list. Renewal now keeps the renewal date and period on one row and places rent and property-fee settings side by side. Move-in now keeps room/purpose, tenant/phone, start/end dates, and electricity/water readings in paired rows.
+
+Validation: Playwright smoke checks passed at 390px and 360px with no horizontal overflow. The checkout field is absent while the other-item field remains available; renewal paired fields share the same top offset; move-in paired fields share the same top offset. Legacy checkout payloads explicitly clear the standalone `propertyAmount` value on save. JavaScript syntax checks and `git diff --check` passed.
+
+final result: passed
+
 ## Online deployment verification — 2026-09-14
 
 Deployed commit `f83b32a` to the existing production service. The production route and cache-busted checkout/renewal assets returned HTTP 200; the deployed JavaScript and CSS contain the selected option 3 flow template. Service health check remained active. Authenticated data interaction was not repeated in this pass because the production page requires the configured admin password.
@@ -64,9 +72,9 @@ source visual truth path: `C:\Users\dangd\.codex\generated_images\019f5f7a-dffb-
 tested viewports: 390 × 844 CSS px (mobile), 360 × 844 CSS px (narrow mobile), 1280 × 800 CSS px (desktop regression)
 tested flows: 退房清单、租户续费、日常维护弹窗
 
-The selected option 3 direction is now implemented for checkout and renewal. Current lease data is a compact read-only summary; meter readings use a two-row comparison table; checkout settlement includes property/maintenance deduction, an editable “其他扣除项” list with add/remove controls, and an itemized refund total. Renewal uses the same template with a normal-height scrollable mobile form and separate rent, property-fee, receipt, payment, and note sections.
+The selected option 3 direction is now implemented for checkout and renewal. Current lease data is a compact read-only summary; meter readings use a two-row comparison table; checkout settlement keeps utility deductions in the receipt and routes property/maintenance costs through the editable “其他扣除项” list with add/remove controls and an itemized refund total. Renewal uses the same template with a normal-height scrollable mobile form and separate rent, property-fee, receipt, payment, and note sections.
 
-Validation: Playwright smoke checks passed with no horizontal overflow at 390px and 360px. Checkout amount recalculation updated water/electricity/property/other deductions and refund total; collected payload preserved `propertyAmount` and `otherItems`. Renewal displayed localized payment method text (`月付`) and recalculated the six-month total. Desktop checkout stayed on the existing layout at 1280px. JavaScript syntax checks and `git diff --check` passed.
+Validation: Playwright smoke checks passed with no horizontal overflow at 390px and 360px. Checkout amount recalculation updated water/electricity/other deductions and refund total; collected payload preserved `otherItems` and clears the legacy standalone `propertyAmount` field. Renewal displayed localized payment method text (`月付`) and recalculated the six-month total. Desktop checkout stayed on the existing layout at 1280px. JavaScript syntax checks and `git diff --check` passed.
 
 Shared template note: the existing record dialog header/footer, color tokens, spacing, field primitives, and card surfaces remain shared so maintenance, room, ledger, and item dialogs can adopt the same mobile treatment incrementally without changing their business handlers.
 
