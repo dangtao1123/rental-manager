@@ -52,6 +52,14 @@ No actionable P0/P1/P2 visual findings remain.
 
 final result: passed
 
+## First payment layout QA — 2026-09-14
+
+Step 3 of move-in now hides `缴费天数` for month/quarter/year presets and reveals it only when `首次缴费周期` is `按天`. Desktop keeps payment date/period, move-in/paid-through date, and monthly rent/property fee in aligned rows; mobile uses the same paired layout without horizontal overflow.
+
+Validation: Playwright fixture checks passed at 1280px, 390px, and 360px. The day-count field computed as `display:none` for `1month` and became visible for `days`; paired fields share row offsets and the page scroll width equals the viewport width. JavaScript syntax checks and `git diff --check` passed.
+
+final result: passed
+
 ## Mobile form row adjustment — 2026-09-14
 
 The checkout flow no longer exposes a standalone `物业/维修扣款` field; property or maintenance costs are entered through the existing “其他扣除项” list. Renewal now keeps the renewal date and period on one row and places rent and property-fee settings side by side. Move-in now keeps room/purpose, tenant/phone, start/end dates, and electricity/water readings in paired rows.
@@ -62,7 +70,7 @@ final result: passed
 
 ## Online deployment verification — 2026-09-14
 
-Deployed commit `69a0a83` to the existing production service. The production route and cache-busted checkout/renewal assets returned HTTP 200; the deployed JavaScript and CSS contain the selected option 3 flow template and the latest mobile row adjustments. Service health check remained active. Authenticated data interaction was not repeated in this pass because the production page requires the configured admin password.
+Deployed commit `e14ab44` to the existing production service. The production route and cache-busted checkout/renewal/move-in assets returned HTTP 200; the deployed JavaScript and CSS contain the selected option 3 flow template, first-payment day-count condition, and paired PC/mobile rows. Service health check remained active. Authenticated data interaction was not repeated in this pass because the production page requires the configured admin password.
 
 final result: passed
 

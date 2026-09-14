@@ -4119,3 +4119,83 @@ dialog#move-in-dialog .move-in-deposit-field { font-size: 14px !important; font-
   dialog#move-in-dialog .move-in-property-card .move-in-grid-property { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   dialog#move-in-dialog .move-in-property-card .move-in-grid-property > label.full { grid-column: auto !important; }
 }
+
+/* v24: first-payment fields stay paired; day count only appears for per-day billing. */
+dialog#move-in-dialog .move-in-step-three .move-in-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px 14px !important;
+}
+dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-payment-date { grid-column: 1 !important; }
+dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-duration-preset { grid-column: 2 !important; }
+dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-start-date { grid-column: 1 !important; }
+dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-paid-through { grid-column: 2 !important; }
+dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-day-count { grid-column: 3 !important; }
+dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-monthly-rent { grid-column: 1 !important; }
+dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-monthly-property-fee { grid-column: 2 !important; }
+dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-amount.full { grid-column: 1 / -1 !important; }
+dialog#move-in-dialog .move-in-step-three .move-in-day-count[hidden] { display: none !important; }
+
+@media (max-width: 760px) {
+  dialog#move-in-dialog .move-in-step-three .move-in-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 9px !important;
+  }
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-payment-date,
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-duration-preset,
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-start-date,
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-paid-through,
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-monthly-rent,
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-monthly-property-fee { grid-column: auto !important; }
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-day-count,
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-amount.full { grid-column: 1 / -1 !important; }
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > label {
+    display: flex !important;
+    min-width: 0 !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+    padding: 9px 10px !important;
+    border: 1px solid #dcebef !important;
+    border-radius: 10px !important;
+    background: #f8fcfd !important;
+    color: #6f8792 !important;
+    font-size: 10px !important;
+    font-weight: 750 !important;
+    line-height: 1.3 !important;
+  }
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > label input,
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > label select {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 40px !important;
+    margin: 0 !important;
+    padding: 0 9px !important;
+    border: 1px solid #c8dfe7 !important;
+    border-radius: 8px !important;
+    background: #fff !important;
+    color: #183548 !important;
+    font-size: 13px !important;
+  }
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-start-date input,
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-paid-through input,
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-payment-date input { background: #f4fbfd !important; }
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-monthly-rent {
+    border-color: #efb7bb !important;
+    background: #fff7f7 !important;
+    color: #a24a50 !important;
+  }
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-monthly-rent input { border-color: #efb7bb !important; color: #c9484e !important; font-weight: 850 !important; }
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-monthly-property-fee {
+    border-color: #9bd5bb !important;
+    background: #f3fbf6 !important;
+    color: #2b7b61 !important;
+  }
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-monthly-property-fee input { border-color: #9bd5bb !important; color: #0b8d69 !important; font-weight: 850 !important; }
+  dialog#move-in-dialog .move-in-step-three .move-in-grid > .move-in-day-count {
+    border-color: #b9dfe7 !important;
+    background: #f1fafc !important;
+    color: #2f7186 !important;
+  }
+  dialog#move-in-dialog .move-in-step-three .move-in-amount.full { margin-top: 2px !important; }
+}
