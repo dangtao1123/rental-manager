@@ -52,6 +52,12 @@ No actionable P0/P1/P2 visual findings remain.
 
 final result: passed
 
+## Online deployment verification — 2026-09-14
+
+Deployed commit `f83b32a` to the existing production service. The production route and cache-busted checkout/renewal assets returned HTTP 200; the deployed JavaScript and CSS contain the selected option 3 flow template. Service health check remained active. Authenticated data interaction was not repeated in this pass because the production page requires the configured admin password.
+
+final result: passed
+
 ## Mobile checkout and renewal modal QA — selected option 3 refinement
 
 source visual truth path: `C:\Users\dangd\.codex\generated_images\019f5f7a-dffb-7cd1-ba2c-dfe856a95e55\exec-9000408a-e56a-4a14-a545-aa6ab7e2eaa9.png`
