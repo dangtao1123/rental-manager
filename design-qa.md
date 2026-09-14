@@ -70,7 +70,7 @@ final result: passed
 
 ## Online deployment verification — 2026-09-14
 
-Deployed commit `e14ab44` to the existing production service. The production route and cache-busted checkout/renewal/move-in assets returned HTTP 200; the deployed JavaScript and CSS contain the selected option 3 flow template, first-payment day-count condition, and paired PC/mobile rows. Service health check remained active. Authenticated data interaction was not repeated in this pass because the production page requires the configured admin password.
+Deployed implementation commit `7e1c512` to the existing production service. The production route and cache-busted checkout/renewal/move-in assets returned HTTP 200; the deployed JavaScript and CSS contain the selected option 3 flow template, first-payment day-count condition, and paired PC/mobile rows. Service health check remained active. Authenticated data interaction was not repeated in this pass because the production page requires the configured admin password.
 
 final result: passed
 
