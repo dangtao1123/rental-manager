@@ -889,6 +889,7 @@
       const target = document.getElementById('maintenance-list');
       if (!target) return;
       target.querySelector('.maintenance-mobile-list')?.remove();
+      target.querySelector(':scope > p.meta')?.remove();
       const filter = state.maintenanceFilters || {};
       const typeLabels = { new: '新增物品', remove: '删除物品', repair: '房间日常维护' };
       const list = state.maintenance.filter((item) => !item.archivedAt && (!filter.month || String(item.maintenanceDate || '').startsWith(filter.month)) && (!filter.date || item.maintenanceDate === filter.date) && (!filter.room || item.roomNo === filter.room));
@@ -911,11 +912,18 @@
       const target = document.getElementById('ledger-list');
       if (!target) return;
       target.querySelector('.ledger-mobile-list')?.remove();
+      target.querySelector(':scope > p.meta')?.remove();
       const start = document.getElementById('ledger-start')?.value || '';
       const end = document.getElementById('ledger-end')?.value || '';
       const room = document.getElementById('ledger-room')?.value || '';
       const labels = { rent: '租金', otherIncome: '其他收入', landlordRent: '托管房租', maintenance: '维护维修', depositRefund: '押金退还', otherExpense: '其他支出' };
       const list = state.ledger.filter((item) => !item.archivedAt && (!start || item.recordDate >= start) && (!end || item.recordDate <= end) && (!room || item.roomNo === room));
+      const summary = document.getElementById('ledger-summary');
+      if (summary && (window.innerWidth <= 760 || window.matchMedia?.('(max-width: 760px)').matches)) {
+        const income = list.filter((item) => item.direction === 'income').reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const expense = list.filter((item) => item.direction !== 'income').reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        summary.innerHTML = `<div class="income-summary summary-card"><span>收入</span><strong>${money(income)}</strong></div><div class="expense-summary summary-card"><span>支出</span><strong>${money(expense)}</strong></div><div class="balance-summary summary-card"><span>结余</span><strong>${money(income - expense)}</strong></div><div class="count-summary summary-card"><span>本月笔数</span><strong>${list.length}</strong></div>`;
+      }
       const cards = list.map((item) => {
         const income = item.direction === 'income';
         const typeLabel = income ? '收入' : '支出';

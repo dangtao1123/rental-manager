@@ -50,8 +50,6 @@ No actionable P0/P1/P2 visual findings remain.
 - The local fixture contains fewer records than the supplied design mock, so the page is shorter in the current screenshot; production data will fill the same card pattern.
 - The compact brand wordmark can be optically enlarged later if the product supplies an approved mobile logo asset.
 
-final result: passed
-
 ## Mobile module suite QA — selected option 1
 
 source visual truth path: `C:\Users\dangd\.codex\generated_images\019f5f7a-dffb-7cd1-ba2c-dfe856a95e55\exec-9b92631b-8bcf-40cc-a642-4351ba7db9c9.png`
@@ -111,5 +109,13 @@ The mobile flows now use the approved bright card composition: a compact dialog 
 Findings: no actionable P0/P1/P2 visual or responsive issues. Hidden dialogs are explicitly removed from layout when closed; mobile flow fields stay within the viewport without horizontal overflow. Desktop move-in rendering remains on the existing layout at 1280px.
 
 Validation: Playwright smoke captures completed for the rental list and all three mobile flows; JavaScript syntax checks and `git diff --check` passed.
+
+final result: passed
+
+## Mobile UI alignment recheck — 2026-09-15
+
+The production screenshots exposed two responsive regressions: the maintenance filter row and batch toolbar were clipped by legacy horizontal-strip rules, and the mobile ledger summary rendered two pending-cost cards instead of the four-card reference summary. A final mobile override now keeps maintenance filters in three equal columns, lays the five batch actions out across two rows, compacts tenant segments/cards, presents settings as editable rows, and restores the ledger summary to 收入 / 支出 / 结余 / 本月笔数 on mobile. Desktop table layouts and existing handlers remain unchanged.
+
+Validation: Chrome headless rendering at 390px, 360px, and 1280px reported document scroll width equal to the viewport width for 日常维护、租户管理、收支账单、租房设置. The maintenance filter computed as a three-column grid and the batch toolbar as a two-column grid at both mobile widths. JavaScript syntax checks and `git diff --check` passed.
 
 final result: passed
