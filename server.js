@@ -1214,7 +1214,19 @@ async function handleRentalSettings(request, response, method) {
   try {
     const actor = await getAdminUser(request);
     if (!actor) { sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' }); return; }
-    if (method === 'GET') { const settings = await readRentalSettings(); if (settings.contractTemplateFile) settings.contractTemplateFile = '/api/zufang/settings/contract-template'; sendJson(response, 200, { ok: true, data: settings }); return; }
+    if (method === 'GET') {
+      const settings = await readRentalSettings();
+      if (settings.contractTemplateFile) {
+        const filename = rentalFilenameFromUrl(settings.contractTemplateFile);
+        settings.contractTemplateFile = signRentalFileUrl(
+          settings.contractTemplateFile,
+          Date.now(),
+          settings.contractTemplateName || rentalDownloadFilename(filename, '.docx'),
+        );
+      }
+      sendJson(response, 200, { ok: true, data: settings });
+      return;
+    }
     const current = await readRentalSettings();
     const input = await readJsonBody(request, MAX_RENTAL_BODY_BYTES);
     if (typeof input.contractTemplateData === 'string' && input.contractTemplateData.startsWith('data:')) {
