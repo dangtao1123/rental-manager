@@ -1731,7 +1731,7 @@ async function handleRentalUsers(request, response, method, id) {
 
 async function handleRentalFile(request, response, filename, searchParams) {
   const safeName = path.basename(filename);
-  if (safeName !== filename || !/^(?:(?:maintenance|item|room|id-card-front|id-card-back)-[0-9a-f-]+\.(?:jpg|png|webp)|landlord-contract-[0-9a-f-]+\.pdf|move-in-(?:template|contract|signed)-[0-9a-f-]+\.(?:docx|pdf))$/.test(safeName)) {
+  if (safeName !== filename || !/^(?:(?:maintenance|item|room|id-card-front|id-card-back|move-in-(?:front|back))-[0-9a-f-]+\.(?:jpg|png|webp)|landlord-contract-[0-9a-f-]+\.pdf|move-in-(?:template|contract|signed)-[0-9a-f-]+\.(?:docx|pdf))$/.test(safeName)) {
     response.writeHead(404).end('文件不存在');
     return;
   }

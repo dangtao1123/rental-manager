@@ -1,4 +1,96 @@
 /* v26: final mobile alignment overrides for the approved bright reference UI. */
+
+/* Tenant directory: keep the search controls as two sibling fields instead of
+   stacking a bordered search control inside another bordered control. */
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view > .ui-tenant-filter {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 180px !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0 0 12px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view > .ui-tenant-filter .search-field {
+  display: flex !important;
+  align-items: center !important;
+  min-width: 0 !important;
+  height: 40px !important;
+  margin: 0 !important;
+  padding: 0 10px !important;
+  border: 1px solid #c8dce5 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+}
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view > .ui-tenant-filter .search-field input {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 38px !important;
+  margin: 0 !important;
+  padding: 0 6px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view > .ui-tenant-filter select {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 40px !important;
+  margin: 0 !important;
+  padding: 0 10px !important;
+  border: 1px solid #c8dce5 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+}
+
+/* Keep the active and ended tenant records visually distinct on every width. */
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view #tenant-list .tenant-group-mobile {
+  display: grid !important;
+  gap: 10px !important;
+}
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view #tenant-list .tenant-group-heading {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 3px 1px !important;
+}
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view #tenant-list .tenant-group-heading h2 {
+  margin: 0 !important;
+  color: var(--ux-ink) !important;
+  font-size: 16px !important;
+}
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view #tenant-list .tenant-group-heading h2 span {
+  color: #7b929d !important;
+  font-size: 12px !important;
+}
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view #tenant-list .tenant-row[data-tenant-state="active"] {
+  border-color: #b8e3d3 !important;
+  background: #f3fbf7 !important;
+  box-shadow: inset 4px 0 #0aa07d, 0 3px 12px rgba(24,66,82,.035) !important;
+}
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view #tenant-list .tenant-row[data-tenant-state="refund"] {
+  border-color: #f0d59d !important;
+  background: #fffaf0 !important;
+  box-shadow: inset 4px 0 #e8a21a, 0 3px 12px rgba(24,66,82,.035) !important;
+}
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view #tenant-list .tenant-row[data-tenant-state="ended"] {
+  border-color: #d7e2e6 !important;
+  background: #f7fafb !important;
+  box-shadow: inset 4px 0 #9fb6c0, 0 3px 12px rgba(24,66,82,.025) !important;
+}
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view #tenant-list .tenant-status-success { color: #0a8f6c !important; font-weight: 800 !important; }
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view #tenant-list .tenant-status-warning { color: #b97812 !important; font-weight: 800 !important; }
+body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view #tenant-list .tenant-status-muted { color: #708892 !important; font-weight: 800 !important; }
+
 @media (max-width: 760px) {
   html,
   body { overflow-x: hidden !important; }

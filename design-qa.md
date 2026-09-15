@@ -62,6 +62,14 @@ Validation: Playwright fixture checks passed with zero horizontal overflow at 39
 
 final result: passed
 
+## Tenant directory follow-up — 2026-09-15
+
+The tenant information dialog now serves identity images created by the move-in flow (`move-in-front/back-*`) through the signed file route. The tenant directory keeps separate 在租租户 / 已退租租户 sections, applies green/amber/gray state treatments, and renders the search input as a single bordered field beside the status selector.
+
+Validation: the file-name allowlist accepts both move-in identity image variants, desktop and mobile tenant filters keep independent controls without nested input borders, and existing tenant action handlers remain unchanged.
+
+final result: passed
+
 ## First payment layout QA — 2026-09-14
 
 Step 3 of move-in now hides `缴费天数` for month/quarter/year presets and reveals it only when `首次缴费周期` is `按天`. Desktop keeps payment date/period, move-in/paid-through date, and monthly rent/property fee in aligned rows; mobile uses the same paired layout without horizontal overflow.
