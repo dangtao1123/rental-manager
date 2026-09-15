@@ -3,6 +3,7 @@ const path = require('node:path');
 const fs = require('node:fs/promises');
 const crypto = require('node:crypto');
 const zlib = require('node:zlib');
+const { AsyncLocalStorage } = require('node:async_hooks');
 const rentalDatabase = require('./rental-db');
 
 const HOST = process.env.HOST || '0.0.0.0';
@@ -34,6 +35,8 @@ const RENTAL_BILLS_FILE = path.join(DATA_DIR, 'rental-bills.json');
 const RENTAL_MAINTENANCE_BATCHES_FILE = path.join(DATA_DIR, 'rental-maintenance-batches.json');
 const RENTAL_SETTINGS_FILE = path.join(DATA_DIR, 'rental-settings.json');
 const RENTAL_MOVE_INS_FILE = path.join(DATA_DIR, 'rental-move-ins.json');
+const RENTAL_WORKSPACES_FILE = path.join(DATA_DIR, 'rental-workspaces.json');
+const RENTAL_COMMUNITIES_FILE = path.join(DATA_DIR, 'rental-communities.json');
 const RENTAL_FILES_DIR = path.join(DATA_DIR, 'rental-maintenance');
 const POSTERS_DIR = path.join(DATA_DIR, 'posters');
 const MAX_BODY_BYTES = 32 * 1024;
@@ -47,6 +50,7 @@ const MAX_POSTER_GENERATION_EVENTS = 10_000;
 const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || 'admin123').replace(/[\r\n]+$/, '');
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const PASSWORD_HASH_BYTES = 32;
+const LEGACY_WORKSPACE_USERNAME = '13176610607';
 const REFERRAL_VISIT_WINDOW_MS = 30 * 60 * 1000;
 const MAX_REFERRAL_VISITS = 10_000;
 const MAX_REFERRAL_OPENINGS = 10_000;
@@ -72,6 +76,12 @@ let writeQueue = Promise.resolve();
 const recentRequests = new Map();
 const recentVisitRequests = new Map();
 const ipLocationCache = new Map();
+const rentalRequestContext = new AsyncLocalStorage();
+const appendRentalAuditEntry = rentalDatabase.appendAudit.bind(rentalDatabase);
+rentalDatabase.appendAudit = (directory, entry) => appendRentalAuditEntry(directory, {
+  ...entry,
+  workspaceId: entry.workspaceId || rentalRequestContext.getStore()?.workspaceId || '',
+});
 
 function sendJson(response, statusCode, payload) {
   response.writeHead(statusCode, {
@@ -189,6 +199,170 @@ async function writeAdminUsers(users) {
   await fs.rename(temporaryFile, ADMIN_USERS_FILE);
 }
 
+let rentalTenancyReady;
+
+function workspaceIdForUsername(username) {
+  const normalized = cleanText(username, 80).toLowerCase() || 'workspace';
+  return `ws-${crypto.createHash('sha256').update(normalized).digest('hex').slice(0, 24)}`;
+}
+
+async function readRentalJsonArray(file) {
+  try {
+    const data = JSON.parse(await fs.readFile(file, 'utf8'));
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    if (error.code === 'ENOENT') return [];
+    throw error;
+  }
+}
+
+async function writeRentalJsonArray(file, records) {
+  await fs.mkdir(DATA_DIR, { recursive: true, mode: 0o750 });
+  const temporaryFile = `${file}.${process.pid}.tmp`;
+  await fs.writeFile(temporaryFile, JSON.stringify(records, null, 2), { encoding: 'utf8', mode: 0o640 });
+  await fs.rename(temporaryFile, file);
+}
+
+function normalizeWorkspace(input = {}, current = {}) {
+  const id = cleanText(input.id ?? current.id, 80) || workspaceIdForUsername(input.username ?? current.username);
+  const username = cleanText(input.username ?? current.username, 40);
+  const profile = { ...(current.profile || {}), ...(input.profile || {}) };
+  return {
+    ...current,
+    id,
+    username,
+    name: cleanText(input.name ?? current.name, 80) || (username ? `${username}的租房空间` : '租房空间'),
+    enabled: input.enabled === undefined ? current.enabled !== false : Boolean(input.enabled),
+    profile: {
+      name: cleanText(profile.name, 80),
+      phone: cleanText(profile.phone, 30),
+      idCard: cleanText(profile.idCard, 40).toUpperCase(),
+      address: cleanText(profile.address, 200),
+    },
+    settings: { ...(current.settings || {}), ...(input.settings || {}) },
+    createdAt: current.createdAt || input.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function normalizeCommunity(input = {}, current = {}) {
+  const hasSettingsInput = ['reminderDays', 'propertyUnitPrice', 'waterUnitPrice', 'electricityUnitPrice'].some((key) => Object.hasOwn(input, key));
+  const settingsConfigured = current.settingsConfigured === true || hasSettingsInput;
+  return {
+    ...current,
+    id: cleanText(input.id ?? current.id, 80) || rentalId(),
+    workspaceId: cleanText(input.workspaceId ?? current.workspaceId, 80),
+    name: rentalText(input.name ?? current.name, 80),
+    address: rentalText(input.address ?? current.address, 200),
+    signingAddress: rentalText(input.signingAddress ?? current.signingAddress, 200),
+    reminderDays: Math.min(365, Math.max(0, Math.round(Number(input.reminderDays ?? current.reminderDays ?? 10) || 0))),
+    propertyUnitPrice: rentalMoney(input.propertyUnitPrice ?? current.propertyUnitPrice),
+    waterUnitPrice: rentalMoney(input.waterUnitPrice ?? current.waterUnitPrice),
+    electricityUnitPrice: rentalRate(input.electricityUnitPrice ?? current.electricityUnitPrice),
+    settingsConfigured,
+    archivedAt: input.archivedAt ?? current.archivedAt ?? '',
+    createdAt: current.createdAt || input.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function rentalRecordWorkspaceId(record) {
+  return cleanText(record?.workspaceId, 80);
+}
+
+function rentalRecordsForWorkspace(records, workspaceId) {
+  if (!workspaceId) return [];
+  return records.filter((record) => rentalRecordWorkspaceId(record) === workspaceId);
+}
+
+async function ensureRentalTenancyModel() {
+  if (rentalTenancyReady) return rentalTenancyReady;
+  rentalTenancyReady = (async () => {
+    let workspaces = await readRentalJsonArray(RENTAL_WORKSPACES_FILE);
+    let communities = await readRentalJsonArray(RENTAL_COMMUNITIES_FILE);
+    const users = await readAdminUsers();
+    let workspacesChanged = false;
+    const workspaceById = new Map(workspaces.map((item) => [item.id, item]));
+    const ensureWorkspace = (input) => {
+      const normalized = normalizeWorkspace(input, workspaceById.get(input.id));
+      if (!workspaceById.has(normalized.id)) {
+        workspaces.push(normalized);
+        workspaceById.set(normalized.id, normalized);
+        workspacesChanged = true;
+      }
+      return workspaceById.get(normalized.id);
+    };
+
+    ensureWorkspace({ id: workspaceIdForUsername(LEGACY_WORKSPACE_USERNAME), username: LEGACY_WORKSPACE_USERNAME, name: '默认租房空间' });
+    for (const user of users) {
+      if (user.role === 'platformAdmin') continue;
+      if (!user.workspaceId) {
+        user.workspaceId = workspaceIdForUsername(user.username);
+        user.workspaceUpdatedAt = new Date().toISOString();
+        workspacesChanged = true;
+      }
+      ensureWorkspace({ id: user.workspaceId, username: user.username, name: `${user.displayName || user.username}的租房空间` });
+    }
+    if (workspacesChanged && users.length) await writeAdminUsers(users);
+
+    const rooms = await readRentalFile(RENTAL_ROOMS_FILE);
+    const legacyWorkspaceId = workspaceIdForUsername(LEGACY_WORKSPACE_USERNAME);
+    const communityByKey = new Map(communities.filter((item) => item.workspaceId && item.name).map((item) => [`${item.workspaceId}\u0000${item.name}`, item]));
+    const ensureCommunity = (workspaceId, propertyName) => {
+      const name = rentalText(propertyName, 80);
+      if (!workspaceId || !name) return null;
+      const key = `${workspaceId}\u0000${name}`;
+      const existing = communityByKey.get(key);
+      if (existing) return existing;
+      const community = normalizeCommunity({ workspaceId, name });
+      communities.push(community);
+      communityByKey.set(key, community);
+      return community;
+    };
+    let roomsChanged = false;
+    for (const room of rooms) {
+      if (!room.workspaceId) { room.workspaceId = legacyWorkspaceId; roomsChanged = true; }
+      if (!room.communityId) {
+        const community = ensureCommunity(room.workspaceId, room.propertyName);
+        if (community) { room.communityId = community.id; roomsChanged = true; }
+      }
+    }
+    if (roomsChanged) await writeRentalFile(RENTAL_ROOMS_FILE, rooms);
+
+    const roomById = new Map(rooms.map((room) => [room.id, room]));
+    const roomByLegacyKey = new Map();
+    for (const room of rooms) {
+      const key = `${room.workspaceId}\u0000${room.propertyName || ''}\u0000${room.roomNo || ''}`;
+      if (!roomByLegacyKey.has(key)) roomByLegacyKey.set(key, room);
+    }
+    const recordFiles = [
+      RENTAL_LEASES_FILE, RENTAL_MAINTENANCE_FILE, RENTAL_CHECKOUTS_FILE, RENTAL_COSTS_FILE,
+      RENTAL_ITEMS_FILE, RENTAL_LEDGER_FILE, RENTAL_BILLS_FILE, RENTAL_RENEWALS_FILE,
+      RENTAL_MOVE_INS_FILE, RENTAL_MAINTENANCE_BATCHES_FILE,
+    ];
+    for (const file of recordFiles) {
+      const records = await readRentalFile(file);
+      let changed = false;
+      for (const record of records) {
+        if (!record.workspaceId) { record.workspaceId = legacyWorkspaceId; changed = true; }
+        if (!record.communityId) {
+          const room = (record.roomId && roomById.get(record.roomId))
+            || roomByLegacyKey.get(`${record.workspaceId}\u0000${record.propertyName || ''}\u0000${record.roomNo || ''}`)
+            || [...roomById.values()].find((item) => item.workspaceId === record.workspaceId && item.roomNo === record.roomNo);
+          if (room?.communityId) { record.communityId = room.communityId; changed = true; }
+        }
+      }
+      if (changed && records.length) await writeRentalFile(file, records);
+    }
+    if (communities.length) await writeRentalJsonArray(RENTAL_COMMUNITIES_FILE, communities);
+    if (workspaces.length) await writeRentalJsonArray(RENTAL_WORKSPACES_FILE, workspaces);
+  })().catch((error) => {
+    rentalTenancyReady = null;
+    throw error;
+  });
+  return rentalTenancyReady;
+}
+
 async function verifyUserPassword(password, auth) {
   if (!auth?.salt || !auth?.hash || typeof password !== 'string') return false;
   const supplied = await scryptAsync(password, auth.salt);
@@ -197,13 +371,36 @@ async function verifyUserPassword(password, auth) {
 }
 
 async function getAdminUser(request) {
+  await ensureRentalTenancyModel();
   const username = cleanText(request.headers['x-admin-user'] || 'admin', 40) || 'admin';
   const password = cleanText(request.headers['x-admin-password'], 128);
-  if (username === 'admin' && await verifyAdminPassword(password)) return { username: 'admin', displayName: '管理员', role: 'admin' };
+  if (username === 'admin' && await verifyAdminPassword(password)) return { username: 'admin', displayName: '管理员', role: 'admin', platformAdmin: true, workspaceId: '' };
   const users = await readAdminUsers();
   const user = users.find((item) => item.username === username && item.enabled !== false);
   if (!user || !await verifyUserPassword(password, user.auth)) return null;
-  return { username: user.username, displayName: user.displayName || user.username, role: 'user' };
+  const platformAdmin = user.role === 'platformAdmin';
+  return { username: user.username, displayName: user.displayName || user.username, role: platformAdmin ? 'admin' : 'user', platformAdmin, workspaceId: platformAdmin ? '' : (user.workspaceId || workspaceIdForUsername(user.username)) };
+}
+
+async function getRentalContext(request, { requireWorkspace = true } = {}) {
+  const actor = await getAdminUser(request);
+  if (!actor) return null;
+  const workspaces = await readRentalJsonArray(RENTAL_WORKSPACES_FILE);
+  const requestedWorkspaceId = cleanText(request.headers['x-rental-workspace'] || request.headers['x-workspace-id'], 80);
+  let workspaceId = actor.workspaceId;
+  if (actor.platformAdmin) {
+    workspaceId = requestedWorkspaceId || workspaces[0]?.id || '';
+  }
+  const workspace = workspaces.find((item) => item.id === workspaceId && item.enabled !== false) || null;
+  if (requireWorkspace && !workspace) {
+    const error = Object.assign(new Error('请先选择有效的客户工作空间'), { statusCode: 422 });
+    throw error;
+  }
+  const context = { ...actor, workspaceId: workspace?.id || '', workspace, platformRoot: Boolean(actor.platformAdmin && !requestedWorkspaceId) };
+  const store = rentalRequestContext.getStore();
+  if (store && typeof store === 'object') Object.assign(store, context);
+  else rentalRequestContext.enterWith(context);
+  return context;
 }
 
 function isValidPhone(value) {
@@ -489,7 +686,7 @@ async function handleCustomerCallRecordDelete(response, id) {
   }
 }
 
-async function readRentalFile(file) {
+async function readRentalFileRaw(file) {
   const databaseRecords = rentalDatabase.readRecords(file, DATA_DIR);
   if (databaseRecords) return databaseRecords;
   try {
@@ -502,11 +699,24 @@ async function readRentalFile(file) {
   }
 }
 
+async function readRentalFile(file) {
+  const records = await readRentalFileRaw(file);
+  const context = rentalRequestContext.getStore();
+  return context?.workspaceId ? rentalRecordsForWorkspace(records, context.workspaceId) : records;
+}
+
 async function writeRentalFile(file, records) {
-  if (rentalDatabase.writeRecords(file, records, DATA_DIR)) return;
+  const context = rentalRequestContext.getStore();
+  let nextRecords = records;
+  if (context?.workspaceId) {
+    const allRecords = await readRentalFileRaw(file);
+    const scopedRecords = records.map((record) => ({ ...record, workspaceId: record.workspaceId || context.workspaceId }));
+    nextRecords = [...allRecords.filter((record) => record.workspaceId !== context.workspaceId), ...scopedRecords];
+  }
+  if (rentalDatabase.writeRecords(file, nextRecords, DATA_DIR)) return;
   await fs.mkdir(DATA_DIR, { recursive: true, mode: 0o750 });
   const temporaryFile = file + '.' + process.pid + '.tmp';
-  await fs.writeFile(temporaryFile, JSON.stringify(records, null, 2), { encoding: 'utf8', mode: 0o640 });
+  await fs.writeFile(temporaryFile, JSON.stringify(nextRecords, null, 2), { encoding: 'utf8', mode: 0o640 });
   await fs.rename(temporaryFile, file);
 }
 
@@ -543,16 +753,68 @@ function normalizeRentalSettings(input = {}, current = {}) {
     updatedAt: new Date().toISOString(),
   };
 }
-async function readRentalSettings() {
+async function readRentalPlatformSettings() {
   const databaseSettings = rentalDatabase.readSettings(DATA_DIR);
   if (databaseSettings) return normalizeRentalSettings(databaseSettings);
   try { return normalizeRentalSettings(JSON.parse(await fs.readFile(RENTAL_SETTINGS_FILE, 'utf8'))); }
   catch (error) { if (error.code === 'ENOENT') return normalizeRentalSettings(); throw error; }
 }
-async function writeRentalSettings(settings) {
+async function writeRentalPlatformSettings(settings) {
   if (rentalDatabase.writeSettings(DATA_DIR, settings)) return;
   await fs.mkdir(DATA_DIR, { recursive: true, mode: 0o750 });
   await fs.writeFile(RENTAL_SETTINGS_FILE, JSON.stringify(settings, null, 2), { encoding: 'utf8', mode: 0o640 });
+}
+function workspaceSettingsFrom(settings = {}) {
+  return {
+    reminderDays: Math.min(365, Math.max(0, Math.round(Number(settings.reminderDays ?? 10) || 0))),
+    propertyUnitPrice: rentalMoney(settings.propertyUnitPrice),
+    waterUnitPrice: rentalMoney(settings.waterUnitPrice),
+    electricityUnitPrice: rentalRate(settings.electricityUnitPrice),
+  };
+}
+function workspaceProfileFrom(input = {}, current = {}) {
+  return {
+    name: cleanText(input.name ?? current.name, 80),
+    phone: cleanText(input.phone ?? current.phone, 30),
+    idCard: cleanText(input.idCard ?? current.idCard, 40).toUpperCase(),
+    address: cleanText(input.address ?? current.address, 200),
+  };
+}
+async function readRentalSettings(workspaceId = '', communityId = '') {
+  const platform = await readRentalPlatformSettings();
+  if (!workspaceId) return platform;
+  const workspaces = await readRentalJsonArray(RENTAL_WORKSPACES_FILE);
+  const workspace = workspaces.find((item) => item.id === workspaceId);
+  const base = normalizeRentalSettings({ ...platform, ...(workspace?.settings || {}) }, platform);
+  base.contractParty = workspaceProfileFrom(workspace?.profile || {});
+  if (!communityId) return base;
+  const communities = await readRentalJsonArray(RENTAL_COMMUNITIES_FILE);
+  const community = communities.find((item) => item.id === communityId && item.workspaceId === workspaceId && !item.archivedAt);
+  if (!community?.settingsConfigured) return base;
+  return normalizeRentalSettings({
+    ...base,
+    reminderDays: community.reminderDays,
+    propertyUnitPrice: community.propertyUnitPrice,
+    waterUnitPrice: community.waterUnitPrice,
+    electricityUnitPrice: community.electricityUnitPrice,
+  }, base);
+}
+async function writeRentalSettings(settings, workspaceId = '') {
+  if (!workspaceId) {
+    await writeRentalPlatformSettings(settings);
+    return;
+  }
+  const workspaces = await readRentalJsonArray(RENTAL_WORKSPACES_FILE);
+  const index = workspaces.findIndex((item) => item.id === workspaceId);
+  if (index < 0) throw Object.assign(new Error('客户工作空间不存在'), { statusCode: 404 });
+  const profile = settings.contractParty || settings.profile;
+  workspaces[index] = {
+    ...workspaces[index],
+    profile: profile ? workspaceProfileFrom(profile, workspaces[index].profile) : (workspaces[index].profile || {}),
+    settings: workspaceSettingsFrom(settings),
+    updatedAt: new Date().toISOString(),
+  };
+  await writeRentalJsonArray(RENTAL_WORKSPACES_FILE, workspaces);
 }
 function rentalMonthCount(start, end) {
   const first = new Date(`${start}T00:00:00Z`);
@@ -857,7 +1119,7 @@ function normalizeRentalRoom(input, current = {}) {
   const landlordContractType = ['paper', 'electronic'].includes(contractTypeInput) ? contractTypeInput : '';
   const landlordContractFile = landlordContractType === 'paper' ? normalizeRentalFileUrl(input.landlordContractFile ?? current.landlordContractFile) : '';
   const landlordContractUrl = landlordContractType === 'electronic' ? normalizeRentalHttpUrl(input.landlordContractUrl ?? current.landlordContractUrl) : '';
-  return { ...current, id: current.id || rentalId(), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), propertyName: rentalText(input.propertyName ?? current.propertyName, 80), status, area, propertyUnitPrice, propertyFeeMode, monthlyPropertyFee: suppliedFee === undefined || suppliedFee === '' ? Math.round(area * propertyUnitPrice * 100) / 100 : rentalMoney(suppliedFee), images: Array.isArray(input.images) ? input.images.slice(0, 20).map((item) => rentalText(item, 500)) : (current.images || []), landlordLeaseStart: rentalDate(input.landlordLeaseStart ?? current.landlordLeaseStart), landlordLeaseEnd: rentalDate(input.landlordLeaseEnd ?? current.landlordLeaseEnd), landlordAnnualRent: annualRent, landlordMonthlyRent: Math.round(annualRent / 12 * 100) / 100, landlordAnnualCost: annualRent, landlordContractType, landlordContractFile, landlordContractUrl, note: rentalText(input.note ?? current.note, 500), updatedAt: new Date().toISOString(), createdAt: current.createdAt || new Date().toISOString() };
+  return { ...current, id: current.id || rentalId(), workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80), communityId: rentalText(input.communityId ?? current.communityId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), propertyName: rentalText(input.propertyName ?? current.propertyName, 80), status, area, propertyUnitPrice, propertyFeeMode, monthlyPropertyFee: suppliedFee === undefined || suppliedFee === '' ? Math.round(area * propertyUnitPrice * 100) / 100 : rentalMoney(suppliedFee), images: Array.isArray(input.images) ? input.images.slice(0, 20).map((item) => rentalText(item, 500)) : (current.images || []), landlordLeaseStart: rentalDate(input.landlordLeaseStart ?? current.landlordLeaseStart), landlordLeaseEnd: rentalDate(input.landlordLeaseEnd ?? current.landlordLeaseEnd), landlordAnnualRent: annualRent, landlordMonthlyRent: Math.round(annualRent / 12 * 100) / 100, landlordAnnualCost: annualRent, landlordContractType, landlordContractFile, landlordContractUrl, note: rentalText(input.note ?? current.note, 500), updatedAt: new Date().toISOString(), createdAt: current.createdAt || new Date().toISOString() };
 }
 function normalizeRentalLease(input, current = {}) {
   const reminderInput = input.reminderEnabled ?? current.reminderEnabled;
@@ -868,7 +1130,7 @@ function normalizeRentalLease(input, current = {}) {
   const propertyFeeMode = ['tenant_self', 'included'].includes(input.propertyFeeMode ?? current.propertyFeeMode) ? (input.propertyFeeMode ?? current.propertyFeeMode) : 'included';
   const depositStatusInput = input.depositStatus ?? current.depositStatus;
   const depositStatus = ['pending', 'refunded'].includes(depositStatusInput) ? depositStatusInput : (leaseStatus === 'ended' ? 'pending' : '');
-  const lease = { ...current, id: current.id || input.id || rentalId(), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), tenantName: rentalText(input.tenantName ?? current.tenantName, 30), tenantPhone: rentalText(input.tenantPhone ?? current.tenantPhone, 30), tenantIdCard: rentalIdCard(input.tenantIdCard ?? current.tenantIdCard), purpose: rentalText(input.purpose ?? current.purpose, 40), paymentMethod: billingCycle, propertyFeeMode, monthlyRent: rentalMoney(input.monthlyRent ?? current.monthlyRent), monthlyPropertyFee: rentalMoney(input.monthlyPropertyFee ?? current.monthlyPropertyFee), deposit: rentalMoney(input.deposit ?? current.deposit), startDate: rentalDate(input.startDate ?? current.startDate), endDate: rentalDate(input.endDate ?? current.endDate), paidThrough: rentalDate(input.paidThrough ?? current.paidThrough), reminderEnabled: true, moveInElectricity: rentalMoney(input.moveInElectricity ?? current.moveInElectricity), moveInWater: rentalMoney(input.moveInWater ?? current.moveInWater), status: leaseStatus, depositStatus, depositRefundedAt: rentalText(input.depositRefundedAt ?? current.depositRefundedAt, 40), depositRefundAmount: rentalMoney(input.depositRefundAmount ?? current.depositRefundAmount), note: rentalText(input.note ?? current.note, 500), updatedAt: new Date().toISOString(), createdAt: current.createdAt || input.createdAt || new Date().toISOString() };
+  const lease = { ...current, id: current.id || input.id || rentalId(), workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80), communityId: rentalText(input.communityId ?? current.communityId, 80), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), tenantName: rentalText(input.tenantName ?? current.tenantName, 30), tenantPhone: rentalText(input.tenantPhone ?? current.tenantPhone, 30), tenantIdCard: rentalIdCard(input.tenantIdCard ?? current.tenantIdCard), purpose: rentalText(input.purpose ?? current.purpose, 40), paymentMethod: billingCycle, propertyFeeMode, monthlyRent: rentalMoney(input.monthlyRent ?? current.monthlyRent), monthlyPropertyFee: rentalMoney(input.monthlyPropertyFee ?? current.monthlyPropertyFee), deposit: rentalMoney(input.deposit ?? current.deposit), startDate: rentalDate(input.startDate ?? current.startDate), endDate: rentalDate(input.endDate ?? current.endDate), paidThrough: rentalDate(input.paidThrough ?? current.paidThrough), reminderEnabled: true, moveInElectricity: rentalMoney(input.moveInElectricity ?? current.moveInElectricity), moveInWater: rentalMoney(input.moveInWater ?? current.moveInWater), status: leaseStatus, depositStatus, depositRefundedAt: rentalText(input.depositRefundedAt ?? current.depositRefundedAt, 40), depositRefundAmount: rentalMoney(input.depositRefundAmount ?? current.depositRefundAmount), note: rentalText(input.note ?? current.note, 500), updatedAt: new Date().toISOString(), createdAt: current.createdAt || input.createdAt || new Date().toISOString() };
   lease.idCardFront = rentalText(input.idCardFront ?? current.idCardFront, 500);
   lease.idCardBack = rentalText(input.idCardBack ?? current.idCardBack, 500);
   lease.billingCycle = billingCycle;
@@ -877,6 +1139,7 @@ function normalizeRentalLease(input, current = {}) {
     ? (input.contractStatus ?? current.contractStatus)
     : 'active';
   lease.contractFileUrl = rentalText(input.contractFileUrl ?? current.contractFileUrl, 500);
+  lease.contractSnapshot = input.contractSnapshot ?? current.contractSnapshot ?? null;
   return { ...lease, ...rentalLeaseTotal(lease) };
 }
 function rentalAuditDetails(resource, record = {}, previous = null, action = '') {
@@ -909,12 +1172,14 @@ function normalizeRentalMaintenance(input, current = {}) {
   const images = Array.isArray(input.images) ? input.images.slice(0, 8).map((item) => rentalText(item, 500)) : (current.images || []);
   const maintenanceType = ['new', 'remove', 'repair'].includes(input.maintenanceType ?? current.maintenanceType) ? (input.maintenanceType ?? current.maintenanceType) : 'repair';
   const status = ['pending', 'done', 'reimbursed'].includes(input.status ?? current.status) ? (input.status ?? current.status) : 'pending';
-  return { ...current, id: current.id || rentalId(), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), maintenanceType, amount: rentalMoney(input.amount ?? current.amount), item: rentalText(input.item ?? current.item, 80), note: rentalText(input.note ?? current.note, 2_000), beforeImage: rentalText(input.beforeImage ?? current.beforeImage, 500), afterImage: rentalText(input.afterImage ?? current.afterImage, 500), paymentProof: rentalText(input.paymentProof ?? current.paymentProof, 500), images, status, maintenanceDate: rentalDate(input.maintenanceDate ?? current.maintenanceDate) || new Date().toISOString().slice(0, 10), reimbursementBatchId: rentalText(input.reimbursementBatchId ?? current.reimbursementBatchId, 80), completedAt: status === 'pending' ? '' : (input.completedAt ?? current.completedAt ?? new Date().toISOString()), reimbursedAt: status === 'reimbursed' ? (input.reimbursedAt ?? current.reimbursedAt ?? new Date().toISOString()) : '', createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
+  return { ...current, id: current.id || rentalId(), workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80), communityId: rentalText(input.communityId ?? current.communityId, 80), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), maintenanceType, amount: rentalMoney(input.amount ?? current.amount), item: rentalText(input.item ?? current.item, 80), note: rentalText(input.note ?? current.note, 2_000), beforeImage: rentalText(input.beforeImage ?? current.beforeImage, 500), afterImage: rentalText(input.afterImage ?? current.afterImage, 500), paymentProof: rentalText(input.paymentProof ?? current.paymentProof, 500), images, status, maintenanceDate: rentalDate(input.maintenanceDate ?? current.maintenanceDate) || new Date().toISOString().slice(0, 10), reimbursementBatchId: rentalText(input.reimbursementBatchId ?? current.reimbursementBatchId, 80), completedAt: status === 'pending' ? '' : (input.completedAt ?? current.completedAt ?? new Date().toISOString()), reimbursedAt: status === 'reimbursed' ? (input.reimbursedAt ?? current.reimbursedAt ?? new Date().toISOString()) : '', createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
 }
 function normalizeRentalMaintenanceBatch(input, current = {}) {
   return {
     ...current,
     id: current.id || rentalId(),
+    workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80),
+    communityId: rentalText(input.communityId ?? current.communityId, 80),
     name: rentalText(input.name ?? current.name, 80) || '未命名批次',
     note: rentalText(input.note ?? current.note, 500),
     createdAt: current.createdAt || new Date().toISOString(),
@@ -923,15 +1188,17 @@ function normalizeRentalMaintenanceBatch(input, current = {}) {
 }
 function normalizeRentalCost(input, current = {}) {
   const types = ['water', 'electricity', 'property', 'other'];
-  return { ...current, id: current.id || rentalId(), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), costType: types.includes(input.costType ?? current.costType) ? (input.costType ?? current.costType) : 'other', amount: rentalMoney(input.amount ?? current.amount), costDate: rentalDate(input.costDate ?? current.costDate) || new Date().toISOString().slice(0, 10), period: rentalText(input.period ?? current.period, 30), note: rentalText(input.note ?? current.note, 1_000), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
+  return { ...current, id: current.id || rentalId(), workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80), communityId: rentalText(input.communityId ?? current.communityId, 80), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), costType: types.includes(input.costType ?? current.costType) ? (input.costType ?? current.costType) : 'other', amount: rentalMoney(input.amount ?? current.amount), costDate: rentalDate(input.costDate ?? current.costDate) || new Date().toISOString().slice(0, 10), period: rentalText(input.period ?? current.period, 30), note: rentalText(input.note ?? current.note, 1_000), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
 }
 function normalizeRentalItem(input, current = {}) {
-  return { ...current, id: current.id || rentalId(), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), name: rentalText(input.name ?? current.name, 100), quantity: Math.max(1, Math.trunc(Number(input.quantity ?? current.quantity) || 1)), note: rentalText(input.note ?? current.note, 500), image: normalizeRentalFileUrl(input.image ?? current.image), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
+  return { ...current, id: current.id || rentalId(), workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80), communityId: rentalText(input.communityId ?? current.communityId, 80), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), name: rentalText(input.name ?? current.name, 100), quantity: Math.max(1, Math.trunc(Number(input.quantity ?? current.quantity) || 1)), note: rentalText(input.note ?? current.note, 500), image: normalizeRentalFileUrl(input.image ?? current.image), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
 }
 function rentalItemMaintenanceInput(item, maintenanceType, now = new Date()) {
   const action = maintenanceType === 'remove' ? '删除' : '新增';
   const quantity = Math.max(1, Math.trunc(Number(item.quantity || 1) || 1));
   return {
+    workspaceId: item.workspaceId,
+    communityId: item.communityId,
     roomId: item.roomId,
     roomNo: item.roomNo,
     maintenanceType: maintenanceType === 'remove' ? 'remove' : 'new',
@@ -1014,7 +1281,7 @@ function normalizeRentalLedger(input, current = {}) {
   const direction = directions.includes(input.direction ?? current.direction) ? (input.direction ?? current.direction) : 'income';
   const fallbackCategory = direction === 'income' ? 'rent' : 'otherExpense';
   const category = categories.includes(input.category ?? current.category) ? (input.category ?? current.category) : fallbackCategory;
-  return { ...current, id: current.id || rentalId(), direction, category, roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), amount: rentalMoney(input.amount ?? current.amount), recordDate: rentalDate(input.recordDate ?? current.recordDate) || new Date().toISOString().slice(0, 10), note: rentalText(input.note ?? current.note, 1_000), sourceType: rentalText(input.sourceType ?? current.sourceType, 30), sourceId: rentalText(input.sourceId ?? current.sourceId, 80), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
+  return { ...current, id: current.id || rentalId(), workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80), communityId: rentalText(input.communityId ?? current.communityId, 80), direction, category, roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), amount: rentalMoney(input.amount ?? current.amount), recordDate: rentalDate(input.recordDate ?? current.recordDate) || new Date().toISOString().slice(0, 10), note: rentalText(input.note ?? current.note, 1_000), sourceType: rentalText(input.sourceType ?? current.sourceType, 30), sourceId: rentalText(input.sourceId ?? current.sourceId, 80), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
 }
 function normalizeRentalBill(input, current = {}) {
   const status = ['planned', 'partial', 'paid', 'overdue', 'void'].includes(input.status ?? current.status)
@@ -1024,10 +1291,10 @@ function normalizeRentalBill(input, current = {}) {
   const propertyFee = rentalMoney(input.propertyFee ?? current.propertyFee);
   const total = Math.round((rent + propertyFee) * 100) / 100;
   const paidAmount = Math.min(total, rentalMoney(input.paidAmount ?? current.paidAmount));
-  return { ...current, id: current.id || rentalId(), leaseId: rentalText(input.leaseId ?? current.leaseId, 80), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), tenantName: rentalText(input.tenantName ?? current.tenantName, 30), periodStart: rentalDate(input.periodStart ?? current.periodStart), periodEnd: rentalDate(input.periodEnd ?? current.periodEnd), dueDate: rentalDate(input.dueDate ?? current.dueDate), rent, propertyFee, total, paidAmount, status, note: rentalText(input.note ?? current.note, 500), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
+  return { ...current, id: current.id || rentalId(), workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80), communityId: rentalText(input.communityId ?? current.communityId, 80), leaseId: rentalText(input.leaseId ?? current.leaseId, 80), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), tenantName: rentalText(input.tenantName ?? current.tenantName, 30), periodStart: rentalDate(input.periodStart ?? current.periodStart), periodEnd: rentalDate(input.periodEnd ?? current.periodEnd), dueDate: rentalDate(input.dueDate ?? current.dueDate), rent, propertyFee, total, paidAmount, status, note: rentalText(input.note ?? current.note, 500), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
 }
 function normalizeRentalRenewal(input, current = {}) {
-  return { ...current, id: current.id || rentalId(), leaseId: rentalText(input.leaseId ?? current.leaseId, 80), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), tenantName: rentalText(input.tenantName ?? current.tenantName, 30), tenantPhone: rentalText(input.tenantPhone ?? current.tenantPhone, 30), renewalDate: rentalDate(input.renewalDate ?? current.renewalDate) || new Date().toISOString().slice(0, 10), startDate: rentalDate(input.startDate ?? current.startDate), endDate: rentalDate(input.endDate ?? current.endDate), durationUnit: input.durationUnit === 'days' ? 'days' : 'months', durationValue: Math.max(1, Number(input.durationValue ?? current.durationValue) || 1), monthlyRent: rentalMoney(input.monthlyRent ?? current.monthlyRent), monthlyPropertyFee: rentalMoney(input.monthlyPropertyFee ?? current.monthlyPropertyFee), deposit: rentalMoney(input.deposit ?? current.deposit), amount: rentalMoney(input.amount ?? current.amount), paymentType: input.paymentType === 'initial' ? 'initial' : (current.paymentType || 'renewal'), paymentMethod: rentalText(input.paymentMethod ?? current.paymentMethod, 20), note: rentalText(input.note ?? current.note, 500), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
+  return { ...current, id: current.id || rentalId(), workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80), communityId: rentalText(input.communityId ?? current.communityId, 80), leaseId: rentalText(input.leaseId ?? current.leaseId, 80), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), tenantName: rentalText(input.tenantName ?? current.tenantName, 30), tenantPhone: rentalText(input.tenantPhone ?? current.tenantPhone, 30), renewalDate: rentalDate(input.renewalDate ?? current.renewalDate) || new Date().toISOString().slice(0, 10), startDate: rentalDate(input.startDate ?? current.startDate), endDate: rentalDate(input.endDate ?? current.endDate), durationUnit: input.durationUnit === 'days' ? 'days' : 'months', durationValue: Math.max(1, Number(input.durationValue ?? current.durationValue) || 1), monthlyRent: rentalMoney(input.monthlyRent ?? current.monthlyRent), monthlyPropertyFee: rentalMoney(input.monthlyPropertyFee ?? current.monthlyPropertyFee), deposit: rentalMoney(input.deposit ?? current.deposit), amount: rentalMoney(input.amount ?? current.amount), paymentType: input.paymentType === 'initial' ? 'initial' : (current.paymentType || 'renewal'), paymentMethod: rentalText(input.paymentMethod ?? current.paymentMethod, 20), note: rentalText(input.note ?? current.note, 500), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
 }
 function normalizeRentalCheckout(input, current = {}) {
   const status = input.status === 'draft' ? 'draft' : 'completed';
@@ -1042,7 +1309,7 @@ function normalizeRentalCheckout(input, current = {}) {
   current.otherItems = otherItems;
   const deposit = rentalMoney(input.deposit ?? current.deposit);
   const checkoutDate = rentalDate(input.checkoutDate ?? current.checkoutDate) || new Date().toISOString().slice(0, 10);
-  return { ...current, id: current.id || rentalId(), status, leaseId: rentalText(input.leaseId ?? current.leaseId, 80), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), tenantName: rentalText(input.tenantName ?? current.tenantName, 30), tenantPhone: rentalText(input.tenantPhone ?? current.tenantPhone, 30), leaseStart: rentalDate(input.leaseStart ?? current.leaseStart), leaseEnd: checkoutDate, checkoutDate, deposit, waterStart: rentalMoney(input.waterStart ?? current.waterStart), waterEnd: rentalMoney(input.waterEnd ?? current.waterEnd), waterUnitPrice: rentalMoney(input.waterUnitPrice ?? current.waterUnitPrice), waterAmount, electricityStart: rentalMoney(input.electricityStart ?? current.electricityStart), electricityEnd: rentalMoney(input.electricityEnd ?? current.electricityEnd), electricityUnitPrice: rentalRate(input.electricityUnitPrice ?? current.electricityUnitPrice), electricityAmount, propertyAmount, otherAmount, otherItems, otherNote: rentalText(input.otherNote ?? current.otherNote, 1_000), totalDeduction, refundAmount: Math.round((deposit - totalDeduction) * 100) / 100, bankName: rentalText(input.bankName ?? current.bankName, 80), accountName: rentalText(input.accountName ?? current.accountName, 40), accountNo: rentalText(input.accountNo ?? current.accountNo, 40), note: rentalText(input.note ?? current.note, 1_000), inventorySnapshot: Array.isArray(input.inventorySnapshot) ? input.inventorySnapshot.slice(0, 100).map((item) => ({ name: rentalText(item.name, 120), quantity: Math.max(1, Math.trunc(Number(item.quantity || 1) || 1)), note: rentalText(item.note, 300), image: normalizeRentalFileUrl(item.image) })).filter((item) => item.name) : (current.inventorySnapshot || []), images: Array.isArray(input.images) ? input.images.slice(0, 10).map((item) => normalizeRentalFileUrl(item)) : (current.images || []), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
+  return { ...current, id: current.id || rentalId(), workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80), communityId: rentalText(input.communityId ?? current.communityId, 80), status, leaseId: rentalText(input.leaseId ?? current.leaseId, 80), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), tenantName: rentalText(input.tenantName ?? current.tenantName, 30), tenantPhone: rentalText(input.tenantPhone ?? current.tenantPhone, 30), leaseStart: rentalDate(input.leaseStart ?? current.leaseStart), leaseEnd: checkoutDate, checkoutDate, deposit, waterStart: rentalMoney(input.waterStart ?? current.waterStart), waterEnd: rentalMoney(input.waterEnd ?? current.waterEnd), waterUnitPrice: rentalMoney(input.waterUnitPrice ?? current.waterUnitPrice), waterAmount, electricityStart: rentalMoney(input.electricityStart ?? current.electricityStart), electricityEnd: rentalMoney(input.electricityEnd ?? current.electricityEnd), electricityUnitPrice: rentalRate(input.electricityUnitPrice ?? current.electricityUnitPrice), electricityAmount, propertyAmount, otherAmount, otherItems, otherNote: rentalText(input.otherNote ?? current.otherNote, 1_000), totalDeduction, refundAmount: Math.round((deposit - totalDeduction) * 100) / 100, bankName: rentalText(input.bankName ?? current.bankName, 80), accountName: rentalText(input.accountName ?? current.accountName, 40), accountNo: rentalText(input.accountNo ?? current.accountNo, 40), note: rentalText(input.note ?? current.note, 1_000), inventorySnapshot: Array.isArray(input.inventorySnapshot) ? input.inventorySnapshot.slice(0, 100).map((item) => ({ name: rentalText(item.name, 120), quantity: Math.max(1, Math.trunc(Number(item.quantity || 1) || 1)), note: rentalText(item.note, 300), image: normalizeRentalFileUrl(item.image) })).filter((item) => item.name) : (current.inventorySnapshot || []), images: Array.isArray(input.images) ? input.images.slice(0, 10).map((item) => normalizeRentalFileUrl(item)) : (current.images || []), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
 }
 function normalizeRentalMoveIn(input, current = {}) {
   const allowedStatus = ['draft', 'contract_pending', 'contract_signed', 'payment_pending', 'completed', 'cancelled'];
@@ -1062,6 +1329,8 @@ function normalizeRentalMoveIn(input, current = {}) {
   return {
     ...current,
     id: current.id || rentalId(),
+    workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80),
+    communityId: rentalText(input.communityId ?? current.communityId, 80),
     roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), propertyName: rentalText(input.propertyName ?? current.propertyName, 80),
     tenantName: rentalText(input.tenantName ?? current.tenantName, 30), tenantPhone: rentalText(input.tenantPhone ?? current.tenantPhone, 30), tenantIdCard: rentalIdCard(input.tenantIdCard ?? current.tenantIdCard),
     purpose: rentalText(input.purpose ?? current.purpose, 30),
@@ -1072,6 +1341,7 @@ function normalizeRentalMoveIn(input, current = {}) {
     durationPreset, durationUnit, durationValue, status, contractStatus, inventorySnapshot: snapshot,
     generatedContractFile: normalizeRentalFileUrl(input.generatedContractFile ?? current.generatedContractFile), generatedContractName: rentalText(input.generatedContractName ?? current.generatedContractName, 120), signedContractFile: normalizeRentalFileUrl(input.signedContractFile ?? current.signedContractFile),
     contractGeneratedAt: input.contractGeneratedAt ?? current.contractGeneratedAt ?? '', signedAt: input.signedAt ?? current.signedAt ?? '',
+    contractSnapshot: input.contractSnapshot ?? current.contractSnapshot ?? null,
     paymentDate: rentalDate(input.paymentDate ?? current.paymentDate), paidThrough: rentalDate(input.paidThrough ?? current.paidThrough),
     completedLeaseId: rentalText(input.completedLeaseId ?? current.completedLeaseId, 80), contractNo: rentalText(input.contractNo ?? current.contractNo, 80), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString(), cancelledAt: input.cancelledAt ?? current.cancelledAt ?? ''
   };
@@ -1147,7 +1417,7 @@ async function syncRentalBills(lease) {
     const nextCursor = addRentalMonths(cursor, interval);
     const periodEnd = nextCursor ? subtractRentalDays(nextCursor, 1) : end;
     if (!existing.has(cursor)) {
-      next.push(normalizeRentalBill({ leaseId: lease.id, roomId: lease.roomId, roomNo: lease.roomNo, tenantName: lease.tenantName, periodStart: cursor, periodEnd: periodEnd > end ? end : periodEnd, dueDate: cursor, rent: lease.monthlyRent * interval, propertyFee: lease.monthlyPropertyFee * interval, status: 'planned' }));
+    next.push(normalizeRentalBill({ workspaceId: lease.workspaceId, communityId: lease.communityId, leaseId: lease.id, roomId: lease.roomId, roomNo: lease.roomNo, tenantName: lease.tenantName, periodStart: cursor, periodEnd: periodEnd > end ? end : periodEnd, dueDate: cursor, rent: lease.monthlyRent * interval, propertyFee: lease.monthlyPropertyFee * interval, status: 'planned' }));
     }
     cursor = nextCursor;
     count += 1;
@@ -1167,13 +1437,152 @@ async function syncRentalMaintenanceLedger(record, archived = false) {
   }
   const maintenanceItem = record.item || (record.maintenanceType === 'new' ? '新增物品' : record.maintenanceType === 'remove' ? '删除物品' : '房间日常维护');
   const maintenanceNote = record.note && record.note !== maintenanceItem ? `${maintenanceItem}·${record.note}` : maintenanceItem;
-  const entry = normalizeRentalLedger({ direction: 'expense', category: 'maintenance', roomId: record.roomId, roomNo: record.roomNo, amount: record.amount, recordDate: record.maintenanceDate, sourceType: 'maintenance', sourceId: record.id, note: maintenanceNote }, index >= 0 ? ledger[index] : {});
+  const entry = normalizeRentalLedger({ workspaceId: record.workspaceId, communityId: record.communityId, direction: 'expense', category: 'maintenance', roomId: record.roomId, roomNo: record.roomNo, amount: record.amount, recordDate: record.maintenanceDate, sourceType: 'maintenance', sourceId: record.id, note: maintenanceNote }, index >= 0 ? ledger[index] : {});
   if (index >= 0) ledger[index] = entry; else ledger.unshift(entry);
   await writeRentalFile(RENTAL_LEDGER_FILE, ledger);
 }
+
+async function handleRentalWorkspaces(request, response, method, id) {
+  try {
+    const actor = await getRentalContext(request, { requireWorkspace: false });
+    if (!actor) { sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' }); return; }
+    if (!actor.platformAdmin) { sendJson(response, 403, { ok: false, message: '只有平台超级管理员可以管理客户空间' }); return; }
+    const workspaces = await readRentalJsonArray(RENTAL_WORKSPACES_FILE);
+    if (method === 'GET') {
+      sendJson(response, 200, { ok: true, data: workspaces.map((item) => ({
+        id: item.id, username: item.username, name: item.name, enabled: item.enabled !== false,
+        profile: item.profile || {}, createdAt: item.createdAt, updatedAt: item.updatedAt,
+      })) });
+      return;
+    }
+    if (method === 'POST') {
+      const input = await readJsonBody(request, MAX_RENTAL_BODY_BYTES);
+      const username = cleanText(input.username, 40);
+      const displayName = cleanText(input.displayName, 40) || username;
+      const password = typeof input.password === 'string' ? input.password : '';
+      const role = input.role === 'platformAdmin' ? 'platformAdmin' : 'user';
+      if (!/^[A-Za-z0-9_-]{3,40}$/.test(username) || username === 'admin') throw Object.assign(new Error('账号需为 3 至 40 位字母、数字、下划线或短横线'), { statusCode: 422 });
+      if (!isValidAdminPassword(password)) throw Object.assign(new Error('密码长度需为 8 至 72 位'), { statusCode: 422 });
+      const users = await readAdminUsers();
+      if (users.some((item) => item.username === username)) {
+        throw Object.assign(new Error('账号已存在'), { statusCode: 409 });
+      }
+      let workspace = null;
+      if (role !== 'platformAdmin') {
+        const existingWorkspaceIndex = workspaces.findIndex((item) => item.id === workspaceIdForUsername(username));
+        workspace = existingWorkspaceIndex >= 0
+          ? normalizeWorkspace({ username, name: cleanText(input.name, 80) || workspaces[existingWorkspaceIndex].name, profile: input.profile || {} }, workspaces[existingWorkspaceIndex])
+          : normalizeWorkspace({ username, name: cleanText(input.name, 80) || `${displayName}的租房空间`, profile: input.profile || {} });
+        if (existingWorkspaceIndex >= 0) workspaces[existingWorkspaceIndex] = workspace; else workspaces.push(workspace);
+      }
+      users.push({ username, displayName, role, workspaceId: workspace?.id || '', enabled: true, auth: await hashAdminPassword(password), createdAt: new Date().toISOString() });
+      await writeAdminUsers(users);
+      await writeRentalJsonArray(RENTAL_WORKSPACES_FILE, workspaces);
+      rentalDatabase.appendAudit(DATA_DIR, { resource: role === 'platformAdmin' ? 'users' : 'workspaces', action: 'create', recordId: workspace?.id || username, actor: actor.displayName, workspaceId: workspace?.id || '', details: role === 'platformAdmin' ? `创建平台超级管理员 ${username}` : `创建客户空间 ${workspace.name}` });
+      sendJson(response, 201, { ok: true, data: { id: workspace?.id || '', username, displayName, role, name: workspace?.name || '', enabled: true } });
+      return;
+    }
+    if (method === 'PATCH' && id) {
+      const index = workspaces.findIndex((item) => item.id === id);
+      if (index < 0) { sendJson(response, 404, { ok: false, message: '客户空间不存在' }); return; }
+      const input = await readJsonBody(request, MAX_RENTAL_BODY_BYTES);
+      const previous = { ...workspaces[index] };
+      workspaces[index] = normalizeWorkspace(input, workspaces[index]);
+      const users = await readAdminUsers();
+      const userIndex = users.findIndex((item) => item.workspaceId === id);
+      if (userIndex >= 0) {
+        if (input.displayName !== undefined) users[userIndex].displayName = cleanText(input.displayName, 40) || users[userIndex].username;
+        if (input.password !== undefined) {
+          if (!isValidAdminPassword(input.password)) throw Object.assign(new Error('密码长度需为 8 至 72 位'), { statusCode: 422 });
+          users[userIndex].auth = await hashAdminPassword(input.password);
+        }
+        if (input.enabled !== undefined) users[userIndex].enabled = Boolean(input.enabled);
+        await writeAdminUsers(users);
+      }
+      await writeRentalJsonArray(RENTAL_WORKSPACES_FILE, workspaces);
+      rentalDatabase.appendAudit(DATA_DIR, { resource: 'workspaces', action: 'update', recordId: id, actor: actor.displayName, workspaceId: id, details: rentalAuditDetails('workspaces', workspaces[index], previous, 'update') });
+      sendJson(response, 200, { ok: true, data: workspaces[index] });
+      return;
+    }
+    sendJson(response, 405, { ok: false, message: '客户空间操作不支持' });
+  } catch (error) {
+    if (!error.statusCode) console.error(error);
+    sendJson(response, error.statusCode || 500, { ok: false, message: error.statusCode ? error.message : '客户空间操作失败' });
+  }
+}
+
+async function handleRentalSession(request, response) {
+  try {
+    const actor = await getRentalContext(request, { requireWorkspace: false });
+    if (!actor) { sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' }); return; }
+    const workspaces = actor.platformAdmin
+      ? await readRentalJsonArray(RENTAL_WORKSPACES_FILE)
+      : (actor.workspace ? [actor.workspace] : []);
+    sendJson(response, 200, {
+      ok: true,
+      data: {
+        actor: { username: actor.username, displayName: actor.displayName, role: actor.role, platformAdmin: Boolean(actor.platformAdmin) },
+        workspace: actor.workspace ? { id: actor.workspace.id, username: actor.workspace.username, name: actor.workspace.name, enabled: actor.workspace.enabled !== false, profile: actor.workspace.profile || {} } : null,
+        workspaces: workspaces.map((item) => ({ id: item.id, username: item.username, name: item.name, enabled: item.enabled !== false, profile: item.profile || {} })),
+      },
+    });
+  } catch (error) {
+    if (!error.statusCode) console.error(error);
+    sendJson(response, error.statusCode || 500, { ok: false, message: error.statusCode ? error.message : '租房会话读取失败' });
+  }
+}
+
+async function handleRentalCommunities(request, response, method, id) {
+  try {
+    const actor = await getRentalContext(request);
+    if (!actor) { sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' }); return; }
+    const communities = await readRentalJsonArray(RENTAL_COMMUNITIES_FILE);
+    const scoped = communities.filter((item) => item.workspaceId === actor.workspaceId);
+    if (method === 'GET') {
+      sendJson(response, 200, { ok: true, data: scoped.filter((item) => !item.archivedAt) });
+      return;
+    }
+    if (method === 'POST') {
+      const input = await readJsonBody(request, MAX_RENTAL_BODY_BYTES);
+      const community = normalizeCommunity({ ...input, workspaceId: actor.workspaceId });
+      if (!community.name) throw Object.assign(new Error('请填写小区名称'), { statusCode: 422 });
+      if (scoped.some((item) => !item.archivedAt && item.name === community.name)) throw Object.assign(new Error('当前工作空间已有同名小区'), { statusCode: 409 });
+      communities.unshift(community);
+      await writeRentalJsonArray(RENTAL_COMMUNITIES_FILE, communities);
+      rentalDatabase.appendAudit(DATA_DIR, { resource: 'communities', action: 'create', recordId: community.id, actor: actor.displayName, workspaceId: actor.workspaceId, communityId: community.id, details: `创建小区 ${community.name}` });
+      sendJson(response, 201, { ok: true, data: community });
+      return;
+    }
+    const index = communities.findIndex((item) => item.id === id && item.workspaceId === actor.workspaceId);
+    if (index < 0) { sendJson(response, 404, { ok: false, message: '小区不存在' }); return; }
+    if (method === 'DELETE') {
+      communities[index] = { ...communities[index], archivedAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+      await writeRentalJsonArray(RENTAL_COMMUNITIES_FILE, communities);
+      rentalDatabase.appendAudit(DATA_DIR, { resource: 'communities', action: 'archive', recordId: id, actor: actor.displayName, workspaceId: actor.workspaceId, communityId: id, details: `归档小区 ${communities[index].name}` });
+      sendJson(response, 200, { ok: true, data: communities[index] });
+      return;
+    }
+    if (method === 'PATCH') {
+      const input = await readJsonBody(request, MAX_RENTAL_BODY_BYTES);
+      const next = normalizeCommunity(input, communities[index]);
+      if (!next.name) throw Object.assign(new Error('请填写小区名称'), { statusCode: 422 });
+      if (communities.some((item) => item.id !== id && item.workspaceId === actor.workspaceId && !item.archivedAt && item.name === next.name)) throw Object.assign(new Error('当前工作空间已有同名小区'), { statusCode: 409 });
+      communities[index] = next;
+      await writeRentalJsonArray(RENTAL_COMMUNITIES_FILE, communities);
+      rentalDatabase.appendAudit(DATA_DIR, { resource: 'communities', action: 'update', recordId: id, actor: actor.displayName, workspaceId: actor.workspaceId, communityId: id, details: `修改小区 ${next.name}` });
+      sendJson(response, 200, { ok: true, data: next });
+      return;
+    }
+    sendJson(response, 405, { ok: false, message: '小区操作不支持' });
+  } catch (error) {
+    if (!error.statusCode) console.error(error);
+    sendJson(response, error.statusCode || 500, { ok: false, message: error.statusCode ? error.message : '小区操作失败' });
+  }
+}
+
 async function handleRentalRenewal(request, response, method) {
   try {
-    const actor = await getAdminUser(request);
+    const actor = await getRentalContext(request);
     if (!actor) { sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' }); return; }
     const records = await readRentalFile(RENTAL_RENEWALS_FILE);
     if (method === 'GET') { sendJson(response, 200, { ok: true, data: records.filter((item) => !item.archivedAt) }); return; }
@@ -1198,13 +1607,13 @@ async function handleRentalRenewal(request, response, method) {
     const initialPayment = period.initialPayment;
     const deposit = initialPayment ? rentalMoney(lease.deposit) : 0;
     const amount = Math.round((periodAmount + deposit) * 100) / 100;
-    const renewal = normalizeRentalRenewal({ leaseId: lease.id, roomId: lease.roomId, roomNo: lease.roomNo, tenantName: lease.tenantName, tenantPhone: lease.tenantPhone, renewalDate: rentalDate(input.renewalDate) || new Date().toISOString().slice(0, 10), startDate, endDate, durationUnit: unit, durationValue: value, monthlyRent: rent, monthlyPropertyFee: propertyFee, deposit, amount, paymentType: initialPayment ? 'initial' : 'renewal', paymentMethod: lease.paymentMethod, note: input.note });
+    const renewal = normalizeRentalRenewal({ workspaceId: actor.workspaceId, communityId: lease.communityId, leaseId: lease.id, roomId: lease.roomId, roomNo: lease.roomNo, tenantName: lease.tenantName, tenantPhone: lease.tenantPhone, renewalDate: rentalDate(input.renewalDate) || new Date().toISOString().slice(0, 10), startDate, endDate, durationUnit: unit, durationValue: value, monthlyRent: rent, monthlyPropertyFee: propertyFee, deposit, amount, paymentType: initialPayment ? 'initial' : 'renewal', paymentMethod: lease.paymentMethod, note: input.note });
     records.unshift(renewal);
     await writeRentalFile(RENTAL_RENEWALS_FILE, records);
     lease.monthlyRent = rent; lease.monthlyPropertyFee = propertyFee; lease.paidThrough = endDate; lease.updatedAt = new Date().toISOString();
     await writeRentalFile(RENTAL_LEASES_FILE, leases);
     const ledger = await readRentalFile(RENTAL_LEDGER_FILE);
-    ledger.unshift(normalizeRentalLedger({ direction: 'income', category: 'rent', roomId: lease.roomId, roomNo: lease.roomNo, amount, recordDate: renewal.renewalDate, sourceType: initialPayment ? 'initial-payment' : 'renewal', sourceId: renewal.id, note: `${lease.tenantName}${initialPayment ? '首次缴费' : '续费'}${unit === 'days' ? `${value}天` : `${value}个月`}，周期起始${startDate}` }));
+    ledger.unshift(normalizeRentalLedger({ workspaceId: actor.workspaceId, communityId: lease.communityId, direction: 'income', category: 'rent', roomId: lease.roomId, roomNo: lease.roomNo, amount, recordDate: renewal.renewalDate, sourceType: initialPayment ? 'initial-payment' : 'renewal', sourceId: renewal.id, note: `${lease.tenantName}${initialPayment ? '首次缴费' : '续费'}${unit === 'days' ? `${value}天` : `${value}个月`}，周期起始${startDate}` }));
     await writeRentalFile(RENTAL_LEDGER_FILE, ledger);
     rentalDatabase.appendAudit(DATA_DIR, { resource: 'renewals', action: 'create', recordId: renewal.id, actor: actor.displayName, details: rentalAuditDetails('renewals', renewal, null, 'create') });
     sendJson(response, 201, { ok: true, data: renewal });
@@ -1212,10 +1621,10 @@ async function handleRentalRenewal(request, response, method) {
 }
 async function handleRentalSettings(request, response, method) {
   try {
-    const actor = await getAdminUser(request);
+    const actor = await getRentalContext(request);
     if (!actor) { sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' }); return; }
     if (method === 'GET') {
-      const settings = await readRentalSettings();
+      const settings = await readRentalSettings(actor.workspaceId);
       if (settings.contractTemplateFile) {
         const filename = rentalFilenameFromUrl(settings.contractTemplateFile);
         settings.contractTemplateFile = signRentalFileUrl(
@@ -1227,14 +1636,30 @@ async function handleRentalSettings(request, response, method) {
       sendJson(response, 200, { ok: true, data: settings });
       return;
     }
-    const current = await readRentalSettings();
+    const current = await readRentalSettings(actor.workspaceId);
     const input = await readJsonBody(request, MAX_RENTAL_BODY_BYTES);
+    const templateFields = ['contractTemplateData', 'contractTemplateFile', 'contractTemplateName', 'contractTemplateUpdatedAt'];
+    if (!actor.platformAdmin && templateFields.some((field) => Object.hasOwn(input, field))) {
+      throw Object.assign(new Error('合同模板由平台超级管理员统一维护'), { statusCode: 403 });
+    }
+    const platformSettings = actor.platformAdmin ? await readRentalPlatformSettings() : null;
     if (typeof input.contractTemplateData === 'string' && input.contractTemplateData.startsWith('data:')) {
       input.contractTemplateFile = await saveRentalDocument(input.contractTemplateData, 'move-in-template');
+      input.contractTemplateUpdatedAt = new Date().toISOString();
     }
     delete input.contractTemplateData;
     const settings = normalizeRentalSettings(input, current);
-    await writeRentalSettings(settings);
+    settings.contractParty = workspaceProfileFrom(input.contractParty || input.profile || current.contractParty || {}, current.contractParty || {});
+    if (actor.platformAdmin && templateFields.some((field) => Object.hasOwn(input, field))) {
+      const platformTemplate = normalizeRentalSettings({
+        ...platformSettings,
+        contractTemplateFile: input.contractTemplateFile ?? platformSettings.contractTemplateFile,
+        contractTemplateName: input.contractTemplateName ?? platformSettings.contractTemplateName,
+        contractTemplateUpdatedAt: input.contractTemplateUpdatedAt ?? platformSettings.contractTemplateUpdatedAt,
+      }, platformSettings);
+      await writeRentalPlatformSettings(platformTemplate);
+    }
+    await writeRentalSettings(settings, actor.workspaceId);
     rentalDatabase.appendAudit(DATA_DIR, { resource: 'settings', action: 'update', recordId: 'rental-settings', actor: actor.displayName, details: rentalAuditDetails('settings', settings, current, 'update') });
     sendJson(response, 200, { ok: true, data: settings });
   } catch (error) { console.error(error); sendJson(response, error.statusCode || 500, { ok: false, message: error.statusCode ? error.message : '租房设置保存失败，请稍后重试' }); }
@@ -1258,7 +1683,7 @@ async function handleRentalPublicMaintenanceReport(request, response) {
 
 async function handleRentalMaintenanceBatches(request, response, method, id) {
   try {
-    const actor = await getAdminUser(request);
+    const actor = await getRentalContext(request);
     if (!actor) { sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' }); return; }
     const [maintenance, batches] = await Promise.all([readRentalFile(RENTAL_MAINTENANCE_FILE), readRentalFile(RENTAL_MAINTENANCE_BATCHES_FILE)]);
     if (method === 'GET') {
@@ -1283,7 +1708,7 @@ async function handleRentalMaintenanceBatches(request, response, method, id) {
     }
     const input = await readJsonBody(request, MAX_RENTAL_BODY_BYTES);
     if (method === 'POST') {
-      const batch = normalizeRentalMaintenanceBatch(input);
+      const batch = normalizeRentalMaintenanceBatch({ ...input, workspaceId: actor.workspaceId });
       if (!batch.name) throw Object.assign(new Error('请填写批次名称'), { statusCode: 422 });
       batches.unshift(batch);
       await writeRentalFile(RENTAL_MAINTENANCE_BATCHES_FILE, batches);
@@ -1295,7 +1720,7 @@ async function handleRentalMaintenanceBatches(request, response, method, id) {
       const index = batches.findIndex((item) => item.id === id);
       if (index < 0) throw Object.assign(new Error('报销批次不存在'), { statusCode: 404 });
       const current = batches[index];
-      const batch = normalizeRentalMaintenanceBatch(input, current);
+      const batch = normalizeRentalMaintenanceBatch({ ...input, workspaceId: actor.workspaceId }, current);
       if (!batch.name) throw Object.assign(new Error('请填写批次名称'), { statusCode: 422 });
       batches[index] = batch;
       await writeRentalFile(RENTAL_MAINTENANCE_BATCHES_FILE, batches);
@@ -1312,9 +1737,9 @@ async function handleRentalMaintenanceBatches(request, response, method, id) {
 
 async function handleRentalContractTemplateDownload(request, response) {
   try {
-    const actor = await getAdminUser(request);
+    const actor = await getRentalContext(request);
     if (!actor) { response.writeHead(401, { 'Content-Type': 'text/plain; charset=utf-8' }).end('请先登录租房管理后台'); return; }
-    const settings = await readRentalSettings();
+    const settings = await readRentalSettings(actor.workspaceId);
     const filename = rentalFilenameFromUrl(settings.contractTemplateFile);
     if (!filename) { response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end('未上传合同模板'); return; }
     const content = await fs.readFile(path.join(RENTAL_FILES_DIR, filename));
@@ -1338,10 +1763,23 @@ function mergeRentalCollectionInput(method, type, id, input, records) {
   return current ? { ...current, ...input } : input;
 }
 
+async function resolveRentalCommunity(actor, input, currentRoom = null) {
+  const communities = await readRentalJsonArray(RENTAL_COMMUNITIES_FILE);
+  let community = communities.find((item) => item.workspaceId === actor.workspaceId && item.id === (input.communityId || currentRoom?.communityId) && !item.archivedAt);
+  const name = rentalText(input.propertyName ?? currentRoom?.propertyName, 80);
+  if (!community && name) community = communities.find((item) => item.workspaceId === actor.workspaceId && item.name === name && !item.archivedAt);
+  if (!community && name) {
+    community = normalizeCommunity({ workspaceId: actor.workspaceId, name });
+    communities.unshift(community);
+    await writeRentalJsonArray(RENTAL_COMMUNITIES_FILE, communities);
+  }
+  return community;
+}
+
 async function handleRentalCollection(request, response, method, type, id) {
   try {
     const purge = new URL(request.url, 'http://' + request.headers.host).searchParams.get('purge') === '1';
-    const actor = await getAdminUser(request);
+    const actor = await getRentalContext(request);
     if (!actor) {
       sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' });
       return;
@@ -1397,21 +1835,27 @@ async function handleRentalCollection(request, response, method, type, id) {
         return records[index];
       }
       const preparedInput = await prepareRentalInput(type, mergeRentalCollectionInput(method, type, id, input, records));
+      preparedInput.workspaceId = actor.workspaceId;
       if (type === 'rooms') {
+        const currentRoom = id ? records.find((item) => item.id === id) : null;
+        const community = await resolveRentalCommunity(actor, preparedInput, currentRoom);
+        if (!community) throw Object.assign(new Error('请先创建并选择小区'), { statusCode: 422 });
+        preparedInput.workspaceId = actor.workspaceId;
+        preparedInput.communityId = community.id;
+        preparedInput.propertyName = community.name;
         preparedInput.propertyName = rentalText(preparedInput.propertyName, 80);
         preparedInput.roomNo = rentalText(preparedInput.roomNo, 40);
         if (!preparedInput.propertyName || !preparedInput.roomNo) throw Object.assign(new Error('小区名称和房间号不能为空'), { statusCode: 422 });
-        const currentRoom = id ? records.find((item) => item.id === id) : null;
         const contractFile = preparedInput.landlordContractFile ?? currentRoom?.landlordContractFile;
         const contractUrl = normalizeRentalHttpUrl(preparedInput.landlordContractUrl ?? currentRoom?.landlordContractUrl);
         if (preparedInput.landlordContractType === 'paper' && !contractFile) throw Object.assign(new Error('请选择纸质版托管合同 PDF'), { statusCode: 422 });
         if (preparedInput.landlordContractType === 'electronic' && !contractUrl) throw Object.assign(new Error('请填写有效的电子版托管合同地址'), { statusCode: 422 });
-        const identityChanged = !currentRoom || currentRoom.propertyName !== preparedInput.propertyName || currentRoom.roomNo !== preparedInput.roomNo;
-        if (identityChanged && records.some((room) => room.id !== id && !room.archivedAt && room.propertyName === preparedInput.propertyName && room.roomNo === preparedInput.roomNo)) {
+        const identityChanged = !currentRoom || currentRoom.communityId !== preparedInput.communityId || currentRoom.roomNo !== preparedInput.roomNo;
+        if (identityChanged && records.some((room) => room.id !== id && !room.archivedAt && room.communityId === preparedInput.communityId && room.roomNo === preparedInput.roomNo)) {
           throw Object.assign(new Error('该小区的房间号已存在，请勿重复创建'), { statusCode: 409 });
         }
-        const settings = await readRentalSettings();
-        if (settings.propertyUnitPrice > 0) {
+        const settings = await readRentalSettings(actor.workspaceId, community.id);
+        if (community.settingsConfigured || settings.propertyUnitPrice > 0) {
           preparedInput.propertyUnitPrice = settings.propertyUnitPrice;
         }
         const leases = await readRentalFile(RENTAL_LEASES_FILE);
@@ -1430,6 +1874,9 @@ async function handleRentalCollection(request, response, method, type, id) {
           if (!depositRefundPatch && room.status === 'inactive') throw Object.assign(new Error('该房间已设为无效，不能新增租户入住'), { statusCode: 422 });
           preparedInput.roomId = room.id;
           preparedInput.roomNo = room.roomNo;
+          preparedInput.workspaceId = actor.workspaceId;
+          preparedInput.communityId = room.communityId;
+          preparedInput.propertyName = room.propertyName;
           if (!depositRefundPatch && records.some((lease) => lease.id !== id && !lease.archivedAt && lease.status === 'active' && ((lease.roomId && lease.roomId === room.id) || (!lease.roomId && lease.roomNo === room.roomNo)))) {
             throw Object.assign(new Error('该房间已有在租租户，请使用续费或先办理退房'), { statusCode: 409 });
           }
@@ -1446,6 +1893,9 @@ async function handleRentalCollection(request, response, method, type, id) {
         if (!room) throw Object.assign(new Error('请先创建房间，再添加物品'), { statusCode: 422 });
         preparedInput.roomId = room.id;
         preparedInput.roomNo = room.roomNo;
+        preparedInput.workspaceId = actor.workspaceId;
+        preparedInput.communityId = room.communityId;
+        preparedInput.propertyName = room.propertyName;
       }
       if (['maintenance', 'costs', 'ledger'].includes(type) && (preparedInput.roomId || preparedInput.roomNo)) {
         const rooms = await readRentalFile(RENTAL_ROOMS_FILE);
@@ -1455,6 +1905,9 @@ async function handleRentalCollection(request, response, method, type, id) {
         if (!room) throw Object.assign(new Error('关联房间不存在或已失效'), { statusCode: 422 });
         preparedInput.roomId = room.id;
         preparedInput.roomNo = room.roomNo;
+        preparedInput.workspaceId = actor.workspaceId;
+        preparedInput.communityId = room.communityId;
+        preparedInput.propertyName = room.propertyName;
       }
       if (type === 'maintenance' && preparedInput.reimbursementBatchId) {
         const batches = await readRentalFile(RENTAL_MAINTENANCE_BATCHES_FILE);
@@ -1468,6 +1921,8 @@ async function handleRentalCollection(request, response, method, type, id) {
           preparedInput.leaseId = activeLease.id;
           preparedInput.roomId = activeLease.roomId;
           preparedInput.roomNo = activeLease.roomNo;
+          preparedInput.workspaceId = actor.workspaceId;
+          preparedInput.communityId = activeLease.communityId;
           if (!preparedInput.tenantName) preparedInput.tenantName = activeLease.tenantName;
           if (!preparedInput.tenantPhone) preparedInput.tenantPhone = activeLease.tenantPhone;
           if (!preparedInput.leaseStart) preparedInput.leaseStart = activeLease.startDate;
@@ -1477,7 +1932,7 @@ async function handleRentalCollection(request, response, method, type, id) {
           if (!preparedInput.electricityStart) preparedInput.electricityStart = activeLease.moveInElectricity;
           if (!preparedInput.inventorySnapshot) preparedInput.inventorySnapshot = (await readRentalFile(RENTAL_ITEMS_FILE)).filter((item) => ((activeLease.roomId && item.roomId === activeLease.roomId) || (!item.roomId && item.roomNo === activeLease.roomNo)) && !item.archivedAt).map((item) => ({ name: item.name, quantity: item.quantity, note: item.note, image: item.image }));
         }
-        const settings = await readRentalSettings();
+        const settings = await readRentalSettings(actor.workspaceId, activeLease?.communityId || preparedInput.communityId);
         preparedInput.waterUnitPrice = settings.waterUnitPrice;
         preparedInput.electricityUnitPrice = settings.electricityUnitPrice;
         const waterStart = rentalMoney(preparedInput.waterStart);
@@ -1504,7 +1959,7 @@ async function handleRentalCollection(request, response, method, type, id) {
         const ledger = await readRentalFile(RENTAL_LEDGER_FILE);
         const sourceId = `deposit:${record.id}`;
         if (!ledger.some((item) => item.sourceType === 'deposit-refund' && item.sourceId === sourceId && !item.archivedAt)) {
-          ledger.unshift(normalizeRentalLedger({ direction: 'expense', category: 'depositRefund', roomId: record.roomId, roomNo: record.roomNo, amount: record.depositRefundAmount || record.deposit, recordDate: new Date().toISOString().slice(0, 10), sourceType: 'deposit-refund', sourceId, note: `${record.tenantName || '租户'}押金已退` }));
+          ledger.unshift(normalizeRentalLedger({ workspaceId: record.workspaceId, communityId: record.communityId, direction: 'expense', category: 'depositRefund', roomId: record.roomId, roomNo: record.roomNo, amount: record.depositRefundAmount || record.deposit, recordDate: new Date().toISOString().slice(0, 10), sourceType: 'deposit-refund', sourceId, note: `${record.tenantName || '租户'}押金已退` }));
           await writeRentalFile(RENTAL_LEDGER_FILE, ledger);
         }
       }
@@ -1558,7 +2013,7 @@ function moveInPeriodEnd(startDate, unit, value) {
 }
 async function handleRentalMoveIns(request, response, method, id) {
   try {
-    const actor = await getAdminUser(request);
+    const actor = await getRentalContext(request);
     if (!actor) { sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' }); return; }
     const records = await readRentalFile(RENTAL_MOVE_INS_FILE);
     if (method === 'GET') {
@@ -1581,8 +2036,8 @@ async function handleRentalMoveIns(request, response, method, id) {
     if (!room) throw Object.assign(new Error('请先创建并选择有效房间'), { statusCode: 422 });
     const activeLease = (await readRentalFile(RENTAL_LEASES_FILE)).some((lease) => !lease.archivedAt && lease.status === 'active' && ((lease.roomId && lease.roomId === room.id) || (!lease.roomId && lease.roomNo === room.roomNo)));
     if (activeLease && !current) throw Object.assign(new Error('该房间已有在租租户，请使用续费'), { statusCode: 409 });
-    const prepared = await prepareRentalInput('move-ins', { ...input, roomId: room.id, roomNo: room.roomNo });
-    const record = normalizeRentalMoveIn({ ...prepared, propertyName: room.propertyName, contractNo: current?.contractNo || prepared.contractNo || `DR-${new Date().toISOString().slice(0, 10).replaceAll('-', '')}-${room.roomNo}` }, current || { roomId: room.id, roomNo: room.roomNo, propertyName: room.propertyName, inventorySnapshot: (await readRentalFile(RENTAL_ITEMS_FILE)).filter((item) => item.roomId === room.id && !item.archivedAt).map((item) => ({ name: item.name, quantity: item.quantity, note: item.note, image: item.image })) });
+    const prepared = await prepareRentalInput('move-ins', { ...input, workspaceId: actor.workspaceId, communityId: room.communityId, roomId: room.id, roomNo: room.roomNo });
+    const record = normalizeRentalMoveIn({ ...prepared, workspaceId: actor.workspaceId, communityId: room.communityId, propertyName: room.propertyName, contractNo: current?.contractNo || prepared.contractNo || `DR-${new Date().toISOString().slice(0, 10).replaceAll('-', '')}-${room.roomNo}` }, current || { workspaceId: actor.workspaceId, communityId: room.communityId, roomId: room.id, roomNo: room.roomNo, propertyName: room.propertyName, inventorySnapshot: (await readRentalFile(RENTAL_ITEMS_FILE)).filter((item) => item.roomId === room.id && !item.archivedAt).map((item) => ({ name: item.name, quantity: item.quantity, note: item.note, image: item.image })) });
     record.status = current?.status === 'draft' && input.status === 'contract_pending'
       ? 'contract_pending'
       : current?.status || record.status || 'draft';
@@ -1597,29 +2052,54 @@ async function handleRentalMoveIns(request, response, method, id) {
 }
 async function handleRentalMoveInAction(request, response, id, action) {
   try {
-    const actor = await getAdminUser(request);
+    const actor = await getRentalContext(request);
     if (!actor) { sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' }); return; }
     const records = await readRentalFile(RENTAL_MOVE_INS_FILE);
     const index = records.findIndex((item) => item.id === id);
     if (index < 0) throw Object.assign(new Error('办理入住记录不存在'), { statusCode: 404 });
     const record = records[index];
     if (action === 'generate-contract') {
-      const settings = await readRentalSettings();
+      const rooms = await readRentalFile(RENTAL_ROOMS_FILE);
+      const room = rooms.find((item) => item.id === record.roomId || item.roomNo === record.roomNo);
+      const communities = await readRentalJsonArray(RENTAL_COMMUNITIES_FILE);
+      const community = communities.find((item) => item.workspaceId === actor.workspaceId && item.id === (record.communityId || room?.communityId) && !item.archivedAt)
+        || communities.find((item) => item.workspaceId === actor.workspaceId && item.name === (record.propertyName || room?.propertyName) && !item.archivedAt);
+      const settings = await readRentalSettings(actor.workspaceId, community?.id || record.communityId);
       const templateName = rentalFilenameFromUrl(settings.contractTemplateFile);
       if (!templateName) throw Object.assign(new Error('请先在租房设置中上传Word合同模板'), { statusCode: 422 });
       const template = await fs.readFile(path.join(RENTAL_FILES_DIR, templateName));
-      const rooms = await readRentalFile(RENTAL_ROOMS_FILE);
-      const room = rooms.find((item) => item.id === record.roomId || item.roomNo === record.roomNo);
       const paymentMethodLabel = ({ monthly: '月付', quarterly: '季付', yearly: '年付' })[record.paymentMethod] || record.paymentMethod || '月付';
       const purposeLabel = ({ self: '自住', studio: '工作室', homestay: '民宿', other: '其他' })[record.purpose] || record.purpose || '自住';
       const monthlyTotal = Math.round((Number(record.monthlyRent || 0) + Number(record.monthlyPropertyFee || 0)) * 100) / 100;
-      const propertyName = record.propertyName || room?.propertyName || '';
-      const propertyAddressName = propertyName.includes('西城') ? propertyName : `西城${propertyName}`;
+      const propertyName = community?.name || record.propertyName || room?.propertyName || '';
+      const communityAddress = community?.address || '';
+      const signingAddress = community?.signingAddress || communityAddress;
+      const contractParty = actor.workspace?.profile || {};
       const contractNo = record.contractNo || `DR-${new Date().toISOString().slice(0, 10).replaceAll('-', '')}-${record.roomNo}`;
       record.contractNo = contractNo;
       const contractName = rentalDownloadFilename([propertyName, record.roomNo, record.tenantName, '租赁合同'].filter(Boolean).join('-'), '.docx');
       record.generatedContractName = contractName;
-      const filled = fillDocxTemplate(template, { propertyName, propertyAddress: `东营市${propertyAddressName}D1-${record.roomNo}`, roomNo: record.roomNo, roomLabel: `${propertyName} · ${record.roomNo}`, contractNo, tenantName: record.tenantName, tenantIdCard: record.tenantIdCard, tenantPhone: record.tenantPhone, purpose: purposeLabel, startDate: record.startDate, endDate: record.endDate || '/', area: room?.area || '', paymentMethod: paymentMethodLabel, monthlyRent: record.monthlyRent, monthlyPropertyFee: record.monthlyPropertyFee, monthlyTotal, deposit: record.deposit, moveInWater: record.moveInWater, moveInElectricity: record.moveInElectricity, waterUnitPrice: settings.waterUnitPrice, electricityUnitPrice: settings.electricityUnitPrice, inventory: (record.inventorySnapshot || []).map((item) => item.name ? `${item.name} × ${Math.max(1, Math.trunc(Number(item.quantity || 1) || 1))}` : '').filter(Boolean).join('、') });
+      const fields = {
+        propertyName, communityName: propertyName, propertyAddress: communityAddress, communityAddress, signingAddress,
+        roomNo: record.roomNo, roomLabel: `${propertyName} · ${record.roomNo}`, contractNo,
+        landlordName: contractParty.name, landlordPhone: contractParty.phone, landlordIdCard: contractParty.idCard, landlordAddress: contractParty.address,
+        signerName: contractParty.name, signerPhone: contractParty.phone, signerIdCard: contractParty.idCard, signerAddress: contractParty.address,
+        tenantName: record.tenantName, tenantIdCard: record.tenantIdCard, tenantPhone: record.tenantPhone, purpose: purposeLabel,
+        startDate: record.startDate, endDate: record.endDate || '/', area: room?.area || '', paymentMethod: paymentMethodLabel,
+        monthlyRent: record.monthlyRent, monthlyPropertyFee: record.monthlyPropertyFee, monthlyTotal, deposit: record.deposit,
+        moveInWater: record.moveInWater, moveInElectricity: record.moveInElectricity, waterUnitPrice: settings.waterUnitPrice,
+        electricityUnitPrice: settings.electricityUnitPrice,
+        inventory: (record.inventorySnapshot || []).map((item) => item.name ? `${item.name} × ${Math.max(1, Math.trunc(Number(item.quantity || 1) || 1))}` : '').filter(Boolean).join('、'),
+      };
+      const filled = fillDocxTemplate(template, fields);
+      record.contractSnapshot = {
+        templateName: settings.contractTemplateName || templateName,
+        templateUpdatedAt: settings.contractTemplateUpdatedAt || '',
+        workspaceId: actor.workspaceId,
+        contractParty: { name: contractParty.name || '', phone: contractParty.phone || '', idCard: contractParty.idCard || '', address: contractParty.address || '' },
+        community: { id: community?.id || record.communityId || '', name: propertyName, address: communityAddress, signingAddress },
+        roomNo: record.roomNo || '', generatedAt: new Date().toISOString(),
+      };
       await fs.mkdir(RENTAL_FILES_DIR, { recursive: true, mode: 0o750 });
       const filename = `move-in-contract-${crypto.randomUUID()}.docx`;
       await fs.writeFile(path.join(RENTAL_FILES_DIR, filename), filled, { mode: 0o640 });
@@ -1643,11 +2123,11 @@ async function handleRentalMoveInAction(request, response, id, action) {
       const durationValue = Math.max(1, Number(presetMonths[input.durationPreset]) || Number(input.durationValue ?? record.durationValue) || 1);
       const startDate = record.startDate || new Date().toISOString().slice(0, 10);
       const paidThrough = moveInPeriodEnd(startDate, durationUnit, durationValue);
-      const lease = normalizeRentalLease({ roomId: room.id, roomNo: room.roomNo, tenantName: record.tenantName, tenantPhone: record.tenantPhone, tenantIdCard: record.tenantIdCard, purpose: record.purpose, paymentMethod: record.paymentMethod, propertyFeeMode: record.propertyFeeMode, monthlyRent: record.monthlyRent, monthlyPropertyFee: record.monthlyPropertyFee, deposit: record.deposit, startDate, endDate: record.endDate, paidThrough, moveInWater: input.moveInWater ?? record.moveInWater, moveInElectricity: input.moveInElectricity ?? record.moveInElectricity, note: record.note, idCardFront: record.idCardFront, idCardBack: record.idCardBack, contractStatus: 'active', contractFileUrl: record.signedContractFile });
+      const lease = normalizeRentalLease({ workspaceId: actor.workspaceId, communityId: record.communityId || room.communityId, roomId: room.id, roomNo: room.roomNo, tenantName: record.tenantName, tenantPhone: record.tenantPhone, tenantIdCard: record.tenantIdCard, purpose: record.purpose, paymentMethod: record.paymentMethod, propertyFeeMode: record.propertyFeeMode, monthlyRent: record.monthlyRent, monthlyPropertyFee: record.monthlyPropertyFee, deposit: record.deposit, startDate, endDate: record.endDate, paidThrough, moveInWater: input.moveInWater ?? record.moveInWater, moveInElectricity: input.moveInElectricity ?? record.moveInElectricity, note: record.note, idCardFront: record.idCardFront, idCardBack: record.idCardBack, contractStatus: 'active', contractFileUrl: record.signedContractFile, contractSnapshot: record.contractSnapshot });
       leases.unshift(lease); await writeRentalFile(RENTAL_LEASES_FILE, leases);
       const renewals = await readRentalFile(RENTAL_RENEWALS_FILE); const amount = Math.round(((lease.monthlyRent + lease.monthlyPropertyFee) * (durationUnit === 'days' ? durationValue / 30 : durationValue) + lease.deposit) * 100) / 100;
-      const renewal = normalizeRentalRenewal({ leaseId: lease.id, roomId: room.id, roomNo: room.roomNo, tenantName: lease.tenantName, tenantPhone: lease.tenantPhone, renewalDate: input.paymentDate || new Date().toISOString().slice(0, 10), startDate, endDate: paidThrough, durationUnit, durationValue, monthlyRent: lease.monthlyRent, monthlyPropertyFee: lease.monthlyPropertyFee, deposit: lease.deposit, amount, paymentType: 'initial', paymentMethod: lease.paymentMethod }); renewals.unshift(renewal); await writeRentalFile(RENTAL_RENEWALS_FILE, renewals);
-      const ledger = await readRentalFile(RENTAL_LEDGER_FILE); ledger.unshift(normalizeRentalLedger({ direction: 'income', category: 'rent', roomId: room.id, roomNo: room.roomNo, amount, recordDate: renewal.renewalDate, sourceType: 'initial-payment', sourceId: renewal.id, note: `${lease.tenantName || '租户'}首次缴费，周期起始${startDate}` })); await writeRentalFile(RENTAL_LEDGER_FILE, ledger);
+      const renewal = normalizeRentalRenewal({ workspaceId: actor.workspaceId, communityId: lease.communityId || room.communityId, leaseId: lease.id, roomId: room.id, roomNo: room.roomNo, tenantName: lease.tenantName, tenantPhone: lease.tenantPhone, renewalDate: input.paymentDate || new Date().toISOString().slice(0, 10), startDate, endDate: paidThrough, durationUnit, durationValue, monthlyRent: lease.monthlyRent, monthlyPropertyFee: lease.monthlyPropertyFee, deposit: lease.deposit, amount, paymentType: 'initial', paymentMethod: lease.paymentMethod }); renewals.unshift(renewal); await writeRentalFile(RENTAL_RENEWALS_FILE, renewals);
+      const ledger = await readRentalFile(RENTAL_LEDGER_FILE); ledger.unshift(normalizeRentalLedger({ workspaceId: actor.workspaceId, communityId: lease.communityId || room.communityId, direction: 'income', category: 'rent', roomId: room.id, roomNo: room.roomNo, amount, recordDate: renewal.renewalDate, sourceType: 'initial-payment', sourceId: renewal.id, note: `${lease.tenantName || '租户'}首次缴费，周期起始${startDate}` })); await writeRentalFile(RENTAL_LEDGER_FILE, ledger);
       room.status = 'occupied'; room.updatedAt = new Date().toISOString(); await writeRentalFile(RENTAL_ROOMS_FILE, rooms); await syncRentalBills(lease);
       record.completedLeaseId = lease.id; record.paymentDate = renewal.renewalDate; record.paidThrough = paidThrough; record.durationUnit = durationUnit; record.durationValue = durationValue; record.status = 'completed'; record.updatedAt = new Date().toISOString(); record.completedAt = new Date().toISOString();
     } else throw Object.assign(new Error('不支持的入住办理操作'), { statusCode: 404 });
@@ -1656,7 +2136,8 @@ async function handleRentalMoveInAction(request, response, id, action) {
 }
 async function handleRentalSummary(request, response) {
   try {
-    if (!await hasAdminAccess(request)) {
+    const actor = await getRentalContext(request);
+    if (!actor) {
       sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' });
       return;
     }
@@ -1679,18 +2160,21 @@ async function handleRentalSummary(request, response) {
 
 async function handleRentalAudit(request, response) {
   try {
-    if (!await hasAdminAccess(request)) { sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' }); return; }
-    sendJson(response, 200, { ok: true, data: rentalDatabase.listAudit(DATA_DIR, 300) });
+    const actor = await getRentalContext(request);
+    if (!actor) { sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' }); return; }
+    const entries = rentalDatabase.listAudit(DATA_DIR, 300);
+    sendJson(response, 200, { ok: true, data: actor.platformRoot ? entries : entries.filter((item) => item.workspaceId === actor.workspaceId) });
   } catch (error) { console.error(error); sendJson(response, 500, { ok: false, message: '操作日志读取失败' }); }
 }
 
 async function handleRentalUsers(request, response, method, id) {
   try {
-    const actor = await getAdminUser(request);
+    const actor = await getRentalContext(request, { requireWorkspace: false });
     if (!actor) { sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' }); return; }
     const users = await readAdminUsers();
     if (method === 'GET') {
-      sendJson(response, 200, { ok: true, data: [{ username: 'admin', displayName: '管理员', role: 'admin', enabled: true }, ...users.map((item) => ({ username: item.username, displayName: item.displayName || item.username, role: 'user', enabled: item.enabled !== false, createdAt: item.createdAt }))] });
+      if (!actor.platformAdmin) { sendJson(response, 200, { ok: true, data: [] }); return; }
+      sendJson(response, 200, { ok: true, data: [{ username: 'admin', displayName: '管理员', role: 'admin', platformAdmin: true, enabled: true }, ...users.map((item) => ({ username: item.username, displayName: item.displayName || item.username, role: item.role === 'platformAdmin' ? 'admin' : 'user', platformAdmin: item.role === 'platformAdmin', enabled: item.enabled !== false, createdAt: item.createdAt }))] });
       return;
     }
     if (actor.role !== 'admin') { sendJson(response, 403, { ok: false, message: '只有管理员可以管理账号' }); return; }
@@ -1699,14 +2183,23 @@ async function handleRentalUsers(request, response, method, id) {
       const username = cleanText(input.username, 40);
       const displayName = cleanText(input.displayName, 40) || username;
       const password = typeof input.password === 'string' ? input.password : '';
+      const role = input.role === 'platformAdmin' ? 'platformAdmin' : 'user';
       if (!/^[A-Za-z0-9_-]{3,40}$/.test(username) || username === 'admin') throw Object.assign(new Error('账号需为 3 至 40 位字母、数字、下划线或短横线'), { statusCode: 422 });
       if (!isValidAdminPassword(password)) throw Object.assign(new Error('密码长度需为 8 至 72 位'), { statusCode: 422 });
       if (users.some((item) => item.username === username)) throw Object.assign(new Error('账号已存在'), { statusCode: 409 });
-      const user = { username, displayName, enabled: true, auth: await hashAdminPassword(password), createdAt: new Date().toISOString() };
+      const workspaceId = role === 'platformAdmin' ? '' : workspaceIdForUsername(username);
+      if (role !== 'platformAdmin') {
+        const workspaces = await readRentalJsonArray(RENTAL_WORKSPACES_FILE);
+        if (!workspaces.some((item) => item.id === workspaceId)) {
+          workspaces.push(normalizeWorkspace({ id: workspaceId, username, name: `${displayName}的租房空间` }));
+          await writeRentalJsonArray(RENTAL_WORKSPACES_FILE, workspaces);
+        }
+      }
+      const user = { username, displayName, role, workspaceId, enabled: true, auth: await hashAdminPassword(password), createdAt: new Date().toISOString() };
       users.push(user);
       await writeAdminUsers(users);
       rentalDatabase.appendAudit(DATA_DIR, { resource: 'users', action: 'create', recordId: username, actor: actor.displayName, details: rentalAuditDetails('users', user, null, 'create') });
-      sendJson(response, 201, { ok: true, data: { username, displayName, role: 'user', enabled: true, createdAt: user.createdAt } });
+      sendJson(response, 201, { ok: true, data: { username, displayName, role, enabled: true, createdAt: user.createdAt } });
       return;
     }
     if (method === 'PATCH' && id) {
@@ -1722,7 +2215,7 @@ async function handleRentalUsers(request, response, method, id) {
       if (input.enabled !== undefined) users[index].enabled = Boolean(input.enabled);
       await writeAdminUsers(users);
       rentalDatabase.appendAudit(DATA_DIR, { resource: 'users', action: 'update', recordId: id, actor: actor.displayName, details: rentalAuditDetails('users', users[index], previousUser, 'update') });
-      sendJson(response, 200, { ok: true, data: { username: users[index].username, displayName: users[index].displayName, role: 'user', enabled: users[index].enabled } });
+      sendJson(response, 200, { ok: true, data: { username: users[index].username, displayName: users[index].displayName, role: users[index].role === 'platformAdmin' ? 'admin' : 'user', platformAdmin: users[index].role === 'platformAdmin', enabled: users[index].enabled } });
       return;
     }
     sendJson(response, 405, { ok: false, message: '账号操作不支持' });
@@ -3604,7 +4097,7 @@ async function serveStatic(request, response, pathname) {
   }
 }
 
-const server = http.createServer(async (request, response) => {
+const handleServerRequest = async (request, response) => {
   const url = new URL(request.url, 'http://' + request.headers.host);
 
   if (request.method === 'POST' && url.pathname === '/api/applications') {
@@ -3613,6 +4106,20 @@ const server = http.createServer(async (request, response) => {
   }
   if (request.method === 'POST' && url.pathname === '/api/customer-call-records') {
     await handleCustomerCallRecordCreate(request, response);
+    return;
+  }
+  if (request.method === 'GET' && url.pathname === '/api/zufang/session') {
+    await handleRentalSession(request, response);
+    return;
+  }
+  const rentalWorkspaceRoute = url.pathname.match(/^\/api\/zufang\/workspaces(?:\/([^/]+))?$/);
+  if (rentalWorkspaceRoute && ['GET', 'POST', 'PATCH'].includes(request.method)) {
+    await handleRentalWorkspaces(request, response, request.method, rentalWorkspaceRoute[1] ? decodeURIComponent(rentalWorkspaceRoute[1]) : '');
+    return;
+  }
+  const rentalCommunityRoute = url.pathname.match(/^\/api\/zufang\/communities(?:\/([0-9a-f-]{36}))?$/);
+  if (rentalCommunityRoute && ['GET', 'POST', 'PATCH', 'DELETE'].includes(request.method)) {
+    await handleRentalCommunities(request, response, request.method, rentalCommunityRoute[1] || '');
     return;
   }
   const rentalCollectionRoute = url.pathname.match(/^\/api\/zufang\/(rooms|leases|maintenance|checkouts|costs|items|ledger|bills)(?:\/([0-9a-f-]{36}))?$/);
@@ -3778,7 +4285,9 @@ const server = http.createServer(async (request, response) => {
 
   response.writeHead(405, { Allow: 'GET, POST, PATCH, DELETE' });
   response.end('Method not allowed');
-});
+};
+
+const server = http.createServer((request, response) => rentalRequestContext.run({ request }, () => handleServerRequest(request, response)));
 
 if (require.main === module) {
   if (IS_PRODUCTION && !process.env.ADMIN_PASSWORD) {
