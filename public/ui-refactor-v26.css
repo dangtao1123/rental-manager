@@ -489,3 +489,154 @@ body:has(#tenants.tab-panel) > .main.rental-shell #tenants.tab-panel.view #tenan
 @media (max-width: 380px) {
   #ledger.tab-panel.view .ledger-summary strong { font-size: 11px !important; }
 }
+
+body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .contract-link.is-missing {
+  color: #9a5f00 !important;
+  border-color: #e5ae4b !important;
+  background: #fff4d6 !important;
+  cursor: pointer !important;
+  font-weight: 800 !important;
+}
+.button-warning-outline {
+  color: #9a5f00 !important;
+  border: 1px solid #e5ae4b !important;
+  background: #fff4d6 !important;
+}
+
+.room-actions .contract-link.is-missing {
+  color: #b4232d !important;
+  border-color: #e88c95 !important;
+  background: #fff0f1 !important;
+  font-weight: 800 !important;
+}
+body > .main.rental-shell > #rental .room-actions .contract-link.is-missing,
+body > .main.rental-shell > #tenants #tenant-list .contract-link.is-missing {
+  color: #b4232d !important;
+  border-color: #e06b76 !important;
+  background: #fff0f1 !important;
+  font-weight: 800 !important;
+}
+.lease-contract-field { align-items: flex-start !important; gap: 8px !important; }
+.lease-contract-current { display: flex; align-items: center; min-height: 32px; }
+.lease-contract-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.upload-contract-button { display: inline-flex !important; align-items: center; justify-content: center; cursor: pointer; }
+.contract-missing-text { color: #b4232d; font-weight: 800; }
+.contract-preview-toolbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 14px; }
+.contract-preview-toolbar p { margin: 5px 0 0; color: #6d8793; font-size: 12px; }
+.contract-preview-toolbar label { display: grid; gap: 5px; min-width: 250px; color: #5c7885; font-size: 12px; font-weight: 700; }
+.contract-preview-toolbar select { min-height: 38px; }
+.contract-preview-table-wrap { overflow-x: auto; }
+.topbar .avatar-small { width: auto !important; min-width: 36px !important; max-width: 180px !important; padding: 0 10px !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+.sidebar-footer strong { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Keep the dense desktop directories inside the viewport before switching to cards. */
+@media (min-width: 761px) and (max-width: 1440px) {
+  body > .main.rental-shell > #rooms.tab-panel.view .room-admin-table {
+    overflow: hidden !important;
+  }
+  body > .main.rental-shell > #rooms.tab-panel.view #room-admin-list .room-admin-table table,
+  body > .main.rental-shell > #rooms.tab-panel.view .room-admin-table table {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  body > .main.rental-shell > #rooms.tab-panel.view .room-admin-table th,
+  body > .main.rental-shell > #rooms.tab-panel.view .room-admin-table td {
+    min-width: 0 !important;
+    padding: 9px 6px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: 11px !important;
+  }
+  body > .main.rental-shell > #rooms.tab-panel.view .room-admin-table td strong,
+  body > .main.rental-shell > #rooms.tab-panel.view .room-admin-table td small {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  body > .main.rental-shell > #rooms.tab-panel.view .room-admin-table .table-actions {
+    flex-wrap: nowrap !important;
+    gap: 3px !important;
+    margin: 0 !important;
+  }
+  body > .main.rental-shell > #rooms.tab-panel.view .room-admin-table .table-actions .button {
+    min-width: 0 !important;
+    min-height: 29px !important;
+    padding: 0 5px !important;
+    font-size: 10px !important;
+  }
+
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row {
+    grid-template-columns: minmax(110px, 1.25fr) minmax(55px, .6fr) minmax(150px, 1.75fr) minmax(90px, .85fr) minmax(100px, .9fr) minmax(76px, .7fr) minmax(70px, .65fr) minmax(205px, 1.6fr) !important;
+    gap: 7px !important;
+    min-width: 0 !important;
+  }
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row > div {
+    min-width: 0 !important;
+  }
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row > div > strong,
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .tenant-main h3 {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .tenant-payment strong {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: 11px !important;
+  }
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .table-actions {
+    width: auto !important;
+    min-width: 0 !important;
+    gap: 4px !important;
+    flex-wrap: nowrap !important;
+  }
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .table-actions .button {
+    min-width: 0 !important;
+    min-height: 29px !important;
+    padding: 0 5px !important;
+    font-size: 10px !important;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1040px) {
+  body > .main.rental-shell > #rooms.tab-panel.view #room-admin-list .room-admin-table,
+  body > .main.rental-shell > #rooms.tab-panel.view .room-admin-table { display: none !important; }
+  body > .main.rental-shell > #rooms.tab-panel.view .room-admin-mobile-list {
+    display: grid !important;
+    gap: 10px !important;
+    padding: 13px !important;
+  }
+  body > .main.rental-shell > #rooms.tab-panel.view .room-admin-mobile-card {
+    min-width: 0 !important;
+  }
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 12px !important;
+  }
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .tenant-main,
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .table-actions {
+    grid-column: 1 / -1 !important;
+  }
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row > div:not(.tenant-main):not(.table-actions) {
+    padding: 6px !important;
+    border-radius: 7px !important;
+    background: #f7fbfc !important;
+  }
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .table-actions {
+    justify-content: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  body > .main.rental-shell > #tenants.tab-panel.view #tenant-list .tenant-row .table-actions .button {
+    flex: 1 1 0 !important;
+  }
+}
+.contract-field-preview-table { min-width: 760px; }
+.contract-field-preview-table .contract-preview-value { color: #173548; font-weight: 700; overflow-wrap: anywhere; }
+@media (max-width: 760px) {
+  .contract-preview-toolbar { display: grid; align-items: stretch; gap: 12px; }
+  .contract-preview-toolbar label { min-width: 0; }
+}

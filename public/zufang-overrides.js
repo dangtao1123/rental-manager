@@ -27,7 +27,7 @@
   function leaseFields(record) {
     const room = roomFor(record);
     const propertyFee = record.propertyFeeMode === 'tenant_self' ? 0 : (record.monthlyPropertyFee ?? record._roomMonthlyPropertyFee ?? room?.monthlyPropertyFee ?? 0);
-    return [['roomId', '小区/房间', room?.id || '', 'select', roomOptions(room?.id || record.roomNo, false)], ['tenantName', '租户姓名', record.tenantName || ''], ['tenantPhone', '租户电话', record.tenantPhone || ''], ['purpose', '住房目的', record.purpose || 'self', 'select', 'self:自住|studio:工作室|homestay:民宿|other:其他'], ['startDate', '入住时间', record.startDate || today(), 'date'], ['endDate', '合同结束时间', record.endDate || '', 'date'], ['paymentMethod', '租金支付方式', record.paymentMethod || record.billingCycle || 'monthly', 'select', 'monthly:月付|quarterly:季付|yearly:年付'], ['monthlyRent', '月租金（计费基准）', record.monthlyRent || ''], ['deposit', '押金', record.deposit || ''], ['propertyFeeMode', '物业费收取方式', record.propertyFeeMode || record._propertyFeeMode || room?.propertyFeeMode || 'included', 'select', 'included:与房租一起交|tenant_self:租户自理'], ['monthlyPropertyFee', '每月物业费', propertyFee, 'readonly'], ['totalMonthly', '合计每月应收', Number(record.monthlyRent || 0) + Number(propertyFee), 'readonly'], ['moveInElectricity', '入住电表读数', record.moveInElectricity || ''], ['moveInWater', '入住水表读数', record.moveInWater || ''], ['idCardFront', '身份证正面', record.idCardFront || '', 'file'], ['idCardBack', '身份证反面', record.idCardBack || '', 'file'], ['note', '备注', record.note || '', 'textarea']];
+    return [['roomId', '小区/房间', room?.id || '', 'select', roomOptions(room?.id || record.roomNo, false)], ['tenantName', '租户姓名', record.tenantName || ''], ['tenantPhone', '租户电话', record.tenantPhone || ''], ['purpose', '住房目的', record.purpose || 'self', 'select', 'self:自住|studio:工作室|homestay:民宿|other:其他'], ['startDate', '入住时间', record.startDate || today(), 'date'], ['endDate', '合同结束时间', record.endDate || '', 'date'], ['paymentMethod', '租金支付方式', record.paymentMethod || record.billingCycle || 'monthly', 'select', 'monthly:月付|quarterly:季付|yearly:年付'], ['monthlyRent', '月租金（计费基准）', record.monthlyRent || ''], ['deposit', '押金', record.deposit || ''], ['propertyFeeMode', '物业费收取方式', record.propertyFeeMode || record._propertyFeeMode || room?.propertyFeeMode || 'included', 'select', 'included:与房租一起交|tenant_self:租户自理'], ['monthlyPropertyFee', '每月物业费', propertyFee, 'readonly'], ['totalMonthly', '合计每月应收', Number(record.monthlyRent || 0) + Number(propertyFee), 'readonly'], ['moveInElectricity', '入住电表读数', record.moveInElectricity || ''], ['moveInWater', '入住水表读数', record.moveInWater || ''], ['idCardFront', '身份证正面', record.idCardFront || '', 'file'], ['idCardBack', '身份证反面', record.idCardBack || '', 'file'], ['contractFileUrl', '租户合同', record.contractFileUrl || '', 'contract'], ['note', '备注', record.note || '', 'textarea']];
   }
 
   function renewalFields(record) {
@@ -174,7 +174,7 @@
       return;
     }
     fields.innerHTML = sectionedFields(type, record, fieldsFor(type, record)).map(([key, label, value, inputType, options]) => {
-      const full = inputType === 'textarea' || inputType === 'file' || inputType === 'pdf' || inputType === 'url' || inputType === 'heading' || inputType === 'json';
+      const full = inputType === 'textarea' || inputType === 'file' || inputType === 'pdf' || inputType === 'url' || inputType === 'heading' || inputType === 'json' || inputType === 'contract';
       const summary = (type === 'renewal' && ['roomNo', 'tenantName', 'tenantPhone', 'leaseStart', 'startDate', 'endDate', 'amount'].includes(key)) || (type === 'checkouts' && ['roomNo', 'tenantName', 'tenantPhone', 'leaseStart', 'leaseEnd', 'paidThrough'].includes(key));
       const className = `${full ? 'full ' : ''}field-${key}${inputType === 'readonly' || key.endsWith('Amount') || key === 'amount' ? ' calculated-field' : ''}${summary ? ' summary-field' : ''}`;
       const fieldLabel = `<span class="field-label">${esc(label)}</span>`;
@@ -184,6 +184,7 @@
       if (inputType === 'select') return `<label class="${className}">${fieldLabel}<select name="${key}">${(options || '').split('|').map((option) => { const [optionValue, text] = option.split(':'); return `<option value="${esc(optionValue)}" ${String(optionValue) === String(value) ? 'selected' : ''}>${esc(text || optionValue)}</option>`; }).join('')}</select></label>`;
       if (inputType === 'textarea') return `<label class="${className}">${fieldLabel}<textarea name="${key}">${esc(value)}</textarea></label>`;
       if (inputType === 'file') { const existingImages = Array.isArray(record[key]) ? record[key] : (record[key] ? [record[key]] : []); const preview = existingImages.length ? existingImages.map((image) => `<img class="upload-preview item-preview-trigger" src="${esc(image)}" data-preview-image="${esc(image)}" alt="已上传图片，点击可预览" />`).join('') : '<span class="meta">未上传</span>'; return `<label class="${className}">${fieldLabel}<input name="${key}" type="file" accept="image/jpeg,image/png,image/webp" data-existing="${esc(JSON.stringify(record[key] || ''))}" />${preview}</label>`; }
+      if (inputType === 'contract') { const link = value ? `<a class="contract-file-link" href="${esc(value)}" target="_blank" rel="noopener">查看已上传合同</a>` : '<span class="contract-missing-text">尚未上传合同</span>'; return `<div class="${className} lease-contract-field" data-contract-upload-field="1" data-contract-deleted="0">${fieldLabel}<div class="lease-contract-current">${link}</div><div class="lease-contract-actions"><label class="button button-outline upload-contract-button">上传/替换合同<input name="contractData" type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.pdf,.docx" data-contract-upload hidden /></label>${value ? '<button type="button" class="small danger" data-delete-lease-contract>删除合同</button>' : ''}</div><input type="hidden" name="contractFileUrl" value="${esc(value)}" /></div>`; }
       if (inputType === 'pdf') { const link = value ? `<a class="contract-file-link" href="${esc(value)}" target="_blank" rel="noopener">查看当前 PDF 合同</a>` : '<span class="meta">未上传</span>'; return `<label class="${className}" data-contract-field="paper">${fieldLabel}<input name="${key}" type="file" accept="application/pdf" data-existing="${esc(JSON.stringify(value || ''))}" />${link}<small>仅支持 PDF，最大 10MB；重新上传会替换当前合同</small></label>`; }
       if (inputType === 'url') return `<label class="${className}" data-contract-field="electronic">${fieldLabel}<input name="${key}" type="url" value="${esc(value)}" placeholder="https://..." />${value ? `<a class="contract-file-link" href="${esc(value)}" target="_blank" rel="noopener">打开电子合同</a>` : ''}</label>`;
       if (inputType === 'readonly') { const display = value === 0 ? '0' : (value || '未设置'); return `<div class="${className} readonly-field"><span class="field-label">${esc(label)}</span><strong data-readonly-value="${esc(key)}">${esc(display)}</strong><input type="hidden" name="${key}" value="${esc(value)}" /></div>`; }
@@ -237,9 +238,9 @@
     const initialPayment = type === 'renewal' && lease && !lease.paidThrough && !renewalsForLease(lease.id).length;
     state.initialPayment = initialPayment;
     if (type === 'renewal') record._initialPayment = initialPayment;
-    $('#dialog-title').textContent = type === 'renewal' ? (initialPayment ? '首次缴费' : '租户续费') : `${id ? '编辑' : '新增'}${type === 'leases' ? '入住记录' : type === 'checkouts' ? '退房清单' : type === 'maintenance' ? '维护记录' : type === 'rooms' ? '房间' : type === 'items' ? '房间物品' : type === 'costs' ? '成本记录' : '收支流水'}`;
-    const submitLabels = { renewal: initialPayment ? '首次缴费' : '续费', checkouts: '退房', maintenance: '保存维护', rooms: '保存房间', items: batchItemMode ? '添加物品' : '保存物品', costs: '保存成本', ledger: '保存流水' }; $('#record-form button[type="submit"]').textContent = type === 'leases' ? (id ? '保存信息' : '入住') : (submitLabels[type] || '保存');
-    if (batchItemMode) renderBatchItems(record); else renderFields(type, record); const checkoutTempSave = $('#checkout-temp-save'); if (checkoutTempSave) checkoutTempSave.hidden = type !== 'checkouts'; const checkoutCancel = $('#record-cancel'); if (checkoutCancel) checkoutCancel.textContent = type === 'checkouts' ? '取消退房' : '取消'; checkoutSubmitMode = 'completed'; $('#dialog-error').textContent = ''; const dialog = $('#record-dialog'); dialog.classList.toggle('checkout-dialog', type === 'checkouts'); dialog.classList.toggle('lease-dialog', type === 'leases'); dialog.classList.toggle('renewal-dialog', type === 'renewal'); dialog.classList.toggle('batch-items-dialog', batchItemMode); ['rooms', 'maintenance', 'items', 'costs', 'ledger'].forEach((name) => dialog.classList.toggle(`${name}-dialog`, type === name)); const checkoutSummary = $('#checkout-refund-summary'); if (checkoutSummary) { checkoutSummary.hidden = !['checkouts', 'renewal'].includes(type); checkoutSummary.classList.toggle('renewal-payment-summary', type === 'renewal'); } $('#generate-dialog-text').hidden = batchItemMode || type === 'ledger'; dialog.showModal();
+    $('#dialog-title').textContent = type === 'renewal' ? (initialPayment ? '首次缴费' : '租户续费') : `${id ? '编辑' : '新增'}${type === 'communities' ? '小区' : type === 'leases' ? '入住记录' : type === 'checkouts' ? '退房清单' : type === 'maintenance' ? '维护记录' : type === 'rooms' ? '房间' : type === 'items' ? '房间物品' : type === 'costs' ? '成本记录' : '收支流水'}`;
+    const submitLabels = { renewal: initialPayment ? '首次缴费' : '续费', checkouts: '退房', maintenance: '保存维护', rooms: '保存房间', communities: '保存小区', items: batchItemMode ? '添加物品' : '保存物品', costs: '保存成本', ledger: '保存流水' }; $('#record-form button[type="submit"]').textContent = type === 'leases' ? (id ? '保存信息' : '入住') : (submitLabels[type] || '保存');
+    if (batchItemMode) renderBatchItems(record); else renderFields(type, record); const checkoutTempSave = $('#checkout-temp-save'); if (checkoutTempSave) checkoutTempSave.hidden = type !== 'checkouts'; const checkoutCancel = $('#record-cancel'); if (checkoutCancel) checkoutCancel.textContent = type === 'checkouts' ? '取消退房' : '取消'; checkoutSubmitMode = 'completed'; $('#dialog-error').textContent = ''; const dialog = $('#record-dialog'); dialog.classList.toggle('checkout-dialog', type === 'checkouts'); dialog.classList.toggle('lease-dialog', type === 'leases'); dialog.classList.toggle('renewal-dialog', type === 'renewal'); dialog.classList.toggle('batch-items-dialog', batchItemMode); ['communities', 'rooms', 'maintenance', 'items', 'costs', 'ledger'].forEach((name) => dialog.classList.toggle(`${name}-dialog`, type === name)); const checkoutSummary = $('#checkout-refund-summary'); if (checkoutSummary) { checkoutSummary.hidden = !['checkouts', 'renewal'].includes(type); checkoutSummary.classList.toggle('renewal-payment-summary', type === 'renewal'); } $('#generate-dialog-text').hidden = batchItemMode || ['ledger', 'communities'].includes(type); dialog.showModal();
     if (type === 'renewal') updateRenewalAmount(); if (type === 'checkouts') updateCheckoutAmounts();
   };
 
@@ -705,6 +706,13 @@ const rows = [...groups.entries()].map(([roomNo, items]) => [roomLabel(roomNo), 
     }
     if (!batchMaintenanceMode || state.recordType !== 'maintenance') {
       const payload = await legacyCollectDialog();
+      if (state.recordType === 'leases' && payload && typeof payload === 'object') {
+        const upload = document.querySelector('#dialog-fields [data-contract-upload]');
+        if (upload?.files?.length) payload.contractData = await fileToDataUrlRaw(upload.files[0]);
+        const contractField = document.querySelector('#dialog-fields [data-contract-upload-field]');
+        if (contractField?.dataset.contractDeleted === '1') { payload.contractFileUrl = ''; payload.contractDelete = true; }
+        delete payload.contractDataInput;
+      }
       if (state.recordType === 'checkouts' && payload && typeof payload === 'object') payload.propertyAmount = 0;
       return payload;
     }
@@ -734,6 +742,20 @@ const rows = [...groups.entries()].map(([roomNo, items]) => [roomLabel(roomNo), 
     catch (error) { $('#dialog-error').textContent = error.message; }
   }, true);
   document.getElementById('maintenance-batch-form')?.addEventListener('submit', saveMaintenanceBatchDialog);
+
+  document.addEventListener('click', (event) => {
+    const removeContract = event.target.closest('[data-delete-lease-contract]');
+    if (!removeContract) return;
+    event.preventDefault();
+    const field = removeContract.closest('[data-contract-upload-field]');
+    if (!field) return;
+    field.dataset.contractDeleted = '1';
+    const hidden = field.querySelector('[name="contractFileUrl"]');
+    if (hidden) hidden.value = '';
+    const current = field.querySelector('.lease-contract-current');
+    if (current) current.innerHTML = '<span class="contract-missing-text">尚未上传合同</span>';
+    removeContract.remove();
+  }, true);
 
   document.addEventListener('click', (event) => {
     const viewButton = event.target.closest('[data-maintenance-view]');

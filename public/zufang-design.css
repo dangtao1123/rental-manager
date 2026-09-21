@@ -51,6 +51,8 @@ body { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 1
 .icon-btn, .avatar-small { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; color: var(--muted); }
 .icon-btn:hover { color: var(--blue); border-color: var(--blue); background: var(--blue-soft); }
 .avatar-small { border-color: var(--teal); background: var(--teal); color: #fff; font-size: 12px; font-weight: 800; }
+.logout-button { height: 34px; padding: 0 11px; border: 1px solid var(--line-strong); border-radius: 7px; color: var(--muted); background: #fff; font-size: 12px; font-weight: 750; cursor: pointer; }
+.logout-button:hover { color: var(--danger); border-color: #e5b8ba; background: #fff7f7; }
 .rental-header { border-bottom: 0; }
 .rental-header .eyebrow { margin-bottom: 8px; }
 .rental-header h1 { font-size: 31px; }
@@ -361,6 +363,8 @@ dialog form { display: flex; flex-direction: column; max-height: calc(100vh - 30
 /* Multi-workspace controls stay compact and use the same calm card language as the rental UI. */
 .workspace-switcher { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: 12px; font-weight: 700; }
 .workspace-switcher select { min-width: 170px; height: 34px; padding: 0 28px 0 10px; border: 1px solid var(--line-strong); border-radius: 7px; background: #fff; color: var(--ink); }
+.community-panel { margin-top: 17px; padding: 21px; }
+.community-panel .section-head { margin-bottom: 16px; }
 .community-list { display: grid; gap: 10px; margin-bottom: 14px; }
 .community-card { display: grid; grid-template-columns: minmax(220px, 1.3fr) minmax(260px, 1.7fr) auto; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 9px; background: #fbfdfe; }
 .community-card strong, .community-card small { display: block; }
@@ -379,4 +383,121 @@ dialog form { display: flex; flex-direction: column; max-height: calc(100vh - 30
   .community-card .row-actions { justify-content: flex-start; }
   .community-form-actions { align-items: stretch; justify-content: stretch; }
   .community-form-actions button { flex: 1; }
+  .community-panel { padding: 15px 13px; }
+}
+@media (max-width: 520px) {
+  .logout-button { height: 32px; padding: 0 8px; font-size: 11px; }
+}
+
+/* Community directory and its shared record dialog. */
+.community-panel { overflow: hidden; }
+.community-list { gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff; }
+.community-list-header, .community-card { display: grid; grid-template-columns: minmax(235px, 1.45fr) minmax(130px, .8fr) minmax(300px, 1.7fr) auto; align-items: center; gap: 18px; }
+.community-list-header { padding: 11px 15px; color: var(--muted); background: #f2f8fa; font-size: 12px; font-weight: 700; }
+.community-card { border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 16px 15px; background: #fff; }
+.community-card:hover { background: #fbfdfe; }
+.community-identity strong { font-size: 16px; }
+.community-identity small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.community-stats { display: flex; gap: 12px; color: var(--muted); font-size: 12px; white-space: nowrap; }
+.community-stats b { color: var(--ink); font-size: 16px; }
+.community-rates { display: grid; grid-template-columns: repeat(4, minmax(66px, 1fr)); gap: 7px; }
+.community-rates span { display: flex; flex-direction: column; gap: 3px; padding: 7px 8px; border: 1px solid #d8e8ee; border-radius: 7px; background: #f8fbfc; color: var(--muted); font-size: 11px; white-space: nowrap; }
+.community-rates span b { color: var(--blue); font-size: 13px; }
+.community-rates span small { font-size: 10px; }
+.community-card .row-actions { margin-top: 0; justify-content: flex-end; }
+#record-dialog.communities-dialog { width: min(calc(100% - 30px), 840px); }
+#record-dialog.communities-dialog .dialog-fields { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px 16px; }
+#record-dialog.communities-dialog .form-section-heading { grid-column: 1 / -1; }
+#record-dialog.communities-dialog .field-name,
+#record-dialog.communities-dialog .field-address,
+#record-dialog.communities-dialog .field-signingAddress,
+#record-dialog.communities-dialog .field-reminderDays { grid-column: span 2; }
+#record-dialog.communities-dialog .field-propertyUnitPrice,
+#record-dialog.communities-dialog .field-waterUnitPrice,
+#record-dialog.communities-dialog .field-electricityUnitPrice,
+#record-dialog.communities-dialog .field-gasUnitPrice { grid-column: span 1; }
+#record-dialog.communities-dialog .dialog-fields input { height: 46px; }
+@media (max-width: 800px) {
+  .community-list-header { display: none; }
+  .community-card { grid-template-columns: 1fr; gap: 12px; padding: 15px; }
+  .community-stats { gap: 18px; }
+  .community-rates { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .community-card .row-actions { justify-content: stretch; }
+  .community-card .row-actions button { flex: 1; }
+  #record-dialog.communities-dialog .dialog-fields { grid-template-columns: 1fr; }
+  #record-dialog.communities-dialog .field-name,
+  #record-dialog.communities-dialog .field-address,
+  #record-dialog.communities-dialog .field-signingAddress,
+  #record-dialog.communities-dialog .field-reminderDays,
+#record-dialog.communities-dialog .field-propertyUnitPrice,
+#record-dialog.communities-dialog .field-waterUnitPrice,
+#record-dialog.communities-dialog .field-electricityUnitPrice,
+#record-dialog.communities-dialog .field-gasUnitPrice { grid-column: 1; }
+}
+
+/* Rental settings: keep general reminders separate from contract management. */
+.settings-layout { display: grid; gap: 16px; }
+.settings-base-panel, .contract-management-panel { margin-top: 0; }
+.settings-form { display: block; }
+.settings-basic-section { display: grid; gap: 14px; }
+.settings-section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.settings-section-head h2, .settings-section-head h3 { margin: 0; color: var(--ink); }
+.settings-section-head h2 { font-size: 18px; }
+.settings-section-head h3 { font-size: 16px; }
+.settings-section-head p { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.settings-basic-section > label, .contract-party-field, .contract-template-upload { display: grid; gap: 7px; color: var(--muted); font-size: 12px; }
+.settings-basic-section > label { max-width: 420px; }
+.settings-basic-section input, .contract-party-field input, .contract-template-upload input { width: 100%; height: 42px; padding: 0 11px; border: 1px solid var(--line-strong); border-radius: 7px; outline: 0; background: #fff; color: var(--ink); }
+.settings-basic-section input:focus, .contract-party-field input:focus, .contract-template-upload input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(25, 121, 178, .1); }
+.contract-management-panel > .section-head { margin-bottom: 19px; }
+.settings-badge { flex: 0 0 auto; padding: 5px 9px; border: 1px solid #b9e3d8; border-radius: 999px; background: var(--green-soft); color: var(--green); font-size: 11px; font-weight: 750; }
+.contract-management-section + .contract-management-section { margin-top: 23px; padding-top: 22px; border-top: 1px solid var(--line); }
+.contract-party-fields { display: grid; gap: 11px; }
+.contract-party-field { grid-template-columns: 150px minmax(0, 1fr); align-items: center; gap: 15px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-soft); }
+.contract-party-field input { margin: 0; background: #fff; }
+.contract-template-upload { max-width: 680px; }
+.contract-template-upload input { height: auto; padding: 9px 11px; background: var(--surface-soft); }
+.contract-template-upload small { color: var(--muted); font-size: 11px; line-height: 1.6; }
+.contract-template-upload a, .settings-template-note a { color: var(--blue); font-weight: 700; }
+.contract-field-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+.contract-field-table { width: 100%; min-width: 540px; border-collapse: collapse; background: #fff; font-size: 12px; }
+.contract-field-table th, .contract-field-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+.contract-field-table th { color: var(--muted); background: #f4f9fa; font-size: 11px; font-weight: 750; }
+.contract-field-table tbody tr:last-child td { border-bottom: 0; }
+.contract-field-table td:nth-child(2) { color: var(--ink); font-weight: 700; }
+.contract-field-table td:nth-child(3) { color: var(--muted); }
+.contract-field-table code { padding: 3px 6px; border-radius: 5px; background: var(--blue-soft); color: var(--blue-dark); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 11px; }
+.room-community-label { display: inline-flex; align-items: center; width: fit-content; max-width: 100%; margin-bottom: 7px; padding: 4px 9px; border: 1px solid #c9e4e7; border-radius: 999px; background: #f0fbfa; color: var(--teal-dark); font-size: 11px; font-weight: 800; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.room-admin-mobile-card .room-community-label { margin-bottom: 8px; }
+
+/* Rental cards are grouped by community; keep the community name in a section heading, not as a card badge. */
+#room-list.room-groups { display: block; }
+/* The legacy refactor stylesheet marks the old grid as !important. Keep the
+   new wrapper full-width so each community owns a normal card grid. */
+body > .main.rental-shell > #rental.tab-panel.view > #room-list.room-groups {
+  display: block !important;
+  grid-template-columns: none !important;
+  gap: 0 !important;
+}
+.room-community-group { width: 100%; min-width: 0; }
+.room-community-group + .room-community-group { margin-top: 24px; }
+.room-community-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: 0 0 10px; padding: 0 2px 9px; border-bottom: 1px solid var(--line); }
+.room-community-kicker { margin: 0 0 3px; color: var(--teal); font-size: 11px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; }
+.room-community-heading h2 { margin: 0; color: var(--ink); font-size: 19px; letter-spacing: -.1px; }
+.room-community-heading > span { color: var(--muted); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.room-community-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 900px) {
+  .room-community-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .room-community-heading { align-items: flex-start; flex-direction: column; gap: 5px; margin-bottom: 9px; }
+  .room-community-heading h2 { font-size: 17px; }
+  .room-community-heading > span { font-size: 11px; }
+  .room-community-cards { grid-template-columns: 1fr; }
+}
+@media (max-width: 800px) {
+  .contract-management-panel > .section-head { align-items: flex-start; }
+  .settings-badge { display: none; }
+  .contract-party-field { grid-template-columns: 1fr; gap: 6px; padding: 11px; }
+  .contract-template-upload { max-width: none; }
 }

@@ -1,0 +1,33 @@
+/* The read-only reimbursement page uses the same console tokens as the main app. */
+:root {
+  --reimburse-ink: #173548;
+  --reimburse-muted: #6d8793;
+  --reimburse-line: #d8e6eb;
+  --reimburse-primary: #1979b2;
+  --reimburse-soft: #f6fafb;
+  --reimburse-shadow: 0 6px 18px rgba(24, 66, 82, .055);
+}
+
+body { color: var(--reimburse-ink) !important; }
+.shell { width: min(1240px, 100%); padding: 28px 24px 64px !important; }
+.header { align-items: flex-end !important; margin-bottom: 18px !important; }
+.eyebrow { color: var(--reimburse-primary) !important; font-size: 11px !important; letter-spacing: 1.35px !important; }
+h1 { color: var(--reimburse-ink) !important; font-size: 30px !important; }
+.meta { color: var(--reimburse-muted) !important; }
+.summary-card, .panel { border-color: var(--reimburse-line) !important; border-radius: 12px !important; box-shadow: var(--reimburse-shadow) !important; }
+.summary-card.amount { border-color: #efc77f !important; }
+.table-wrap { border-color: var(--reimburse-line) !important; border-radius: 12px !important; }
+th { background: var(--reimburse-soft) !important; color: var(--reimburse-muted) !important; }
+td { color: var(--reimburse-ink) !important; }
+dialog { border: 1px solid var(--reimburse-line) !important; border-radius: 16px !important; }
+.dialog-head { padding: 18px 22px !important; }
+
+@media (max-width: 720px) {
+  .shell { padding: 20px 12px 48px !important; }
+  .header { display: block !important; }
+  h1 { font-size: 24px !important; }
+  .summary { gap: 8px !important; }
+  .summary-card { padding: 13px !important; }
+  .summary-card strong { font-size: 24px !important; }
+  tr { border-color: var(--reimburse-line) !important; border-radius: 12px !important; box-shadow: var(--reimburse-shadow) !important; }
+}

@@ -12,17 +12,19 @@
     overview: ['OVERVIEW', '工作台', '今日租务概览，快速处理到期、维护与账单'],
     rental: ['RENTAL MANAGEMENT', '租房管理', '房源卡片、租户状态与续费提醒统一查看'],
     rooms: ['ROOM ARCHIVE', '房间管理', '维护房间档案、房东托管、物品和照片'],
+    communities: ['COMMUNITY DIRECTORY', '小区管理', '维护小区签约信息和专属费用单价'],
     tenants: ['TENANT DIRECTORY', '租户管理', '在租与已退租分开查看，保留完整历史记录'],
     ledger: ['CASH FLOW', '收支账单', '应收账单与实际流水分开记录，可按时间和房间筛选'],
     maintenance: ['ROOM CARE', '日常维护', '维护记录按房间与日期管理，待处理项目会显示在工作台'],
     checkout: ['MOVE IN / OUT', '入住 / 退房', '通过房间与租户关系生成入住、续费和退房记录'],
     templates: ['BUSINESS TEXT', '业务文字', '生成入住、续租和退房说明，一键复制发送'],
-    settings: ['RENTAL SETTINGS', '租房设置', '统一设置到期提醒、水电单价与默认物业费'],
+    settings: ['RENTAL SETTINGS', '租房设置', '设置合同签署人、合同模板和到期提醒'],
     audit: ['AUDIT LOG', '操作日志', '记录关键业务变更，便于追溯与协作']
   };
 
   const actionIcons = {
     'add-room': 'hugeicons:add-01',
+    'add-community': 'hugeicons:add-01',
     'add-lease': 'hugeicons:login-03',
     'add-maintenance': 'hugeicons:note-edit',
     'add-checkout': 'hugeicons:logout-03',
@@ -114,12 +116,13 @@
       overview: ['OVERVIEW', '工作台', '今日租务概览，快速处理到期、维护与账单'],
       rental: ['RENTAL MANAGEMENT', '租房管理', '绿色为已出租，红色为空置，琥珀色为装修维护中'],
       rooms: ['ROOM ARCHIVE', '房间管理', '维护房间档案、房东托管、物品和照片'],
+      communities: ['COMMUNITY DIRECTORY', '小区管理', '维护小区签约信息和专属费用单价'],
       tenants: ['TENANT DIRECTORY', '租户管理', '在租与已退租分开查看，保留完整历史记录'],
       ledger: ['CASH FLOW', '收支账单', '应收账单与实际流水分开记录，可按时间和房间筛选'],
       maintenance: ['ROOM CARE', '日常维护', '维护记录按房间与日期管理，待处理项目会显示在工作台'],
       checkout: ['MOVE IN / OUT', '入住 / 退房', '通过房间与租户关系生成入住、续费和退房记录'],
       templates: ['BUSINESS TEXT', '业务文字', '生成入住、续租和退房说明，一键复制发送'],
-      settings: ['RENTAL SETTINGS', '租房设置', '统一设置到期提醒、水电单价与默认物业费'],
+      settings: ['RENTAL SETTINGS', '租房设置', '设置合同签署人、合同模板和到期提醒'],
       audit: ['AUDIT LOG', '操作日志', '记录关键业务变更，便于追溯与协作'],
       archive: ['ARCHIVE', '已归档', '查看已归档的房源和租户，保留可追溯的历史记录']
     };
@@ -163,6 +166,22 @@
       makeHead(rooms, ...meta.rooms, action); panel?.remove();
       if (list) rooms.append(panelWith(list));
       if (items) { items.hidden = true; const sub = items.previousElementSibling; if (sub?.classList.contains('subheading')) sub.hidden = true; }
+    }
+
+    const communities = document.getElementById('communities');
+    if (communities && !communities.querySelector(':scope > .page-head')) {
+      const panel = oldPanel(communities);
+      const title = panel?.querySelector('.panel-title');
+      const action = title?.querySelector('button[data-action]');
+      const list = document.getElementById('community-list');
+      const form = document.getElementById('community-form');
+      makeHead(communities, ...meta.communities, action);
+      panel?.remove();
+      const listPanel = document.createElement('section'); listPanel.className = 'panel community-panel';
+      listPanel.innerHTML = '<div class="section-head"><div><h2>小区列表</h2><p>每个小区可单独配置合同地址和物业、水、电、燃气单价</p></div></div>';
+      if (list) listPanel.append(list);
+      communities.append(listPanel);
+      if (form) { form.hidden = true; form.setAttribute('aria-hidden', 'true'); }
     }
 
     const tenants = document.getElementById('tenants');
@@ -220,10 +239,13 @@
 
     const settings = document.getElementById('settings');
     if (settings && !settings.querySelector(':scope > .page-head')) {
-      const panel = oldPanel(settings); const settingsForm = document.getElementById('rental-settings-form'); const save = document.getElementById('save-rental-settings'); const status = document.getElementById('settings-status'); const userForm = document.getElementById('rental-user-form'); const userList = document.getElementById('user-list');
+      const panel = oldPanel(settings); const settingsForm = document.getElementById('rental-settings-form'); const save = document.getElementById('save-rental-settings'); const status = document.getElementById('settings-status'); const userForm = document.getElementById('rental-user-form'); const userStatus = document.getElementById('user-status'); const userList = document.getElementById('user-list');
       makeHead(settings, ...meta.settings, save); panel?.remove();
-      const settingsPanel = document.createElement('section'); settingsPanel.className = 'panel settings-grid'; if (settingsForm) settingsPanel.append(settingsForm); settings.append(settingsPanel); if (status) settingsPanel.append(status);
-      const account = document.createElement('section'); account.className = 'panel account-panel'; account.innerHTML = '<div class="section-head"><div><h2>后台账号管理</h2><p>为同事创建账号，所有变更都会记录操作人</p></div></div>'; if (userForm) account.append(userForm); if (userList) account.append(userList); settings.append(account);
+      const settingsLayout = document.createElement('div'); settingsLayout.className = 'settings-layout';
+      const settingsPanel = document.createElement('section'); settingsPanel.className = 'panel settings-base-panel'; if (settingsForm) settingsPanel.append(settingsForm); if (status) settingsPanel.append(status);
+      const contractPanel = document.createElement('section'); contractPanel.id = 'contract-management-panel'; contractPanel.className = 'panel contract-management-panel';
+      settingsLayout.append(settingsPanel, contractPanel); settings.append(settingsLayout);
+      const account = document.createElement('section'); account.className = 'panel account-panel'; account.hidden = true; account.innerHTML = '<div class="section-head"><div><h2>后台账号管理</h2><p>仅平台超级管理员可以创建或停用后台账号。</p></div></div>'; if (userForm) account.append(userForm); if (userStatus) account.append(userStatus); if (userList) account.append(userList); settings.append(account);
     }
 
     const auditView = document.getElementById('audit');
@@ -288,7 +310,7 @@
       button.innerHTML = '<iconify-icon icon="hugeicons:archive-02"></iconify-icon><span>已归档</span>'; sidebar.append(button);
     }
     if (sidebar) {
-      const order = ['overview', 'rental', 'rooms', 'maintenance', 'tenants', 'ledger', 'checkout', 'templates', 'settings', 'audit', 'archive'];
+      const order = ['overview', 'rental', 'rooms', 'communities', 'maintenance', 'tenants', 'ledger', 'checkout', 'templates', 'settings', 'audit', 'archive'];
       const items = new Map(Array.from(sidebar.querySelectorAll(':scope > [data-tab]'), (button) => [button.dataset.tab, button]));
       order.forEach((tabId) => { const button = items.get(tabId); if (button) sidebar.append(button); });
       const checkout = items.get('checkout');
@@ -336,6 +358,7 @@
       dialog.setAttribute('aria-labelledby', 'mobile-more-title');
       const items = [
         ['tenants', '租户管理', '租户与入住记录', 'hugeicons:user-group'],
+        ['communities', '小区管理', '地址与物业水电气单价', 'hugeicons:building-03'],
         ['ledger', '收支账单', '收入与支出明细', 'hugeicons:invoice-03'],
         ['settings', '租房设置', '单价与账号管理', 'hugeicons:settings-02'],
         ['audit', '操作日志', '查看操作记录', 'hugeicons:activity-01'],
@@ -684,7 +707,7 @@
 
   function contractLink(lease) {
     const url = lease.contractFileUrl || lease.signedContractFile || lease.generatedContractFile;
-    return url ? `<a class="button button-outline contract-link" href="${esc(url)}" target="_blank" rel="noopener">查看合同</a>` : '<button class="button button-outline contract-link is-missing" type="button" disabled>查看合同</button>';
+    return url ? `<a class="button button-outline contract-link" href="${esc(url)}" target="_blank" rel="noopener">查看合同</a>` : `<button class="button button-contract-pending contract-link is-missing" type="button" data-complete-contract="${esc(lease.id)}">待补合同</button>`;
   }
 
   function openRoomTenantHistory(roomNo) {
@@ -703,7 +726,7 @@
       const endDate = active ? today() : (checkout?.checkoutDate || lease.endDate || today());
       return [`<strong>${esc(lease.tenantName || '未填写租户')}</strong><small>${esc(lease.tenantPhone || '未填写电话')}</small>`, status, esc(purposeLabels[lease.purpose] || lease.purpose || '未设置'), esc(lease.startDate || '未设置'), endLabel, historyDurationText(lease.startDate, endDate)];
     });
-    $('#room-tenants-dialog-title').textContent = `${room ? `${room.propertyName || '房间'} · ${room.roomNo}` : roomLabel(roomNo)} · 历史租客`;
+    $('#room-tenants-dialog-title').textContent = `${room ? `${roomCommunityName(room)} · ${room.roomNo}` : roomLabel(roomNo)} · 历史租客`;
     $('#room-tenants-list').innerHTML = leases.length ? refTable(['租户', '状态', '租房用途', '入住时间', '续租/退房', '入住时长'], rows) : '<p class="room-tenants-empty">该房间暂无租客记录</p>';
     const historyTable = $('#room-tenants-list table');
     if (historyTable) historyTable.dataset.historyDurationReady = '1';
@@ -764,7 +787,14 @@
       const reminderDays = Number(state.settings?.reminderDays ?? 10);
       const sourceRooms = typeof visible === 'function' ? visible(state.rooms) : state.rooms;
       const rooms = typeof sortRentalRooms === 'function' ? sortRentalRooms(sourceRooms, reminderDays) : sourceRooms;
-      target.innerHTML = rooms.length ? rooms.map((room) => {
+      const groups = [];
+      const groupMap = new Map();
+      rooms.forEach((room) => {
+        const name = typeof roomCommunityName === 'function' ? roomCommunityName(room) : (room.propertyName || '未设置小区');
+        if (!groupMap.has(name)) { const group = { name, rooms: [] }; groupMap.set(name, group); groups.push(group); }
+        groupMap.get(name).rooms.push(room);
+      });
+      const renderCard = (room) => {
         const lease = typeof leaseForRoom === 'function' ? leaseForRoom(room) : null;
         const moveIn = (state.moveIns || []).find((item) => {
           if (item.archivedAt || ['cancelled', 'completed'].includes(item.status)) return false;
@@ -783,8 +813,14 @@
         const total = lease ? Number(lease.monthlyRent || 0) + Number(lease.monthlyPropertyFee || 0) : 0;
         const deposit = lease && lease.deposit !== '' && lease.deposit !== undefined ? ` · 押金：${money(lease.deposit)}` : '';
         const dayLabel = lease && days !== null ? `<strong class="room-card-days">${days < 0 ? `已逾期${Math.abs(days)}天` : `剩余${days}天`}</strong>` : '';
+        const contractMissing = Boolean(lease && !(lease.contractFileUrl || lease.signedContractFile || lease.generatedContractFile));
+        const tenantButton = lease
+          ? (contractMissing
+            ? `<button class="button button-outline contract-link is-missing" data-edit="leases" data-id="${esc(lease.id)}">待补合同</button>`
+            : `<button class="button button-outline" data-edit="leases" data-id="${esc(lease.id)}">租户信息</button>`)
+          : '';
         const action = lease
-          ? `<button class="button button-dark" data-show-room-maintenance="${esc(room.roomNo)}">房间维护</button><button class="button button-outline" data-edit="leases" data-id="${esc(lease.id)}">租户信息</button><button class="button button-outline" data-action="add-lease" data-room-no="${esc(room.roomNo)}" data-room-id="${esc(room.id)}">续费</button><button class="button button-outline" data-action="add-checkout" data-room-no="${esc(room.roomNo)}" data-room-id="${esc(room.id)}">退房</button>`
+          ? `<button class="button button-dark" data-show-room-maintenance="${esc(room.roomNo)}">房间维护</button>${tenantButton}<button class="button button-outline" data-action="add-lease" data-room-no="${esc(room.roomNo)}" data-room-id="${esc(room.id)}">续费</button><button class="button button-outline" data-action="add-checkout" data-room-no="${esc(room.roomNo)}" data-room-id="${esc(room.id)}">退房</button>`
           : moveIn
             ? `<button class="button button-dark" data-show-room-maintenance="${esc(room.roomNo)}">房间维护</button><button class="button button-outline" data-resume-move-in="${esc(moveIn.id)}">继续办理</button>`
             : `<button class="button button-dark" data-show-room-maintenance="${esc(room.roomNo)}">房间维护</button><button class="button button-outline" data-action="start-move-in" data-room-no="${esc(room.roomNo)}" data-room-id="${esc(room.id)}">办理入住</button>`;
@@ -793,7 +829,12 @@
           : moveIn
             ? `<div class="room-vacant-note">${esc(moveIn.tenantName || '未填写租户')} · ${contractPending ? '合同签署中' : '等待首次缴费'}</div><div class="room-payment-row"><div><span>入住办理</span><strong>待完成</strong></div><div><span>房间面积</span><strong>${esc(room.area || 0)}㎡</strong></div><div><span>托管到期</span><strong>${esc(room.landlordLeaseEnd || '未设置')}</strong></div></div>`
             : `<div class="room-vacant-note">当前无在租租户</div><div class="room-payment-row"><div><span>面积</span><strong>${esc(room.area || 0)}㎡</strong></div><div><span>物业费</span><strong>${money(room.monthlyPropertyFee || 0)} / 月</strong></div><div><span>托管到期</span><strong>${esc(room.landlordLeaseEnd || '未设置')}</strong></div></div>`;
-        return `<article class="room-card ${cardClass}" data-rental-status="${lease ? 'rented' : maintenance ? 'maintenance' : moveIn ? 'move-in-pending' : 'vacant'}"><div class="room-card-head"><div><h3>${esc(`${room.propertyName || '房间'} · ${room.roomNo}`)}</h3></div><div class="room-card-head-meta">${status}${dayLabel}</div></div>${body}<div class="room-actions">${action}</div></article>`;
+        return `<article class="room-card ${cardClass}" data-rental-status="${lease ? 'rented' : maintenance ? 'maintenance' : moveIn ? 'move-in-pending' : 'vacant'}"><div class="room-card-head"><div><h3>${esc(`${typeof roomCommunityName === 'function' ? roomCommunityName(room) : (room.propertyName || '房间')} · ${room.roomNo || '未设置房号'}`)}</h3></div><div class="room-card-head-meta">${status}${dayLabel}</div></div>${body}<div class="room-actions">${action}</div></article>`;
+      };
+      target.classList.add('room-groups');
+      target.innerHTML = rooms.length ? groups.map((group) => {
+        const occupied = group.rooms.filter((room) => typeof leaseForRoom === 'function' && leaseForRoom(room)).length;
+        return `<section class="room-community-group"><div class="room-community-heading"><div><p class="room-community-kicker">小区</p><h2>${esc(group.name)}</h2></div><span>${group.rooms.length} 间房 · ${occupied} 间在租</span></div><div class="room-community-cards">${group.rooms.map(renderCard).join('')}</div></section>`;
       }).join('') : '<p class="meta">请先添加房间</p>';
       if (oldRooms && !rooms.length) oldRooms.call(this);
     };
@@ -806,14 +847,16 @@
         const status = room.status === 'maintenance' && !lease ? statusChip('装修维护中', 'warning') : lease ? statusChip('已出租', 'success') : statusChip('空置', 'danger');
         const items = state.items.filter((item) => item.roomNo === room.roomNo && !item.archivedAt);
         const photos = Array.isArray(room.images) ? room.images : [];
-        return [`<strong>${esc(room.propertyName || '房间')} · ${esc(room.roomNo)}</strong><small>${esc(room.area || 0)}㎡</small>`, status, `¥ ${Number(room.monthlyPropertyFee || 0).toLocaleString('zh-CN')} / 月`, `¥ ${Number(room.landlordAnnualRent || 0).toLocaleString('zh-CN')} / 年${landlordContractStatus(room)}`, esc(room.landlordLeaseEnd || '未设置'), lease ? `${esc(lease.tenantName || '未填写')}<small>${esc(lease.tenantPhone || '')}</small>` : '暂无', `<button class="link-button" data-show-room-items="${esc(room.roomNo)}">${items.length} 件物品</button>`, `<button class="link-button" data-show-room-photos="${esc(room.roomNo)}">${photos.length} 张照片</button>`, `<div class="table-actions"><button class="button button-outline" data-edit="rooms" data-id="${esc(room.id)}">编辑</button><button class="button button-outline" data-show-room-maintenance="${esc(room.roomNo)}">维护记录</button>${roomTenantHistoryButton(room)}${roomArchiveButton(room)}</div>`];
+        const communityName = typeof roomCommunityName === 'function' ? roomCommunityName(room) : (room.propertyName || '未设置小区');
+        return [`<strong>${esc(communityName)} · ${esc(room.roomNo)}</strong><small>${esc(room.area || 0)}㎡</small>`, status, `¥ ${Number(room.monthlyPropertyFee || 0).toLocaleString('zh-CN')} / 月`, `¥ ${Number(room.landlordAnnualRent || 0).toLocaleString('zh-CN')} / 年${landlordContractStatus(room)}`, esc(room.landlordLeaseEnd || '未设置'), lease ? `${esc(lease.tenantName || '未填写')}<small>${esc(lease.tenantPhone || '')}</small>` : '暂无', `<button class="link-button" data-show-room-items="${esc(room.roomNo)}">${items.length} 件物品</button>`, `<button class="link-button" data-show-room-photos="${esc(room.roomNo)}">${photos.length} 张照片</button>`, `<div class="table-actions"><button class="button button-outline" data-edit="rooms" data-id="${esc(room.id)}">编辑</button><button class="button button-outline" data-show-room-maintenance="${esc(room.roomNo)}">维护记录</button>${roomTenantHistoryButton(room)}${roomArchiveButton(room)}</div>`];
       });
       const mobileCards = rooms.map((room) => {
         const lease = typeof leaseForRoom === 'function' ? leaseForRoom(room) : null;
         const status = room.status === 'maintenance' && !lease ? statusChip('装修维护中', 'warning') : lease ? statusChip('已出租', 'success') : statusChip('空置', 'danger');
         const items = state.items.filter((item) => item.roomNo === room.roomNo && !item.archivedAt);
         const photos = Array.isArray(room.images) ? room.images : [];
-        return `<article class="room-admin-mobile-card"><div class="room-card-head"><div><h3>${esc(room.propertyName || '房间')} · ${esc(room.roomNo)}</h3><p>${esc(room.area || 0)}㎡ · 物业费 ¥ ${Number(room.monthlyPropertyFee || 0).toLocaleString('zh-CN')} / 月</p></div>${status}</div><div class="room-mobile-meta"><div><span>房东年租</span><b>¥ ${Number(room.landlordAnnualRent || 0).toLocaleString('zh-CN')}</b>${landlordContractStatus(room)}</div><div><span>托管到期</span><b>${esc(room.landlordLeaseEnd || '未设置')}</b></div><div><span>当前租户</span><b>${lease ? esc(lease.tenantName || '未填写') : '暂无'}</b></div><div><span>物品清单</span><button class="link-button" data-show-room-items="${esc(room.roomNo)}">${items.length} 件</button></div><div><span>房间照片</span><button class="link-button" data-show-room-photos="${esc(room.roomNo)}">${photos.length} 张</button></div></div><div class="card-actions"><button class="button button-outline" data-edit="rooms" data-id="${esc(room.id)}">编辑</button><button class="button button-outline" data-show-room-maintenance="${esc(room.roomNo)}">维护记录</button>${roomTenantHistoryButton(room)}${roomArchiveButton(room)}</div></article>`;
+        const communityName = typeof roomCommunityName === 'function' ? roomCommunityName(room) : (room.propertyName || '未设置小区');
+        return `<article class="room-admin-mobile-card"><div class="room-community-label">${esc(communityName)}</div><div class="room-card-head"><div><h3>${esc(room.roomNo || '未设置房号')}</h3><p>${esc(room.area || 0)}㎡ · 物业费 ¥ ${Number(room.monthlyPropertyFee || 0).toLocaleString('zh-CN')} / 月</p></div>${status}</div><div class="room-mobile-meta"><div><span>房东年租</span><b>¥ ${Number(room.landlordAnnualRent || 0).toLocaleString('zh-CN')}</b>${landlordContractStatus(room)}</div><div><span>托管到期</span><b>${esc(room.landlordLeaseEnd || '未设置')}</b></div><div><span>当前租户</span><b>${lease ? esc(lease.tenantName || '未填写') : '暂无'}</b></div><div><span>物品清单</span><button class="link-button" data-show-room-items="${esc(room.roomNo)}">${items.length} 件</button></div><div><span>房间照片</span><button class="link-button" data-show-room-photos="${esc(room.roomNo)}">${photos.length} 张</button></div></div><div class="card-actions"><button class="button button-outline" data-edit="rooms" data-id="${esc(room.id)}">编辑</button><button class="button button-outline" data-show-room-maintenance="${esc(room.roomNo)}">维护记录</button>${roomTenantHistoryButton(room)}${roomArchiveButton(room)}</div></article>`;
       }).join('');
       target.innerHTML = `<div class="room-admin-table">${refTable(['小区 / 房间', '状态', '物业费', '房东年租', '托管到期', '当前租户', '物品清单', '房间照片', '操作'], rows)}</div><div class="room-admin-mobile-list">${mobileCards || '<p class="meta">暂无房间</p>'}</div>`;
     };
@@ -823,7 +866,7 @@
       const rooms = state.rooms.filter((item) => item.archivedAt);
       const leases = state.leases.filter((item) => item.archivedAt);
       const roomRows = rooms.map((room) => [
-        `<strong>${esc(room.propertyName || '房间')} · ${esc(room.roomNo || '')}</strong>`,
+        `<strong>${esc(typeof roomCommunityName === 'function' ? roomCommunityName(room) : (room.propertyName || '房间'))} · ${esc(room.roomNo || '')}</strong>`,
         '房源', room.archivedAt.slice(0, 16).replace('T', ' '),
         `<button class="button button-danger-outline" data-purge data-purge-type="rooms" data-purge-id="${esc(room.id)}">彻底删除</button>`
       ]);
@@ -922,7 +965,11 @@
       if (summary && (window.innerWidth <= 760 || window.matchMedia?.('(max-width: 760px)').matches)) {
         const income = list.filter((item) => item.direction === 'income').reduce((sum, item) => sum + Number(item.amount || 0), 0);
         const expense = list.filter((item) => item.direction !== 'income').reduce((sum, item) => sum + Number(item.amount || 0), 0);
-        summary.innerHTML = `<div class="income-summary summary-card"><span>收入</span><strong>${money(income)}</strong></div><div class="expense-summary summary-card"><span>支出</span><strong>${money(expense)}</strong></div><div class="balance-summary summary-card"><span>结余</span><strong>${money(income - expense)}</strong></div><div class="count-summary summary-card"><span>本月笔数</span><strong>${list.length}</strong></div>`;
+        const pending = state.maintenance.filter((item) => !item.archivedAt && item.status === 'pending' && (!room || item.roomNo === room) && (!start || item.maintenanceDate >= start) && (!end || item.maintenanceDate <= end));
+        const reimbursing = state.maintenance.filter((item) => !item.archivedAt && item.status === 'done' && (!room || item.roomNo === room) && (!start || item.maintenanceDate >= start) && (!end || item.maintenanceDate <= end));
+        const pendingAmount = pending.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const reimbursingAmount = reimbursing.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        summary.innerHTML = `<div class="income-summary summary-card"><span>收入</span><strong>${money(income)}</strong></div><div class="expense-summary summary-card"><span>支出</span><strong>${money(expense)}</strong></div><div class="balance-summary summary-card"><span>结余</span><strong>${money(income - expense)}</strong></div><div class="pending-summary summary-card"><span>待支出费用</span><strong>${money(pendingAmount)}</strong><small>${pending.length} 条待处理维护</small></div><div class="pending-summary summary-card"><span>待报销费用</span><strong>${money(reimbursingAmount)}</strong><small>${reimbursing.length} 条待完成报销维护</small></div>`;
       }
       const cards = list.map((item) => {
         const income = item.direction === 'income';
@@ -997,8 +1044,9 @@
   function renderReferenceViews() {
     ensureMobileWorkbench();
     ensureMobileRental();
-    ['renderStats', 'renderRooms', 'renderRoomAdmin', 'renderTenants', 'renderArchive', 'renderLedger', 'renderMaintenance', 'renderCheckouts', 'renderAudit', 'renderTodo', 'renderSettings', 'renderUsers'].forEach((name) => {
-      if (typeof window[name] === 'function') window[name]();
+    ['renderStats', 'renderRooms', 'renderRoomAdmin', 'renderTenants', 'renderArchive', 'renderLedger', 'renderMaintenance', 'renderCheckouts', 'renderAudit', 'renderTodo', 'renderSettings', 'renderCommunities', 'renderUsers'].forEach((name) => {
+      if (typeof window[name] !== 'function') return;
+      try { window[name](); } catch (error) { console.error(`[租房管理] ${name} 渲染失败`, error); }
     });
     syncMobileWorkbenchSummary();
     syncMobileRentalSummary();
@@ -1030,7 +1078,7 @@
   normalizeArchiveButtons(document);
   setTimeout(() => refreshLocalIcons(document), 120);
 
-  const dismissibleDialogs = '#record-dialog, #renewal-dialog, #room-items-dialog, #room-maintenance-dialog, #room-photos-dialog, #image-preview-dialog, #maintenance-batch-dialog';
+  const dismissibleDialogs = '#record-dialog, #renewal-dialog, #room-items-dialog, #room-maintenance-dialog, #room-photos-dialog, #image-preview-dialog, #maintenance-batch-dialog, #user-edit-dialog';
   document.addEventListener('click', (event) => {
     const dialog = event.target.closest(dismissibleDialogs);
     if (dialog && event.target === dialog && dialog.open) dialog.close();

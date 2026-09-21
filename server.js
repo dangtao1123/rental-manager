@@ -246,7 +246,7 @@ function normalizeWorkspace(input = {}, current = {}) {
 }
 
 function normalizeCommunity(input = {}, current = {}) {
-  const hasSettingsInput = ['reminderDays', 'propertyUnitPrice', 'waterUnitPrice', 'electricityUnitPrice'].some((key) => Object.hasOwn(input, key));
+  const hasSettingsInput = ['reminderDays', 'propertyUnitPrice', 'waterUnitPrice', 'electricityUnitPrice', 'gasUnitPrice'].some((key) => Object.hasOwn(input, key));
   const settingsConfigured = current.settingsConfigured === true || hasSettingsInput;
   return {
     ...current,
@@ -259,6 +259,7 @@ function normalizeCommunity(input = {}, current = {}) {
     propertyUnitPrice: rentalMoney(input.propertyUnitPrice ?? current.propertyUnitPrice),
     waterUnitPrice: rentalMoney(input.waterUnitPrice ?? current.waterUnitPrice),
     electricityUnitPrice: rentalRate(input.electricityUnitPrice ?? current.electricityUnitPrice),
+    gasUnitPrice: rentalMoney(input.gasUnitPrice ?? current.gasUnitPrice),
     settingsConfigured,
     archivedAt: input.archivedAt ?? current.archivedAt ?? '',
     createdAt: current.createdAt || input.createdAt || new Date().toISOString(),
@@ -293,7 +294,11 @@ async function ensureRentalTenancyModel() {
       return workspaceById.get(normalized.id);
     };
 
-    ensureWorkspace({ id: workspaceIdForUsername(LEGACY_WORKSPACE_USERNAME), username: LEGACY_WORKSPACE_USERNAME, name: '默认租房空间' });
+    const legacyWorkspaceId = workspaceIdForUsername(LEGACY_WORKSPACE_USERNAME);
+    if (workspaces.some((item) => item.id === legacyWorkspaceId)
+      || users.some((user) => user.username === LEGACY_WORKSPACE_USERNAME || user.workspaceId === legacyWorkspaceId)) {
+      ensureWorkspace({ id: legacyWorkspaceId, username: LEGACY_WORKSPACE_USERNAME, name: '默认租房空间' });
+    }
     for (const user of users) {
       if (user.role === 'platformAdmin') continue;
       if (!user.workspaceId) {
@@ -306,7 +311,6 @@ async function ensureRentalTenancyModel() {
     if (workspacesChanged && users.length) await writeAdminUsers(users);
 
     const rooms = await readRentalFile(RENTAL_ROOMS_FILE);
-    const legacyWorkspaceId = workspaceIdForUsername(LEGACY_WORKSPACE_USERNAME);
     const communityByKey = new Map(communities.filter((item) => item.workspaceId && item.name).map((item) => [`${item.workspaceId}\u0000${item.name}`, item]));
     const ensureCommunity = (workspaceId, propertyName) => {
       const name = rentalText(propertyName, 80);
@@ -747,6 +751,7 @@ function normalizeRentalSettings(input = {}, current = {}) {
     propertyUnitPrice: rentalMoney(input.propertyUnitPrice ?? current.propertyUnitPrice),
     waterUnitPrice: rentalMoney(input.waterUnitPrice ?? current.waterUnitPrice),
     electricityUnitPrice: rentalRate(input.electricityUnitPrice ?? current.electricityUnitPrice),
+    gasUnitPrice: rentalMoney(input.gasUnitPrice ?? current.gasUnitPrice),
     contractTemplateFile: normalizeRentalFileUrl(input.contractTemplateFile ?? current.contractTemplateFile),
     contractTemplateName: rentalText(input.contractTemplateName ?? current.contractTemplateName, 160),
     contractTemplateUpdatedAt: input.contractTemplateUpdatedAt ?? current.contractTemplateUpdatedAt ?? '',
@@ -770,6 +775,7 @@ function workspaceSettingsFrom(settings = {}) {
     propertyUnitPrice: rentalMoney(settings.propertyUnitPrice),
     waterUnitPrice: rentalMoney(settings.waterUnitPrice),
     electricityUnitPrice: rentalRate(settings.electricityUnitPrice),
+    gasUnitPrice: rentalMoney(settings.gasUnitPrice),
   };
 }
 function workspaceProfileFrom(input = {}, current = {}) {
@@ -797,6 +803,7 @@ async function readRentalSettings(workspaceId = '', communityId = '') {
     propertyUnitPrice: community.propertyUnitPrice,
     waterUnitPrice: community.waterUnitPrice,
     electricityUnitPrice: community.electricityUnitPrice,
+    gasUnitPrice: community.gasUnitPrice,
   }, base);
 }
 async function writeRentalSettings(settings, workspaceId = '') {
@@ -922,7 +929,16 @@ function fillDocxTemplate(buffer, fields) {
     if (!/^word\/(?:document|header\d+|footer\d+)\.xml$/.test(entry.name)) return entry;
     let xml = entry.data.toString('utf8');
     for (const [token, value] of Object.entries(replacements)) {
-      if (xml.includes(token)) { xml = xml.split(token).join(value); replaced += 1; }
+      // Word may split a placeholder across multiple runs (for example when
+      // a bookmark is inserted between `{{tenantName` and `}}`). Match the
+      // placeholder while allowing XML tags between its characters.
+      const pattern = new RegExp(token.split('').map((character) => character.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('(?:<[^>]*>)*'), 'g');
+      let didReplace = false;
+      xml = xml.replace(pattern, () => {
+        didReplace = true;
+        return value;
+      });
+      if (didReplace) replaced += 1;
     }
     return { ...entry, data: Buffer.from(xml), method: 8 };
   });
@@ -1072,6 +1088,10 @@ async function prepareRentalInput(type, input) {
       if (input[key]?.startsWith('data:image/')) prepared[key] = await saveRentalImage(input[key], `id-card-${key === 'idCardFront' ? 'front' : 'back'}`);
       else delete prepared[key];
     }
+    if (input.contractData?.startsWith('data:')) prepared.contractFileUrl = await saveRentalDocument(input.contractData, 'lease-contract');
+    else if (Object.hasOwn(input, 'contractFileUrl')) prepared.contractFileUrl = normalizeRentalFileUrl(input.contractFileUrl);
+    delete prepared.contractData;
+    delete prepared.contractDelete;
     return prepared;
   }
   if (type === 'items') {
@@ -1139,12 +1159,14 @@ function normalizeRentalLease(input, current = {}) {
     ? (input.contractStatus ?? current.contractStatus)
     : 'active';
   lease.contractFileUrl = rentalText(input.contractFileUrl ?? current.contractFileUrl, 500);
+  lease.contractPending = Boolean(input.contractPending ?? current.contractPending ?? false);
   lease.contractSnapshot = input.contractSnapshot ?? current.contractSnapshot ?? null;
   return { ...lease, ...rentalLeaseTotal(lease) };
 }
 function rentalAuditDetails(resource, record = {}, previous = null, action = '') {
   const fieldNames = {
     rooms: { propertyName: '小区', roomNo: '房间号', status: '状态', area: '面积', propertyUnitPrice: '物业费单价', monthlyPropertyFee: '每月物业费', landlordLeaseStart: '托管开始', landlordLeaseEnd: '托管结束', landlordAnnualRent: '房东年租', landlordContractType: '托管合同类型', landlordContractFile: '纸质托管合同', landlordContractUrl: '电子托管合同地址', images: '房间照片' },
+    communities: { name: '小区名称', address: '小区地址', signingAddress: '签约地址', reminderDays: '到期提醒天数', propertyUnitPrice: '物业费单价', waterUnitPrice: '水费单价', electricityUnitPrice: '电费单价', gasUnitPrice: '燃气费单价' },
     leases: { roomNo: '房间号', tenantName: '租户姓名', tenantPhone: '租户电话', tenantIdCard: '身份证号', purpose: '住房目的', paymentMethod: '支付方式', propertyFeeMode: '物业费方式', monthlyRent: '月租金', monthlyPropertyFee: '每月物业费', deposit: '押金', depositStatus: '押金状态', depositRefundAmount: '退还押金', startDate: '入住时间', endDate: '合同结束', paidThrough: '已付至', moveInWater: '入住水表', moveInElectricity: '入住电表' },
     renewals: { roomNo: '房间号', tenantName: '租户姓名', renewalDate: '续费日期', durationValue: '续费时长', monthlyRent: '月租金', monthlyPropertyFee: '物业费', amount: '续费金额', endDate: '续费后到期' },
     maintenance: { roomNo: '房间号', maintenanceDate: '维护日期', maintenanceType: '维护类型', item: '维护事项', amount: '金额', status: '状态', reimbursementBatchId: '报销批次', completedAt: '完成时间', reimbursedAt: '报销时间', note: '备注' },
@@ -1153,7 +1175,7 @@ function rentalAuditDetails(resource, record = {}, previous = null, action = '')
     items: { roomNo: '房间号', name: '物品名称', note: '备注' },
     ledger: { roomNo: '房间号', direction: '收支方向', category: '收支分类', amount: '金额', recordDate: '发生日期', note: '备注' },
     bills: { roomNo: '房间号', tenantName: '租户姓名', periodStart: '账期开始', periodEnd: '账期结束', total: '应收金额', paidAmount: '已收金额', status: '账单状态' },
-    settings: { reminderDays: '到期提醒天数', propertyUnitPrice: '物业费单价', waterUnitPrice: '水费单价', electricityUnitPrice: '电费单价' },
+    settings: { reminderDays: '到期提醒天数', propertyUnitPrice: '物业费单价', waterUnitPrice: '水费单价', electricityUnitPrice: '电费单价', gasUnitPrice: '燃气费单价' },
     users: { username: '账号', displayName: '名称', enabled: '状态' },
   }[resource] || {};
   const snapshot = (value) => Object.fromEntries(Object.entries(fieldNames).map(([key, label]) => [label, value?.[key]]).filter(([, value]) => value !== undefined && value !== null && value !== ''));
@@ -1187,7 +1209,7 @@ function normalizeRentalMaintenanceBatch(input, current = {}) {
   };
 }
 function normalizeRentalCost(input, current = {}) {
-  const types = ['water', 'electricity', 'property', 'other'];
+  const types = ['water', 'electricity', 'property', 'gas', 'other'];
   return { ...current, id: current.id || rentalId(), workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80), communityId: rentalText(input.communityId ?? current.communityId, 80), roomId: rentalText(input.roomId ?? current.roomId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), costType: types.includes(input.costType ?? current.costType) ? (input.costType ?? current.costType) : 'other', amount: rentalMoney(input.amount ?? current.amount), costDate: rentalDate(input.costDate ?? current.costDate) || new Date().toISOString().slice(0, 10), period: rentalText(input.period ?? current.period, 30), note: rentalText(input.note ?? current.note, 1_000), createdAt: current.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
 }
 function normalizeRentalItem(input, current = {}) {
@@ -1953,6 +1975,14 @@ async function handleRentalCollection(request, response, method, type, id) {
       const record = normalizers[type](preparedInput, index >= 0 ? records[index] : {});
       if (index >= 0) records[index] = record; else records.unshift(record);
       await writeRentalFile(file, records);
+      if (type === 'leases' && input.contractDelete && previousRecord?.contractFileUrl && !input.contractData) {
+        const oldContract = previousRecord.contractFileUrl;
+        const moveIns = await readRentalFile(RENTAL_MOVE_INS_FILE);
+        const stillReferenced = records.some((item) => item.id !== record.id && item.contractFileUrl === oldContract)
+          || moveIns.some((item) => item.signedContractFile === oldContract || item.generatedContractFile === oldContract);
+        const filename = stillReferenced ? '' : rentalFilenameFromUrl(oldContract);
+        if (filename) await fs.unlink(path.join(RENTAL_FILES_DIR, filename)).catch(() => {});
+      }
       if (type === 'items' && index < 0 && !request.headers['x-skip-maintenance-sync']) await appendRentalItemMaintenance(record, 'new');
       if (type === 'maintenance') await syncRentalMaintenanceLedger(record);
       if (type === 'leases' && record.depositStatus === 'refunded' && previousRecord?.depositStatus !== 'refunded') {
@@ -2011,13 +2041,24 @@ function moveInPeriodEnd(startDate, unit, value) {
   const amount = Math.max(1, Number(value) || 1);
   return unit === 'days' ? addRentalDays(startDate, amount - 1) : subtractRentalDays(addRentalMonths(startDate, amount), 1);
 }
+function rentalMoveInInventory(record, items) {
+  return items.filter((item) => !item.archivedAt
+    && (!record.workspaceId || item.workspaceId === record.workspaceId)
+    && (record.roomId ? item.roomId === record.roomId || (!item.roomId && record.communityId && item.communityId === record.communityId && item.roomNo === record.roomNo)
+      : record.communityId && item.communityId === record.communityId && item.roomNo === record.roomNo))
+    .map((item) => ({ name: item.name, quantity: item.quantity, note: item.note, image: item.image }));
+}
+function usesLiveMoveInInventory(record) {
+  return !['completed', 'cancelled'].includes(record.status) && record.contractStatus !== 'uploaded_signed';
+}
 async function handleRentalMoveIns(request, response, method, id) {
   try {
     const actor = await getRentalContext(request);
     if (!actor) { sendJson(response, 401, { ok: false, message: '请先登录租房管理后台' }); return; }
     const records = await readRentalFile(RENTAL_MOVE_INS_FILE);
     if (method === 'GET') {
-      sendJson(response, 200, { ok: true, data: records.map((record) => withSignedRentalFiles('move-ins', record)) });
+      const items = await readRentalFile(RENTAL_ITEMS_FILE);
+      sendJson(response, 200, { ok: true, data: records.map((record) => withSignedRentalFiles('move-ins', usesLiveMoveInInventory(record) ? { ...record, inventorySnapshot: rentalMoveInInventory(record, items) } : record)) });
       return;
     }
     if (method === 'DELETE') {
@@ -2034,13 +2075,17 @@ async function handleRentalMoveIns(request, response, method, id) {
     const current = records.find((item) => item.id === id);
     const room = moveInRoomMatch(rooms, { ...(current || {}), ...input });
     if (!room) throw Object.assign(new Error('请先创建并选择有效房间'), { statusCode: 422 });
-    const activeLease = (await readRentalFile(RENTAL_LEASES_FILE)).some((lease) => !lease.archivedAt && lease.status === 'active' && ((lease.roomId && lease.roomId === room.id) || (!lease.roomId && lease.roomNo === room.roomNo)));
-    if (activeLease && !current) throw Object.assign(new Error('该房间已有在租租户，请使用续费'), { statusCode: 409 });
+    const activeLeases = await readRentalFile(RENTAL_LEASES_FILE);
+    const activeLease = activeLeases.some((lease) => !lease.archivedAt && lease.status === 'active' && ((lease.roomId && lease.roomId === room.id) || (!lease.roomId && lease.roomNo === room.roomNo)));
+    if (activeLease && !current && !input.contractOnly) throw Object.assign(new Error('该房间已有在租租户，请使用续费'), { statusCode: 409 });
     const prepared = await prepareRentalInput('move-ins', { ...input, workspaceId: actor.workspaceId, communityId: room.communityId, roomId: room.id, roomNo: room.roomNo });
     const record = normalizeRentalMoveIn({ ...prepared, workspaceId: actor.workspaceId, communityId: room.communityId, propertyName: room.propertyName, contractNo: current?.contractNo || prepared.contractNo || `DR-${new Date().toISOString().slice(0, 10).replaceAll('-', '')}-${room.roomNo}` }, current || { workspaceId: actor.workspaceId, communityId: room.communityId, roomId: room.id, roomNo: room.roomNo, propertyName: room.propertyName, inventorySnapshot: (await readRentalFile(RENTAL_ITEMS_FILE)).filter((item) => item.roomId === room.id && !item.archivedAt).map((item) => ({ name: item.name, quantity: item.quantity, note: item.note, image: item.image })) });
-    record.status = current?.status === 'draft' && input.status === 'contract_pending'
-      ? 'contract_pending'
-      : current?.status || record.status || 'draft';
+    const requestedStatus = input.status;
+    const canAdvanceToPayment = requestedStatus === 'payment_pending' && ['draft', 'contract_pending'].includes(current?.status);
+    const canResumeContract = requestedStatus === 'contract_pending' && current?.status === 'draft';
+    record.status = canAdvanceToPayment ? 'payment_pending' : canResumeContract ? 'contract_pending' : current?.status || record.status || 'draft';
+    if (usesLiveMoveInInventory(record)) record.inventorySnapshot = rentalMoveInInventory(record, await readRentalFile(RENTAL_ITEMS_FILE));
+    else if (current) record.inventorySnapshot = current.inventorySnapshot;
     if (!record.startDate) record.startDate = new Date().toISOString().slice(0, 10);
     if (!record.monthlyPropertyFee && record.propertyFeeMode === 'included') record.monthlyPropertyFee = room.monthlyPropertyFee || 0;
     if (method === 'PATCH' && !current) throw Object.assign(new Error('办理入住记录不存在，请刷新页面后重试'), { statusCode: 404 });
@@ -2060,7 +2105,8 @@ async function handleRentalMoveInAction(request, response, id, action) {
     const record = records[index];
     if (action === 'generate-contract') {
       const rooms = await readRentalFile(RENTAL_ROOMS_FILE);
-      const room = rooms.find((item) => item.id === record.roomId || item.roomNo === record.roomNo);
+      const room = moveInRoomMatch(rooms, record);
+      record.inventorySnapshot = rentalMoveInInventory(record, await readRentalFile(RENTAL_ITEMS_FILE));
       const communities = await readRentalJsonArray(RENTAL_COMMUNITIES_FILE);
       const community = communities.find((item) => item.workspaceId === actor.workspaceId && item.id === (record.communityId || room?.communityId) && !item.archivedAt)
         || communities.find((item) => item.workspaceId === actor.workspaceId && item.name === (record.propertyName || room?.propertyName) && !item.archivedAt);
@@ -2072,7 +2118,7 @@ async function handleRentalMoveInAction(request, response, id, action) {
       const purposeLabel = ({ self: '自住', studio: '工作室', homestay: '民宿', other: '其他' })[record.purpose] || record.purpose || '自住';
       const monthlyTotal = Math.round((Number(record.monthlyRent || 0) + Number(record.monthlyPropertyFee || 0)) * 100) / 100;
       const propertyName = community?.name || record.propertyName || room?.propertyName || '';
-      const communityAddress = community?.address || '';
+      const communityAddress = community?.signingAddress || community?.address || '';
       const signingAddress = community?.signingAddress || communityAddress;
       const contractParty = actor.workspace?.profile || {};
       const contractNo = record.contractNo || `DR-${new Date().toISOString().slice(0, 10).replaceAll('-', '')}-${record.roomNo}`;
@@ -2098,19 +2144,27 @@ async function handleRentalMoveInAction(request, response, id, action) {
         workspaceId: actor.workspaceId,
         contractParty: { name: contractParty.name || '', phone: contractParty.phone || '', idCard: contractParty.idCard || '', address: contractParty.address || '' },
         community: { id: community?.id || record.communityId || '', name: propertyName, address: communityAddress, signingAddress },
-        roomNo: record.roomNo || '', generatedAt: new Date().toISOString(),
+        roomNo: record.roomNo || '', inventory: record.inventorySnapshot, generatedAt: new Date().toISOString(),
       };
       await fs.mkdir(RENTAL_FILES_DIR, { recursive: true, mode: 0o750 });
       const filename = `move-in-contract-${crypto.randomUUID()}.docx`;
       await fs.writeFile(path.join(RENTAL_FILES_DIR, filename), filled, { mode: 0o640 });
-      record.generatedContractFile = `/api/zufang/files/${filename}`; record.contractStatus = 'generated'; record.status = 'contract_pending'; record.contractGeneratedAt = new Date().toISOString(); record.updatedAt = new Date().toISOString();
+      record.generatedContractFile = `/api/zufang/files/${filename}`; record.contractStatus = 'generated'; record.status = record.status === 'completed' ? 'completed' : 'contract_pending'; record.contractGeneratedAt = new Date().toISOString(); record.updatedAt = new Date().toISOString();
     } else if (action === 'upload-signed') {
       const input = await readJsonBody(request, MAX_RENTAL_BODY_BYTES);
       const prepared = await prepareRentalInput('move-ins', input);
       if (!prepared.signedContractFile) throw Object.assign(new Error('请上传已签署的PDF或DOCX合同'), { statusCode: 422 });
-      record.signedContractFile = prepared.signedContractFile; record.contractStatus = 'uploaded_signed'; record.status = 'payment_pending'; record.signedAt = new Date().toISOString(); record.updatedAt = new Date().toISOString();
+      record.signedContractFile = prepared.signedContractFile; record.contractStatus = 'uploaded_signed'; record.status = record.status === 'completed' ? 'completed' : 'payment_pending'; record.signedAt = new Date().toISOString(); record.updatedAt = new Date().toISOString();
+      if (record.completedLeaseId) {
+        const leases = await readRentalFile(RENTAL_LEASES_FILE);
+        const leaseIndex = leases.findIndex((lease) => lease.id === record.completedLeaseId && !lease.archivedAt);
+        if (leaseIndex >= 0) {
+          leases[leaseIndex] = normalizeRentalLease({ ...leases[leaseIndex], contractStatus: 'active', contractFileUrl: prepared.signedContractFile, contractPending: false, contractSnapshot: record.contractSnapshot }, leases[leaseIndex]);
+          await writeRentalFile(RENTAL_LEASES_FILE, leases);
+        }
+      }
     } else if (action === 'complete-payment') {
-      if (record.contractStatus !== 'uploaded_signed') throw Object.assign(new Error('请先上传已签署合同'), { statusCode: 422 });
+      if (!['not_generated', 'uploaded_signed'].includes(record.contractStatus)) throw Object.assign(new Error('请先上传已签署合同，或选择暂不签合同直接办理入住'), { statusCode: 422 });
       const input = await readJsonBody(request, MAX_RENTAL_BODY_BYTES);
       const rooms = await readRentalFile(RENTAL_ROOMS_FILE);
       const room = rooms.find((item) => item.id === record.roomId || item.roomNo === record.roomNo);
@@ -2123,7 +2177,8 @@ async function handleRentalMoveInAction(request, response, id, action) {
       const durationValue = Math.max(1, Number(presetMonths[input.durationPreset]) || Number(input.durationValue ?? record.durationValue) || 1);
       const startDate = record.startDate || new Date().toISOString().slice(0, 10);
       const paidThrough = moveInPeriodEnd(startDate, durationUnit, durationValue);
-      const lease = normalizeRentalLease({ workspaceId: actor.workspaceId, communityId: record.communityId || room.communityId, roomId: room.id, roomNo: room.roomNo, tenantName: record.tenantName, tenantPhone: record.tenantPhone, tenantIdCard: record.tenantIdCard, purpose: record.purpose, paymentMethod: record.paymentMethod, propertyFeeMode: record.propertyFeeMode, monthlyRent: record.monthlyRent, monthlyPropertyFee: record.monthlyPropertyFee, deposit: record.deposit, startDate, endDate: record.endDate, paidThrough, moveInWater: input.moveInWater ?? record.moveInWater, moveInElectricity: input.moveInElectricity ?? record.moveInElectricity, note: record.note, idCardFront: record.idCardFront, idCardBack: record.idCardBack, contractStatus: 'active', contractFileUrl: record.signedContractFile, contractSnapshot: record.contractSnapshot });
+      const hasSignedContract = record.contractStatus === 'uploaded_signed' && Boolean(record.signedContractFile);
+      const lease = normalizeRentalLease({ workspaceId: actor.workspaceId, communityId: record.communityId || room.communityId, roomId: room.id, roomNo: room.roomNo, tenantName: record.tenantName, tenantPhone: record.tenantPhone, tenantIdCard: record.tenantIdCard, purpose: record.purpose, paymentMethod: record.paymentMethod, propertyFeeMode: record.propertyFeeMode, monthlyRent: record.monthlyRent, monthlyPropertyFee: record.monthlyPropertyFee, deposit: record.deposit, startDate, endDate: record.endDate, paidThrough, moveInWater: input.moveInWater ?? record.moveInWater, moveInElectricity: input.moveInElectricity ?? record.moveInElectricity, note: record.note, idCardFront: record.idCardFront, idCardBack: record.idCardBack, contractStatus: hasSignedContract ? 'active' : 'draft', contractFileUrl: hasSignedContract ? record.signedContractFile : '', contractPending: !hasSignedContract, contractSnapshot: record.contractSnapshot });
       leases.unshift(lease); await writeRentalFile(RENTAL_LEASES_FILE, leases);
       const renewals = await readRentalFile(RENTAL_RENEWALS_FILE); const amount = Math.round(((lease.monthlyRent + lease.monthlyPropertyFee) * (durationUnit === 'days' ? durationValue / 30 : durationValue) + lease.deposit) * 100) / 100;
       const renewal = normalizeRentalRenewal({ workspaceId: actor.workspaceId, communityId: lease.communityId || room.communityId, leaseId: lease.id, roomId: room.id, roomNo: room.roomNo, tenantName: lease.tenantName, tenantPhone: lease.tenantPhone, renewalDate: input.paymentDate || new Date().toISOString().slice(0, 10), startDate, endDate: paidThrough, durationUnit, durationValue, monthlyRent: lease.monthlyRent, monthlyPropertyFee: lease.monthlyPropertyFee, deposit: lease.deposit, amount, paymentType: 'initial', paymentMethod: lease.paymentMethod }); renewals.unshift(renewal); await writeRentalFile(RENTAL_RENEWALS_FILE, renewals);
@@ -2177,7 +2232,7 @@ async function handleRentalUsers(request, response, method, id) {
       sendJson(response, 200, { ok: true, data: [{ username: 'admin', displayName: '管理员', role: 'admin', platformAdmin: true, enabled: true }, ...users.map((item) => ({ username: item.username, displayName: item.displayName || item.username, role: item.role === 'platformAdmin' ? 'admin' : 'user', platformAdmin: item.role === 'platformAdmin', enabled: item.enabled !== false, createdAt: item.createdAt }))] });
       return;
     }
-    if (actor.role !== 'admin') { sendJson(response, 403, { ok: false, message: '只有管理员可以管理账号' }); return; }
+    if (!actor.platformAdmin) { sendJson(response, 403, { ok: false, message: '只有平台超级管理员可以管理账号' }); return; }
     if (method === 'POST') {
       const input = await readJsonBody(request, MAX_RENTAL_BODY_BYTES);
       const username = cleanText(input.username, 40);
@@ -2207,12 +2262,32 @@ async function handleRentalUsers(request, response, method, id) {
       if (index < 0) { sendJson(response, 404, { ok: false, message: '账号不存在' }); return; }
       const previousUser = { ...users[index] };
       const input = await readJsonBody(request, MAX_RENTAL_BODY_BYTES);
+      if (input.role !== undefined && !['user', 'platformAdmin'].includes(input.role)) throw Object.assign(new Error('账号权限类型不正确'), { statusCode: 422 });
       if (input.password !== undefined) {
-        if (!isValidAdminPassword(input.password)) throw Object.assign(new Error('密码长度需为 8 至 72 位'), { statusCode: 422 });
-        users[index].auth = await hashAdminPassword(input.password);
+        if (input.password !== '' && !isValidAdminPassword(input.password)) throw Object.assign(new Error('密码长度需为 8 至 72 位'), { statusCode: 422 });
+        if (input.password !== '') users[index].auth = await hashAdminPassword(input.password);
       }
       if (input.displayName !== undefined) users[index].displayName = cleanText(input.displayName, 40) || users[index].username;
       if (input.enabled !== undefined) users[index].enabled = Boolean(input.enabled);
+      const currentRole = previousUser.role === 'platformAdmin' ? 'platformAdmin' : 'user';
+      const nextRole = input.role === undefined ? currentRole : input.role;
+      if (nextRole !== currentRole) {
+        const workspaces = await readRentalJsonArray(RENTAL_WORKSPACES_FILE);
+        if (nextRole === 'platformAdmin') {
+          users[index].role = 'platformAdmin';
+          users[index].workspaceId = '';
+        } else {
+          const workspaceId = previousUser.workspaceId || workspaceIdForUsername(users[index].username);
+          let workspaceIndex = workspaces.findIndex((item) => item.id === workspaceId || item.username === users[index].username);
+          if (workspaceIndex < 0) {
+            workspaces.push(normalizeWorkspace({ id: workspaceId, username: users[index].username, name: `${users[index].displayName}的租房空间` }));
+            workspaceIndex = workspaces.length - 1;
+          }
+          users[index].role = 'user';
+          users[index].workspaceId = workspaces[workspaceIndex].id;
+        }
+        await writeRentalJsonArray(RENTAL_WORKSPACES_FILE, workspaces);
+      }
       await writeAdminUsers(users);
       rentalDatabase.appendAudit(DATA_DIR, { resource: 'users', action: 'update', recordId: id, actor: actor.displayName, details: rentalAuditDetails('users', users[index], previousUser, 'update') });
       sendJson(response, 200, { ok: true, data: { username: users[index].username, displayName: users[index].displayName, role: users[index].role === 'platformAdmin' ? 'admin' : 'user', platformAdmin: users[index].role === 'platformAdmin', enabled: users[index].enabled } });

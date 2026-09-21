@@ -62,6 +62,61 @@ Validation: Playwright fixture checks passed with zero horizontal overflow at 39
 
 final result: passed
 
+## Cross-page UI unification — 2026-09-21
+
+The audit recommendations are now applied through a shared UI layer. Page headers, filters, panel surfaces, actions, status treatments, desktop table widths, mobile cards, settings sections, and the standalone reimbursement page use the same tokens and spacing rules. Room and tenant desktop action columns reserve enough width for all actions without horizontal clipping; the mobile topbar keeps workspace switching and logout accessible in compact controls; the five ledger summary metrics now use the same data meaning on PC and mobile.
+
+Validation: JavaScript syntax checks passed for `server.js`, `public/zufang.js`, `public/zufang-ui.js`, and `public/zufang-overrides.js`; shared CSS braces balanced; `git diff --check` reported no whitespace errors; local HTTP smoke checks returned 200 for the main app, unified stylesheet, reimbursement page, and reimbursement stylesheet. Temporary QA harnesses were removed before release.
+
+final result: passed
+
+## 小区管理列表与弹窗 — 选定方案实现
+
+source visual truth path: `C:\Users\dangd\.codex\generated_images\019f5f7a-dffb-7cd1-ba2c-dfe856a95e55\exec-444ddba5-f135-45e2-aa22-9b1b1afc52a4.png`
+implementation screenshot paths: `E:\workspace\rental-manager\community-1440-verified.png`, `E:\workspace\rental-manager\community-modal-1440-verified.png`, `E:\workspace\rental-manager\community-modal-390-verified.png`
+tested viewports: 1440 × 900 CSS px (desktop), 390 × 900 CSS px (mobile), deviceScaleFactor 1
+state: 小区管理列表；新增小区弹窗；编辑小区弹窗
+
+## Full-view comparison evidence
+
+The selected reference and rendered screenshots use the same light blue workspace, left navigation, navy/teal hierarchy, white rounded list surface, compact rate cells, and shared record-dialog header/body/footer. The implementation keeps the existing function-list dialog interaction rather than introducing a separate editor panel.
+
+## Focused region comparison evidence
+
+- Desktop modal: title/close row, two section headings, paired address fields, four fee inputs, and sticky footer align to the selected reference composition.
+- Mobile modal: the same fields collapse to one readable column, the footer remains visible, and the dialog stays within the 390px viewport without horizontal overflow.
+- Directory rows: each row keeps community identity and signing address together, shows room/occupancy counts, exposes four fee defaults, and keeps 编辑/归档 actions aligned.
+
+## Findings
+
+No actionable P0/P1/P2 visual findings remain. The mobile form is intentionally single-column for readability; the desktop form retains the reference's two-column identity section and four-column fee section.
+
+### Required fidelity surfaces
+
+- Fonts and typography: existing Microsoft YaHei/PingFang SC stack, dark navy hierarchy, compact 12px labels, and 14–16px body text match the current function-list dialog system.
+- Spacing and layout rhythm: list header/rows, modal section dividers, input heights, and fixed action footer reuse existing dialog spacing tokens; the mobile breakpoint removes horizontal grid tracks.
+- Colors and visual tokens: existing icy-blue page surface, white modal/list surfaces, teal section markers/primary action, blue outlines, and restrained shadow/backdrop are preserved.
+- Image quality and asset fidelity: no new decorative imagery was introduced; existing Iconify/house mark assets remain in use.
+- Copy and content: labels use the confirmed terms 小区名称、物业地址、合同签约地址、到期提醒天数、物业/水/电/燃气费单价、保存小区.
+
+## Primary interactions verified
+
+- 新增小区 opens the shared `#record-dialog` and shows the two section headings.
+- Saving a new record refreshes the list.
+- 编辑 opens the same dialog with existing values populated.
+- Mobile and desktop list/modal states render without console errors in the passing fixture run.
+- Existing inventory synchronization tests remain passing after the UI change.
+
+final result: passed
+
+## Login page QA — 2026-09-16
+
+The selected login concept is implemented as a real responsive page: a bright residential courtyard hero with the approved house mark and a single account/password form on desktop; on mobile the hero becomes a shallow banner and the form remains within the viewport. Existing session authentication is reused, with remember-me persistence and an inline error state; registration and other unimplemented entry points are not added.
+
+Validation: local Chrome captures passed at 1440 × 1024 and 390 × 844. The mobile login form stays inside the viewport (computed form width 335px in a 375px layout viewport after the browser scrollbar), and a real `admin` / development-password submit hid the login layer after the session request succeeded. `node --check public/zufang.js`, `node --check server.js`, and `git diff --check` passed.
+
+final result: passed
+
 ## Tenant directory follow-up — 2026-09-15
 
 The tenant information dialog now serves identity images created by the move-in flow (`move-in-front/back-*`) through the signed file route. The tenant directory keeps separate 在租租户 / 已退租租户 sections, applies green/amber/gray state treatments, and renders the search input as a single bordered field beside the status selector.
