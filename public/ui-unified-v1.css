@@ -294,12 +294,14 @@ main.rental-shell > .tab-panel.view .room-community-heading {
     align-items: start;
   }
 
-  main.rental-shell > .tab-panel.view #room-list .room-card {
+  /* Match the legacy rental-card selector so its !important min-height and
+     auto-margin cannot recreate the spacer. */
+  #rental.tab-panel.view > #room-list .room-card {
     min-height: 0 !important;
     height: auto !important;
   }
 
-  main.rental-shell > .tab-panel.view #room-list .room-card .room-actions {
+  #rental.tab-panel.view > #room-list .room-card .room-actions {
     margin-top: 18px !important;
   }
 }
