@@ -1459,9 +1459,81 @@ async function syncRentalMaintenanceLedger(record, archived = false) {
   }
   const maintenanceItem = record.item || (record.maintenanceType === 'new' ? '新增物品' : record.maintenanceType === 'remove' ? '删除物品' : '房间日常维护');
   const maintenanceNote = record.note && record.note !== maintenanceItem ? `${maintenanceItem}·${record.note}` : maintenanceItem;
-  const entry = normalizeRentalLedger({ workspaceId: record.workspaceId, communityId: record.communityId, direction: 'expense', category: 'maintenance', roomId: record.roomId, roomNo: record.roomNo, amount: record.amount, recordDate: record.maintenanceDate, sourceType: 'maintenance', sourceId: record.id, note: maintenanceNote }, index >= 0 ? ledger[index] : {});
+  const currentEntry = index >= 0 ? { ...ledger[index] } : {};
+  // A maintenance record can move from pending back to done/reimbursed. In
+  // that case the old ledger row is reused, so clear its previous archive
+  // marker before making it visible again.
+  delete currentEntry.archivedAt;
+  const entry = normalizeRentalLedger({ workspaceId: record.workspaceId, communityId: record.communityId, direction: 'expense', category: 'maintenance', roomId: record.roomId, roomNo: record.roomNo, amount: record.amount, recordDate: record.maintenanceDate, sourceType: 'maintenance', sourceId: record.id, note: maintenanceNote }, currentEntry);
   if (index >= 0) ledger[index] = entry; else ledger.unshift(entry);
   await writeRentalFile(RENTAL_LEDGER_FILE, ledger);
+}
+
+async function reconcileRentalMaintenanceLedgers() {
+  const maintenance = await readRentalFileRaw(RENTAL_MAINTENANCE_FILE);
+  const ledger = await readRentalFileRaw(RENTAL_LEDGER_FILE);
+  const sourceIndexes = new Map();
+  ledger.forEach((entry, index) => {
+    if (entry.sourceType !== 'maintenance' || !entry.sourceId) return;
+    const indexes = sourceIndexes.get(entry.sourceId) || [];
+    indexes.push(index);
+    sourceIndexes.set(entry.sourceId, indexes);
+  });
+
+  const nextLedger = ledger.map((entry) => ({ ...entry }));
+  const now = new Date().toISOString();
+  let changed = 0;
+  let repaired = 0;
+  const maintenanceIds = new Set(maintenance.map((record) => record.id));
+
+  const archiveEntry = (index) => {
+    if (index < 0 || nextLedger[index].archivedAt) return;
+    nextLedger[index] = { ...nextLedger[index], archivedAt: now, updatedAt: now };
+    changed += 1;
+  };
+
+  for (const record of maintenance) {
+    const indexes = sourceIndexes.get(record.id) || [];
+    const shouldBeActive = !record.archivedAt && record.status !== 'pending' && Number(record.amount || 0) > 0;
+    if (!shouldBeActive) {
+      indexes.forEach(archiveEntry);
+      continue;
+    }
+
+    const primaryIndex = indexes.find((index) => !nextLedger[index].archivedAt) ?? indexes[0] ?? -1;
+    const existingEntry = primaryIndex >= 0 ? nextLedger[primaryIndex] : null;
+    const wasArchived = Boolean(existingEntry?.archivedAt);
+    const currentEntry = existingEntry ? { ...existingEntry } : {};
+    delete currentEntry.archivedAt;
+    const maintenanceItem = record.item || (record.maintenanceType === 'new' ? '新增物品' : record.maintenanceType === 'remove' ? '删除物品' : '房间日常维护');
+    const maintenanceNote = record.note && record.note !== maintenanceItem ? `${maintenanceItem}·${record.note}` : maintenanceItem;
+    const entry = normalizeRentalLedger({ workspaceId: record.workspaceId, communityId: record.communityId, direction: 'expense', category: 'maintenance', roomId: record.roomId, roomNo: record.roomNo, amount: record.amount, recordDate: record.maintenanceDate, sourceType: 'maintenance', sourceId: record.id, note: maintenanceNote }, currentEntry);
+    const withoutUpdatedAt = (value) => {
+      const comparable = { ...value };
+      delete comparable.updatedAt;
+      return comparable;
+    };
+    if (primaryIndex >= 0) {
+      if (wasArchived || JSON.stringify(withoutUpdatedAt(existingEntry)) !== JSON.stringify(withoutUpdatedAt(entry))) {
+        nextLedger[primaryIndex] = entry;
+        changed += 1;
+        if (wasArchived) repaired += 1;
+      }
+    } else {
+      nextLedger.push(entry);
+      changed += 1;
+      repaired += 1;
+    }
+    indexes.filter((index) => index !== primaryIndex).forEach(archiveEntry);
+  }
+
+  // A purged maintenance record must not leave a live generated expense row.
+  ledger.forEach((entry, index) => {
+    if (entry.sourceType === 'maintenance' && entry.sourceId && !maintenanceIds.has(entry.sourceId)) archiveEntry(index);
+  });
+
+  if (changed) await writeRentalFile(RENTAL_LEDGER_FILE, nextLedger);
+  return { changed, repaired };
 }
 
 async function handleRentalWorkspaces(request, response, method, id) {
@@ -4370,6 +4442,11 @@ if (require.main === module) {
   }
   server.listen(PORT, HOST, () => {
     console.log('Rental manager is running at http://localhost:' + PORT);
+    reconcileRentalMaintenanceLedgers().then(({ changed, repaired }) => {
+      if (changed) console.log(`Maintenance ledger reconciliation updated ${changed} row(s); repaired ${repaired} row(s).`);
+    }).catch((error) => {
+      console.error('Maintenance ledger reconciliation failed:', error);
+    });
     if (!process.env.ADMIN_PASSWORD) {
       console.warn('Admin is using the development password. Set ADMIN_PASSWORD before deployment.');
     }
