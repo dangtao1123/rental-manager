@@ -287,6 +287,23 @@ main.rental-shell > .tab-panel.view .room-community-heading {
   border-bottom: 1px solid var(--ui-line-soft);
 }
 
+/* Rental cards should finish after their content; the actions row must not
+   stretch into an empty spacer on desktop. */
+@media (min-width: 761px) {
+  main.rental-shell > .tab-panel.view .room-community-cards {
+    align-items: start;
+  }
+
+  main.rental-shell > .tab-panel.view #room-list .room-card {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  main.rental-shell > .tab-panel.view #room-list .room-card .room-actions {
+    margin-top: 18px !important;
+  }
+}
+
 main.rental-shell > .tab-panel.view .community-card {
   padding: 16px !important;
   border-color: var(--ui-line) !important;
