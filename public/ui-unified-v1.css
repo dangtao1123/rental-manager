@@ -302,7 +302,9 @@ main.rental-shell > .tab-panel.view .room-community-heading {
   }
 
   #rental.tab-panel.view > #room-list .room-card .room-actions {
-    margin-top: 18px !important;
+    margin-top: 14px !important;
+    padding-top: 0 !important;
+    border-top: 0 !important;
   }
 }
 
