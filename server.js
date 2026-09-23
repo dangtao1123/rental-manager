@@ -247,6 +247,7 @@ function normalizeWorkspace(input = {}, current = {}) {
 
 function normalizeCommunity(input = {}, current = {}) {
   const hasSettingsInput = ['reminderDays', 'propertyUnitPrice', 'waterUnitPrice', 'electricityUnitPrice', 'gasUnitPrice'].some((key) => Object.hasOwn(input, key));
+  const publicSortInput = input.publicSort ?? current.publicSort;
   const settingsConfigured = current.settingsConfigured === true || hasSettingsInput;
   return {
     ...current,
@@ -255,6 +256,13 @@ function normalizeCommunity(input = {}, current = {}) {
     name: rentalText(input.name ?? current.name, 80),
     address: rentalText(input.address ?? current.address, 200),
     signingAddress: rentalText(input.signingAddress ?? current.signingAddress, 200),
+    publicEnabled: rentalBoolean(input.publicEnabled, current.publicEnabled === true),
+    publicDisplayAddress: rentalText(input.publicDisplayAddress ?? current.publicDisplayAddress, 160),
+    publicDescription: rentalText(input.publicDescription ?? current.publicDescription, 1_000),
+    publicNearby: rentalText(input.publicNearby ?? current.publicNearby, 1_000),
+    publicAmenities: rentalText(input.publicAmenities ?? current.publicAmenities, 500),
+    publicCoverImage: normalizeRentalFileUrl(input.publicCoverImage ?? current.publicCoverImage),
+    publicSort: Math.min(9_999, Math.max(0, Math.round(Number(publicSortInput) || 0))),
     reminderDays: Math.min(365, Math.max(0, Math.round(Number(input.reminderDays ?? current.reminderDays ?? 10) || 0))),
     propertyUnitPrice: rentalMoney(input.propertyUnitPrice ?? current.propertyUnitPrice),
     waterUnitPrice: rentalMoney(input.waterUnitPrice ?? current.waterUnitPrice),
@@ -725,6 +733,11 @@ async function writeRentalFile(file, records) {
 }
 
 function rentalText(value, max = 200) { return cleanText(value, max); }
+function rentalBoolean(value, fallback = false) {
+  if (value === undefined || value === null || value === '') return fallback;
+  if (typeof value === 'string') return !['0', 'false', 'no', 'off'].includes(value.trim().toLowerCase());
+  return Boolean(value);
+}
 function rentalIdCard(value) {
   const text = String(value ?? '').trim().replace(/\s+/g, '').toUpperCase();
   if (!text) return '';
@@ -1002,10 +1015,12 @@ function signRentalFileUrl(value, now = Date.now(), downloadName = '') {
 function withSignedRentalFiles(type, record, now = Date.now()) {
   const signed = { ...record };
   const singleFields = type === 'rooms'
-    ? ['landlordContractFile']
+    ? ['landlordContractFile', 'publicCoverImage']
     : type === 'leases'
     ? ['idCardFront', 'idCardBack', 'contractFileUrl']
-    : type === 'items'
+    : type === 'communities'
+      ? ['publicCoverImage']
+      : type === 'items'
       ? ['image']
       : type === 'maintenance'
         ? ['beforeImage', 'afterImage', 'paymentProof']
@@ -1139,7 +1154,8 @@ function normalizeRentalRoom(input, current = {}) {
   const landlordContractType = ['paper', 'electronic'].includes(contractTypeInput) ? contractTypeInput : '';
   const landlordContractFile = landlordContractType === 'paper' ? normalizeRentalFileUrl(input.landlordContractFile ?? current.landlordContractFile) : '';
   const landlordContractUrl = landlordContractType === 'electronic' ? normalizeRentalHttpUrl(input.landlordContractUrl ?? current.landlordContractUrl) : '';
-  return { ...current, id: current.id || rentalId(), workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80), communityId: rentalText(input.communityId ?? current.communityId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), propertyName: rentalText(input.propertyName ?? current.propertyName, 80), status, area, propertyUnitPrice, propertyFeeMode, monthlyPropertyFee: suppliedFee === undefined || suppliedFee === '' ? Math.round(area * propertyUnitPrice * 100) / 100 : rentalMoney(suppliedFee), images: Array.isArray(input.images) ? input.images.slice(0, 20).map((item) => rentalText(item, 500)) : (current.images || []), landlordLeaseStart: rentalDate(input.landlordLeaseStart ?? current.landlordLeaseStart), landlordLeaseEnd: rentalDate(input.landlordLeaseEnd ?? current.landlordLeaseEnd), landlordAnnualRent: annualRent, landlordMonthlyRent: Math.round(annualRent / 12 * 100) / 100, landlordAnnualCost: annualRent, landlordContractType, landlordContractFile, landlordContractUrl, note: rentalText(input.note ?? current.note, 500), updatedAt: new Date().toISOString(), createdAt: current.createdAt || new Date().toISOString() };
+  const publicSortInput = input.publicSort ?? current.publicSort;
+  return { ...current, id: current.id || rentalId(), workspaceId: rentalText(input.workspaceId ?? current.workspaceId, 80), communityId: rentalText(input.communityId ?? current.communityId, 80), roomNo: rentalText(input.roomNo ?? current.roomNo, 40), propertyName: rentalText(input.propertyName ?? current.propertyName, 80), status, area, propertyUnitPrice, propertyFeeMode, monthlyPropertyFee: suppliedFee === undefined || suppliedFee === '' ? Math.round(area * propertyUnitPrice * 100) / 100 : rentalMoney(suppliedFee), images: Array.isArray(input.images) ? input.images.slice(0, 20).map((item) => rentalText(item, 500)) : (current.images || []), publicEnabled: rentalBoolean(input.publicEnabled, current.publicEnabled === true), publicTitle: rentalText(input.publicTitle ?? current.publicTitle, 120), publicRent: rentalMoney(input.publicRent ?? current.publicRent), publicLayout: rentalText(input.publicLayout ?? current.publicLayout, 40), publicOrientation: rentalText(input.publicOrientation ?? current.publicOrientation, 40), publicFloor: rentalText(input.publicFloor ?? current.publicFloor, 40), publicFurnishing: rentalText(input.publicFurnishing ?? current.publicFurnishing, 60), publicAvailableDate: rentalDate(input.publicAvailableDate ?? current.publicAvailableDate), publicRenovationEndDate: rentalDate(input.publicRenovationEndDate ?? current.publicRenovationEndDate), publicHighlights: rentalText(input.publicHighlights ?? current.publicHighlights, 800), publicDescription: rentalText(input.publicDescription ?? current.publicDescription, 2_000), publicCoverImage: normalizeRentalFileUrl(input.publicCoverImage ?? current.publicCoverImage), publicSort: Math.min(9_999, Math.max(0, Math.round(Number(publicSortInput) || 0))), landlordLeaseStart: rentalDate(input.landlordLeaseStart ?? current.landlordLeaseStart), landlordLeaseEnd: rentalDate(input.landlordLeaseEnd ?? current.landlordLeaseEnd), landlordAnnualRent: annualRent, landlordMonthlyRent: Math.round(annualRent / 12 * 100) / 100, landlordAnnualCost: annualRent, landlordContractType, landlordContractFile, landlordContractUrl, note: rentalText(input.note ?? current.note, 500), updatedAt: new Date().toISOString(), createdAt: current.createdAt || new Date().toISOString() };
 }
 function normalizeRentalLease(input, current = {}) {
   const reminderInput = input.reminderEnabled ?? current.reminderEnabled;
@@ -1165,8 +1181,8 @@ function normalizeRentalLease(input, current = {}) {
 }
 function rentalAuditDetails(resource, record = {}, previous = null, action = '') {
   const fieldNames = {
-    rooms: { propertyName: '小区', roomNo: '房间号', status: '状态', area: '面积', propertyUnitPrice: '物业费单价', monthlyPropertyFee: '每月物业费', landlordLeaseStart: '托管开始', landlordLeaseEnd: '托管结束', landlordAnnualRent: '房东年租', landlordContractType: '托管合同类型', landlordContractFile: '纸质托管合同', landlordContractUrl: '电子托管合同地址', images: '房间照片' },
-    communities: { name: '小区名称', address: '小区地址', signingAddress: '签约地址', reminderDays: '到期提醒天数', propertyUnitPrice: '物业费单价', waterUnitPrice: '水费单价', electricityUnitPrice: '电费单价', gasUnitPrice: '燃气费单价' },
+    rooms: { propertyName: '小区', roomNo: '房间号', status: '状态', area: '面积', propertyUnitPrice: '物业费单价', monthlyPropertyFee: '每月物业费', publicEnabled: '对外展示', publicTitle: '对外标题', publicRent: '对外月租金', publicLayout: '户型', publicOrientation: '朝向', publicFloor: '楼层', publicFurnishing: '装修情况', publicAvailableDate: '可入住日期', publicRenovationEndDate: '预计装修完成', publicHighlights: '房源亮点', publicDescription: '房源介绍', publicCoverImage: '对外封面图', publicSort: '展示顺序', landlordLeaseStart: '托管开始', landlordLeaseEnd: '托管结束', landlordAnnualRent: '房东年租', landlordContractType: '托管合同类型', landlordContractFile: '纸质托管合同', landlordContractUrl: '电子托管合同地址', images: '房间照片' },
+    communities: { name: '小区名称', address: '小区地址', signingAddress: '签约地址', publicEnabled: '对外展示', publicDisplayAddress: '对外显示区域/地址', publicDescription: '小区简介', publicNearby: '周边配套', publicAmenities: '小区特色', publicCoverImage: '小区封面图', publicSort: '展示顺序', reminderDays: '到期提醒天数', propertyUnitPrice: '物业费单价', waterUnitPrice: '水费单价', electricityUnitPrice: '电费单价', gasUnitPrice: '燃气费单价' },
     leases: { roomNo: '房间号', tenantName: '租户姓名', tenantPhone: '租户电话', tenantIdCard: '身份证号', purpose: '住房目的', paymentMethod: '支付方式', propertyFeeMode: '物业费方式', monthlyRent: '月租金', monthlyPropertyFee: '每月物业费', deposit: '押金', depositStatus: '押金状态', depositRefundAmount: '退还押金', startDate: '入住时间', endDate: '合同结束', paidThrough: '已付至', moveInWater: '入住水表', moveInElectricity: '入住电表' },
     renewals: { roomNo: '房间号', tenantName: '租户姓名', renewalDate: '续费日期', durationValue: '续费时长', monthlyRent: '月租金', monthlyPropertyFee: '物业费', amount: '续费金额', endDate: '续费后到期' },
     maintenance: { roomNo: '房间号', maintenanceDate: '维护日期', maintenanceType: '维护类型', item: '维护事项', amount: '金额', status: '状态', reimbursementBatchId: '报销批次', completedAt: '完成时间', reimbursedAt: '报销时间', note: '备注' },
@@ -1633,7 +1649,7 @@ async function handleRentalCommunities(request, response, method, id) {
     const communities = await readRentalJsonArray(RENTAL_COMMUNITIES_FILE);
     const scoped = communities.filter((item) => item.workspaceId === actor.workspaceId);
     if (method === 'GET') {
-      sendJson(response, 200, { ok: true, data: scoped.filter((item) => !item.archivedAt) });
+      sendJson(response, 200, { ok: true, data: scoped.filter((item) => !item.archivedAt).map((item) => withSignedRentalFiles('communities', item)) });
       return;
     }
     if (method === 'POST') {

@@ -62,7 +62,8 @@
     if (type === 'leases') return withSections(fields, { roomId: '租户信息', startDate: '租房日期', paymentMethod: '租金与费用', moveInElectricity: '入住读数与证件', note: '备注' });
     if (type === 'renewal') return withSections(fields, { roomNo: '租户信息', renewalDate: '本次续租', leaseStart: '租期信息', monthlyRent: '费用明细', note: '备注' });
     if (type === 'checkouts') return withSections(fields, { roomDisplay: '租户与租期', checkoutDate: '退房信息', waterHeading: '水费核算', electricityHeading: '电费核算', otherHeading: '退房扣除或返还项目', bankHeading: '收款信息', note: '备注' });
-    if (type === 'rooms') return withSections(fields, { basicHeading: '基本信息', managementHeading: '托管信息', landlordContractType: '托管合同', note: '备注' });
+    if (type === 'rooms') return withSections(fields, { basicHeading: '基本信息', publicHeading: '对外展示资料', managementHeading: '托管信息', landlordContractType: '托管合同', note: '备注' });
+    if (type === 'communities') return withSections(fields, { communityHeading: '小区资料', publicHeading: '对外展示资料', ratesHeading: '费用单价' });
     if (type === 'maintenance') return withSections(fields, { roomId: '维护信息', note: '说明与凭证' });
     if (type === 'items') return withSections(fields, { roomId: '物品信息' });
     if (type === 'costs' || type === 'ledger') return withSections(fields, { roomId: '收支信息', direction: '收支信息' });
